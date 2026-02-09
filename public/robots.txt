@@ -1,0 +1,29 @@
+# Imperial Yachting — imperialyachting.com
+# Allow all search engines and AI crawlers
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Google
+User-agent: Googlebot
+Allow: /
+
+# AI Crawlers — explicitly allowed for GEO
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Anthropic-ai
+Allow: /
+
+# Sitemap
+Sitemap: https://imperialyachting.com/sitemap.xml

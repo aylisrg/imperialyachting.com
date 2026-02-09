@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Navy palette */
+  --color-navy-950: #060E1A;
+  --color-navy-900: #0A1628;
+  --color-navy-800: #121F3D;
+  --color-navy-700: #1A2D54;
+  --color-navy-600: #243B6B;
+
+  /* Gold palette */
+  --color-gold-600: #B8943A;
+  --color-gold-500: #C9A84C;
+  --color-gold-400: #D4B96A;
+  --color-gold-300: #E0CA8E;
+  --color-gold-200: #EDE0BC;
+
+  /* Sea accent */
+  --color-sea-600: #1E6A87;
+  --color-sea-500: #2A7B9B;
+  --color-sea-400: #3D9BBF;
+
+  /* Neutral */
+  --color-sand-50: #FAFAF7;
+  --color-sand-100: #F5F5F0;
+  --color-sand-200: #E8E6E1;
+  --color-sand-300: #D4D1CA;
+
+  /* Fonts */
+  --font-heading: var(--font-syne);
+  --font-body: var(--font-inter);
+  --font-accent: var(--font-playfair);
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  background-color: var(--color-navy-950);
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Gold gradient text utility */
+.text-gold-gradient {
+  background: linear-gradient(135deg, var(--color-gold-500), var(--color-gold-300));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gold line accent */
+.gold-line {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-gold-500), var(--color-gold-300));
+}
+
+/* Glass card effect */
+.glass-card {
+  background: rgba(18, 31, 61, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom selection color */
+::selection {
+  background-color: rgba(201, 168, 76, 0.3);
+  color: #ffffff;
+}
