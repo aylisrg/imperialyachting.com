@@ -1,24 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { BookOpen, Clock, ArrowRight, Send } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
+import { Reveal } from "@/components/ui/Reveal";
 
 const placeholderPosts = [
   {
@@ -71,52 +58,29 @@ export function BlogPageClient() {
 
         <Container className="relative z-10">
           <div className="max-w-3xl">
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{
-                duration: 1,
-                delay: 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="origin-left mb-8"
-            >
+            <div className="origin-left mb-8 animate-hero-line">
               <div className="gold-line" />
-            </motion.div>
+            </div>
 
-            <motion.div
-              custom={0}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="mb-6"
-            >
+            <div className="mb-6 animate-hero-1">
               <BookOpen
                 className="w-8 h-8 text-gold-500/60"
                 strokeWidth={1.5}
               />
-            </motion.div>
+            </div>
 
-            <motion.h1
-              custom={1}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white"
+            <h1
+              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white animate-hero-2"
             >
               Insights &amp; Journal
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              custom={2}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed"
+            <p
+              className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed animate-hero-3"
             >
               Expert guides, destination insights, and the latest from the world
               of luxury yachting in Dubai.
-            </motion.p>
+            </p>
           </div>
         </Container>
       </section>
@@ -132,61 +96,57 @@ export function BlogPageClient() {
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {placeholderPosts.map((post, i) => (
-              <motion.article
-                key={post.slug}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeUp}
-                className="rounded-xl overflow-hidden border border-white/5 group"
-              >
-                {/* Gradient placeholder image */}
-                <div
-                  className={`relative aspect-[16/10] bg-gradient-to-br ${post.gradient}`}
+              <Reveal key={post.slug} delay={i * 100}>
+                <article
+                  className="rounded-xl overflow-hidden border border-white/5 group"
                 >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-heading text-lg font-bold text-white/10 tracking-wider text-center px-6">
+                  {/* Gradient placeholder image */}
+                  <div
+                    className={`relative aspect-[16/10] bg-gradient-to-br ${post.gradient}`}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="font-heading text-lg font-bold text-white/10 tracking-wider text-center px-6">
+                        {post.title}
+                      </span>
+                    </div>
+
+                    {/* Category badge */}
+                    <div className="absolute top-3 left-3">
+                      <Badge variant="gold">{post.category}</Badge>
+                    </div>
+
+                    {/* Coming Soon overlay */}
+                    <div className="absolute inset-0 bg-navy-950/40 flex items-center justify-center">
+                      <span className="inline-flex items-center gap-2 rounded-full bg-gold-500/20 backdrop-blur-sm border border-gold-500/30 px-5 py-2 text-sm font-heading font-bold text-gold-400 tracking-wide">
+                        Coming Soon
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="bg-navy-800 p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="flex items-center gap-1.5 text-xs text-white/40">
+                        <Clock className="w-3 h-3" />
+                        {post.readTime}
+                      </span>
+                    </div>
+
+                    <h3 className="font-heading text-lg font-bold text-white leading-snug">
                       {post.title}
-                    </span>
+                    </h3>
+
+                    <p className="mt-3 text-sm text-white/50 leading-relaxed line-clamp-3">
+                      {post.excerpt}
+                    </p>
+
+                    <div className="mt-4 flex items-center gap-2 text-sm text-gold-400/60">
+                      <span className="font-medium">Read article</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
                   </div>
-
-                  {/* Category badge */}
-                  <div className="absolute top-3 left-3">
-                    <Badge variant="gold">{post.category}</Badge>
-                  </div>
-
-                  {/* Coming Soon overlay */}
-                  <div className="absolute inset-0 bg-navy-950/40 flex items-center justify-center">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-gold-500/20 backdrop-blur-sm border border-gold-500/30 px-5 py-2 text-sm font-heading font-bold text-gold-400 tracking-wide">
-                      Coming Soon
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="bg-navy-800 p-6">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="flex items-center gap-1.5 text-xs text-white/40">
-                      <Clock className="w-3 h-3" />
-                      {post.readTime}
-                    </span>
-                  </div>
-
-                  <h3 className="font-heading text-lg font-bold text-white leading-snug">
-                    {post.title}
-                  </h3>
-
-                  <p className="mt-3 text-sm text-white/50 leading-relaxed line-clamp-3">
-                    {post.excerpt}
-                  </p>
-
-                  <div className="mt-4 flex items-center gap-2 text-sm text-gold-400/60">
-                    <span className="font-medium">Read article</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </motion.article>
+                </article>
+              </Reveal>
             ))}
           </div>
         </Container>
@@ -196,13 +156,7 @@ export function BlogPageClient() {
       <section className="py-24 sm:py-32 bg-navy-950">
         <Container>
           <div className="max-w-2xl mx-auto text-center">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              custom={0}
-            >
+            <Reveal>
               <div className="gold-line mx-auto mb-8" />
 
               <Send
@@ -219,37 +173,29 @@ export function BlogPageClient() {
                 and destination insights. No spam, just quality content from
                 the water.
               </p>
-            </motion.div>
+            </Reveal>
 
-            <motion.form
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              custom={1}
-              className="mt-10 flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="flex-1 rounded-lg bg-navy-800 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold-500/30 focus:ring-1 focus:ring-gold-500/20 transition-colors"
-              />
-              <Button variant="primary" size="md" type="submit">
-                Subscribe
-              </Button>
-            </motion.form>
+            <Reveal delay={100}>
+              <form
+                className="mt-10 flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+                onSubmit={(e) => e.preventDefault()}
+              >
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  className="flex-1 rounded-lg bg-navy-800 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-gold-500/30 focus:ring-1 focus:ring-gold-500/20 transition-colors"
+                />
+                <Button variant="primary" size="md" type="submit">
+                  Subscribe
+                </Button>
+              </form>
+            </Reveal>
 
-            <motion.p
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              custom={2}
-              className="mt-4 text-xs text-white/30"
-            >
-              We respect your privacy. Unsubscribe anytime.
-            </motion.p>
+            <Reveal delay={200}>
+              <p className="mt-4 text-xs text-white/30">
+                We respect your privacy. Unsubscribe anytime.
+              </p>
+            </Reveal>
           </div>
         </Container>
       </section>

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
 
   Clock,
@@ -23,35 +22,11 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { charterTypes } from "@/data/services";
 import { charterFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  },
-};
 
 const inclusions = [
   { icon: Users, label: "Professional captain & crew" },
@@ -120,55 +95,27 @@ export function CharterPageContent() {
         </div>
 
         <Container className="relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
-          >
+          <div className="animate-hero-1">
             <Badge variant="gold">Yacht Charter</Badge>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.1,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <h1
+            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto animate-hero-2"
           >
             Unforgettable Yacht{" "}
             <span className="text-gold-gradient">Experiences in Dubai</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.2,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <p
+            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed animate-hero-3"
           >
             All-inclusive, crewed luxury yacht charters on our privately owned
             fleet. Sunset cruises, celebrations, and corporate events departing
             from Dubai Harbour.
-          </motion.p>
+          </p>
 
-          <motion.div
-            className="mt-8 flex flex-wrap items-center justify-center gap-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.3,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <div
+            className="mt-8 flex flex-wrap items-center justify-center gap-4 animate-hero-4"
           >
             <Button variant="primary" size="lg" href={SITE_CONFIG.whatsapp}>
               Book via WhatsApp
@@ -176,7 +123,7 @@ export function CharterPageContent() {
             <Button variant="secondary" size="lg" href="/fleet">
               View Fleet
             </Button>
-          </motion.div>
+          </div>
         </Container>
       </section>
 
@@ -191,13 +138,9 @@ export function CharterPageContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {charterTypes.map((type, i) => (
-              <motion.div
+              <Reveal
                 key={type.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={cardVariants}
+                delay={i * 100}
                 className="glass-card rounded-2xl p-6 sm:p-8 hover:border-gold-500/30 transition-all duration-500"
               >
                 <div className="flex items-center gap-2 mb-4">
@@ -221,7 +164,7 @@ export function CharterPageContent() {
                     {type.priceFrom}
                   </p>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </Container>
@@ -240,28 +183,9 @@ export function CharterPageContent() {
             {inclusions.map((item, i) => {
               const Icon = item.icon;
               return (
-                <motion.div
+                <Reveal
                   key={item.label}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-30px" }}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        delay: i * 0.06,
-                        duration: 0.5,
-                        ease: [0.22, 1, 0.36, 1] as [
-                          number,
-                          number,
-                          number,
-                          number,
-                        ],
-                      },
-                    },
-                  }}
+                  delay={i * 60}
                   className="text-center"
                 >
                   <div className="mx-auto w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mb-3">
@@ -270,21 +194,17 @@ export function CharterPageContent() {
                   <p className="text-sm text-white/60 leading-snug">
                     {item.label}
                   </p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
 
-          <motion.p
-            className="mt-10 text-center text-white/40 text-sm"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            Additional catering, decorations, and water sports can be arranged
-            upon request.
-          </motion.p>
+          <Reveal>
+            <p className="mt-10 text-center text-white/40 text-sm">
+              Additional catering, decorations, and water sports can be arranged
+              upon request.
+            </p>
+          </Reveal>
         </Container>
       </section>
 
@@ -299,13 +219,9 @@ export function CharterPageContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {destinations.map((dest, i) => (
-              <motion.div
+              <Reveal
                 key={dest.name}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={cardVariants}
+                delay={i * 100}
                 className="flex items-start gap-4 glass-card rounded-xl p-6"
               >
                 <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-sea-500/10 flex items-center justify-center">
@@ -319,7 +235,7 @@ export function CharterPageContent() {
                     {dest.description}
                   </p>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </Container>
@@ -338,13 +254,9 @@ export function CharterPageContent() {
             {processSteps.map((step, i) => {
               const StepIcon = step.icon;
               return (
-                <motion.div
+                <Reveal
                   key={step.number}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  variants={cardVariants}
+                  delay={i * 100}
                   className="text-center"
                 >
                   <div className="relative mx-auto w-16 h-16 rounded-full bg-navy-800 border-2 border-gold-500/30 flex items-center justify-center mb-5">
@@ -359,7 +271,7 @@ export function CharterPageContent() {
                   <p className="mt-2 text-sm text-white/50 leading-relaxed">
                     {step.description}
                   </p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>

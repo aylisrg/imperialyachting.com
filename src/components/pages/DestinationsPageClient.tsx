@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Clock,
   MapPin,
@@ -14,21 +13,9 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { destinations } from "@/data/destinations";
 import { SITE_CONFIG } from "@/lib/constants";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
 
 const gradients = [
   "from-sea-500/30 via-navy-700 to-navy-800",
@@ -78,67 +65,40 @@ export function DestinationsPageClient() {
 
         <Container className="relative z-10">
           <div className="max-w-3xl">
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{
-                duration: 1,
-                delay: 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="origin-left mb-8"
-            >
+            <div className="origin-left mb-8 animate-hero-line">
               <div className="gold-line" />
-            </motion.div>
+            </div>
 
-            <motion.div
-              custom={0}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="mb-6"
-            >
+            <div className="mb-6 animate-hero-1">
               <Compass
                 className="w-8 h-8 text-gold-500/60"
                 strokeWidth={1.5}
               />
-            </motion.div>
+            </div>
 
-            <motion.h1
-              custom={1}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white"
+            <h1
+              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white animate-hero-2"
             >
               Discover Dubai by Sea
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              custom={2}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed"
+            <p
+              className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed animate-hero-3"
             >
               From iconic landmarks to secluded island escapes, explore
               Dubai&apos;s most spectacular destinations from the deck of a
               luxury yacht.
-            </motion.p>
+            </p>
 
-            <motion.div
-              custom={3}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="mt-8 flex items-center gap-2 text-white/40"
+            <div
+              className="mt-8 flex items-center gap-2 text-white/40 animate-hero-4"
             >
               <MapPin className="w-4 h-4 text-gold-500/60" />
               <span className="text-sm font-medium tracking-wide uppercase">
                 Departing from Dubai Harbour
               </span>
               <span className="ml-2 w-8 h-px bg-gold-500/30" />
-            </motion.div>
+            </div>
           </div>
         </Container>
       </section>
@@ -154,72 +114,68 @@ export function DestinationsPageClient() {
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {destinations.map((destination, i) => (
-              <motion.article
-                key={destination.slug}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeUp}
-                className="rounded-xl overflow-hidden border border-white/5 hover:border-gold-500/15 transition-colors duration-500 group"
-              >
-                {/* Gradient placeholder */}
-                <div
-                  className={`relative aspect-[16/10] bg-gradient-to-br ${gradients[i % gradients.length]}`}
+              <Reveal key={destination.slug} delay={i * 100}>
+                <article
+                  className="rounded-xl overflow-hidden border border-white/5 hover:border-gold-500/15 transition-colors duration-500 group"
                 >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-heading text-xl font-bold text-white/15 tracking-wider text-center px-4">
+                  {/* Gradient placeholder */}
+                  <div
+                    className={`relative aspect-[16/10] bg-gradient-to-br ${gradients[i % gradients.length]}`}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="font-heading text-xl font-bold text-white/15 tracking-wider text-center px-4">
+                        {destination.name}
+                      </span>
+                    </div>
+
+                    {/* Sailing time badge */}
+                    <div className="absolute top-3 right-3">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-navy-950/70 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white/80">
+                        <Clock className="w-3 h-3 text-gold-400" />
+                        {destination.sailingTime}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="bg-navy-800 p-6">
+                    <h3 className="font-heading text-xl font-bold text-white group-hover:text-gold-400 transition-colors">
                       {destination.name}
-                    </span>
-                  </div>
+                    </h3>
 
-                  {/* Sailing time badge */}
-                  <div className="absolute top-3 right-3">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-navy-950/70 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white/80">
-                      <Clock className="w-3 h-3 text-gold-400" />
-                      {destination.sailingTime}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="bg-navy-800 p-6">
-                  <h3 className="font-heading text-xl font-bold text-white group-hover:text-gold-400 transition-colors">
-                    {destination.name}
-                  </h3>
-
-                  <p className="mt-3 text-sm text-white/50 leading-relaxed line-clamp-3">
-                    {destination.description}
-                  </p>
-
-                  {/* Best-for tags */}
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {destination.bestFor.map((tag) => (
-                      <Badge key={tag} variant="gold">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  {/* Highlights */}
-                  <div className="mt-5 pt-5 border-t border-white/5">
-                    <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
-                      Highlights
+                    <p className="mt-3 text-sm text-white/50 leading-relaxed line-clamp-3">
+                      {destination.description}
                     </p>
-                    <ul className="space-y-2">
-                      {destination.highlights.map((highlight) => (
-                        <li
-                          key={highlight}
-                          className="flex items-start gap-2 text-sm text-white/60"
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-gold-500/50 flex-shrink-0 mt-0.5" />
-                          {highlight}
-                        </li>
+
+                    {/* Best-for tags */}
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {destination.bestFor.map((tag) => (
+                        <Badge key={tag} variant="gold">
+                          {tag}
+                        </Badge>
                       ))}
-                    </ul>
+                    </div>
+
+                    {/* Highlights */}
+                    <div className="mt-5 pt-5 border-t border-white/5">
+                      <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
+                        Highlights
+                      </p>
+                      <ul className="space-y-2">
+                        {destination.highlights.map((highlight) => (
+                          <li
+                            key={highlight}
+                            className="flex items-start gap-2 text-sm text-white/60"
+                          >
+                            <CheckCircle2 className="w-4 h-4 text-gold-500/50 flex-shrink-0 mt-0.5" />
+                            {highlight}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              </motion.article>
+                </article>
+              </Reveal>
             ))}
           </div>
         </Container>
@@ -236,13 +192,9 @@ export function DestinationsPageClient() {
 
           <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto">
             {seasons.map((season, i) => (
-              <motion.div
+              <Reveal
                 key={season.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeUp}
+                delay={i * 100}
                 className="glass-card rounded-xl p-8"
               >
                 <div className="flex items-center gap-4 mb-5">
@@ -264,7 +216,7 @@ export function DestinationsPageClient() {
                 <p className="text-sm text-white/50 leading-relaxed">
                   {season.description}
                 </p>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </Container>

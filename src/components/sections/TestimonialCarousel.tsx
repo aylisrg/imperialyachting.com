@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -20,8 +19,6 @@ export function TestimonialCarousel() {
     return () => clearInterval(timer);
   }, [next]);
 
-  const testimonial = testimonials[current];
-
   return (
     <section className="py-24 sm:py-32 bg-sand-50">
       <Container>
@@ -33,53 +30,53 @@ export function TestimonialCarousel() {
         />
 
         <div className="relative max-w-3xl mx-auto">
-          {/* Quote icon */}
           <Quote className="mx-auto mb-6 w-10 h-10 text-gold-500/30" />
 
-          {/* Testimonial content */}
+          {/* Crossfade testimonials — all in DOM, only current visible */}
           <div className="relative min-h-[200px] flex items-center justify-center">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={current}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="text-center"
+            {testimonials.map((testimonial, i) => (
+              <div
+                key={i}
+                className={cn(
+                  "testimonial-slide absolute inset-0 flex items-center justify-center",
+                  i === current
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-4 pointer-events-none"
+                )}
+                aria-hidden={i !== current}
               >
-                {/* Star rating */}
-                <div className="flex items-center justify-center gap-1 mb-6">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={cn(
-                        "w-5 h-5",
-                        i < testimonial.rating
-                          ? "fill-gold-500 text-gold-500"
-                          : "fill-sand-200 text-sand-200"
-                      )}
-                    />
-                  ))}
-                </div>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1 mb-6">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <Star
+                        key={j}
+                        className={cn(
+                          "w-5 h-5",
+                          j < testimonial.rating
+                            ? "fill-gold-500 text-gold-500"
+                            : "fill-sand-200 text-sand-200"
+                        )}
+                      />
+                    ))}
+                  </div>
 
-                {/* Quote text */}
-                <blockquote className="font-accent text-xl sm:text-2xl italic text-navy-900 leading-relaxed">
-                  &ldquo;{testimonial.text}&rdquo;
-                </blockquote>
+                  <blockquote className="font-accent text-xl sm:text-2xl italic text-navy-900 leading-relaxed">
+                    &ldquo;{testimonial.text}&rdquo;
+                  </blockquote>
 
-                {/* Client info */}
-                <div className="mt-8">
-                  <p className="font-heading font-semibold text-navy-950">
-                    {testimonial.name}
-                  </p>
-                  {testimonial.role && (
-                    <p className="mt-1 text-sm text-navy-800/60">
-                      {testimonial.role}
+                  <div className="mt-8">
+                    <p className="font-heading font-semibold text-navy-950">
+                      {testimonial.name}
                     </p>
-                  )}
+                    {testimonial.role && (
+                      <p className="mt-1 text-sm text-navy-800/60">
+                        {testimonial.role}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </motion.div>
-            </AnimatePresence>
+              </div>
+            ))}
           </div>
 
           {/* Navigation dots */}

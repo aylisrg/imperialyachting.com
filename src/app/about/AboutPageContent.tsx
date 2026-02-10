@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Shield,
   Eye,
@@ -20,34 +19,10 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { companyInfo } from "@/data/company";
 import { SITE_CONFIG } from "@/lib/constants";
 import type { LucideIcon } from "lucide-react";
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  },
-};
 
 const valueIcons: Record<string, LucideIcon> = {
   Reliability: Shield,
@@ -109,46 +84,25 @@ export function AboutPageContent() {
         </div>
 
         <Container className="relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
-          >
+          <div className="animate-hero-1">
             <Badge variant="gold">About Us</Badge>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.1,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <h1
+            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto animate-hero-2"
           >
             Our <span className="text-gold-gradient">Story</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.2,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <p
+            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed animate-hero-3"
           >
             Founded in {companyInfo.founded}, Imperial Yachting was born from a
             passion for the sea and a commitment to redefining luxury yacht
             experiences in Dubai. We are a fleet owner, not a broker — meaning
             every detail, from maintenance to hospitality, is under our direct
             control.
-          </motion.p>
+          </p>
         </Container>
       </section>
 
@@ -159,28 +113,9 @@ export function AboutPageContent() {
             {stats.map((stat, i) => {
               const Icon = stat.icon;
               return (
-                <motion.div
+                <Reveal
                   key={stat.label}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        delay: i * 0.1,
-                        duration: 0.5,
-                        ease: [0.22, 1, 0.36, 1] as [
-                          number,
-                          number,
-                          number,
-                          number,
-                        ],
-                      },
-                    },
-                  }}
+                  delay={i * 100}
                   className="text-center"
                 >
                   <Icon className="w-6 h-6 text-gold-500/60 mx-auto mb-3" />
@@ -188,7 +123,7 @@ export function AboutPageContent() {
                     {stat.value}
                   </p>
                   <p className="mt-1 text-sm text-white/40">{stat.label}</p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
@@ -199,13 +134,7 @@ export function AboutPageContent() {
       <section className="py-24 sm:py-32 bg-navy-950">
         <Container>
           <div className="max-w-5xl mx-auto">
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-14 items-center"
-            >
+            <Reveal className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-14 items-center">
               {companyInfo.team.map((member, index) => (
                 <div key={member.name} className="contents">
                   {/* Photo */}
@@ -268,7 +197,7 @@ export function AboutPageContent() {
                   </div>
                 </div>
               ))}
-            </motion.div>
+            </Reveal>
           </div>
         </Container>
       </section>
@@ -286,13 +215,9 @@ export function AboutPageContent() {
             {companyInfo.values.map((value, i) => {
               const Icon = valueIcons[value.title] ?? Star;
               return (
-                <motion.div
+                <Reveal
                   key={value.title}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  variants={cardVariants}
+                  delay={i * 100}
                   className="glass-card rounded-2xl p-8 text-center hover:border-gold-500/30 transition-all duration-500"
                 >
                   <div className="mx-auto w-14 h-14 rounded-2xl bg-gold-500/10 flex items-center justify-center mb-5">
@@ -304,7 +229,7 @@ export function AboutPageContent() {
                   <p className="mt-3 text-sm text-white/50 leading-relaxed">
                     {value.description}
                   </p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
@@ -324,13 +249,9 @@ export function AboutPageContent() {
             {credentials.map((cred, i) => {
               const Icon = cred.icon;
               return (
-                <motion.div
+                <Reveal
                   key={cred.label}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  variants={cardVariants}
+                  delay={i * 100}
                   className="glass-card rounded-xl p-6 text-center"
                 >
                   <div className="mx-auto w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center mb-4">
@@ -340,18 +261,12 @@ export function AboutPageContent() {
                   <p className="font-heading text-lg font-bold text-white tracking-wide">
                     {cred.value}
                   </p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
 
-          <motion.div
-            className="mt-8 text-center"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
+          <Reveal className="mt-8 text-center">
             <p className="text-sm text-white/30">
               <span className="text-white/50 font-medium">
                 {SITE_CONFIG.legalName}
@@ -360,7 +275,7 @@ export function AboutPageContent() {
               {SITE_CONFIG.address.street}, {SITE_CONFIG.address.area},{" "}
               {SITE_CONFIG.address.city}, {SITE_CONFIG.address.country}
             </p>
-          </motion.div>
+          </Reveal>
         </Container>
       </section>
 
@@ -375,13 +290,9 @@ export function AboutPageContent() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
             {[1, 2, 3, 4].map((_, i) => (
-              <motion.div
+              <Reveal
                 key={i}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-30px" }}
-                variants={cardVariants}
+                delay={i * 100}
                 className="glass-card rounded-xl aspect-[3/2] flex items-center justify-center"
               >
                 <div className="text-center">
@@ -390,7 +301,7 @@ export function AboutPageContent() {
                   </div>
                   <p className="text-xs text-white/20">Partner Logo</p>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </Container>
