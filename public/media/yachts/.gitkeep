@@ -1,0 +1,24 @@
+# Yacht Photos Directory
+
+This directory contains photos for all yachts in the fleet.
+Each yacht has its own subdirectory named after its slug.
+
+## Structure
+- monte-carlo-6/
+- van-dutch-40/
+- evo-43/
+
+## Required Photos per Yacht
+Each yacht needs these 6 photos:
+1. hero.jpg - Main hero image
+2. exterior-1.jpg - Exterior view
+3. interior-1.jpg - Interior view
+4. flybridge.jpg - Flybridge/deck area
+5. cabin.jpg - Cabin view
+6. dining.jpg - Dining area
+
+## Photo Guidelines
+- Format: JPEG (.jpg)
+- Recommended size: 1920x1080px or higher
+- Max file size: 2MB per photo
+- Aspect ratio: 16:10 or 16:9
