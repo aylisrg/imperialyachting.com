@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Ship,
   Settings,
@@ -17,6 +16,7 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { services } from "@/data/services";
 import { SITE_CONFIG } from "@/lib/constants";
 import type { LucideIcon } from "lucide-react";
@@ -27,21 +27,6 @@ const iconMap: Record<string, LucideIcon> = {
   video: Video,
   palette: Palette,
 };
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.12,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
-
-
 
 const processSteps = [
   {
@@ -86,45 +71,24 @@ export function ServicesPageContent() {
         </div>
 
         <Container className="relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
-          >
+          <div className="animate-hero-1">
             <Badge variant="gold">Our Services</Badge>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.1,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <h1
+            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto animate-hero-2"
           >
             Comprehensive{" "}
             <span className="text-gold-gradient">Yacht Services</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.2,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <p
+            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed animate-hero-3"
           >
             From luxury charters and fleet management to cinematography and
             branding, Imperial Yachting delivers end-to-end solutions for the
             yachting industry.
-          </motion.p>
+          </p>
         </Container>
       </section>
 
@@ -142,14 +106,7 @@ export function ServicesPageContent() {
               const Icon = iconMap[service.icon] ?? Ship;
 
               return (
-                <motion.div
-                  key={service.title}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  variants={cardVariants}
-                >
+                <Reveal key={service.title} delay={i * 120}>
                   <Link
                     href={service.href}
                     className="group block h-full glass-card rounded-2xl p-8 sm:p-10 hover:border-gold-500/30 hover:shadow-lg hover:shadow-gold-500/5 transition-all duration-500"
@@ -173,7 +130,7 @@ export function ServicesPageContent() {
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
                   </Link>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
@@ -199,55 +156,36 @@ export function ServicesPageContent() {
                 const isEven = i % 2 === 0;
 
                 return (
-                  <motion.div
-                    key={step.number}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "-50px" }}
-                    variants={{
-                      hidden: { opacity: 0, y: 24 },
-                      visible: {
-                        opacity: 1,
-                        y: 0,
-                        transition: {
-                          delay: i * 0.1,
-                          duration: 0.6,
-                          ease: [0.22, 1, 0.36, 1] as [
-                            number,
-                            number,
-                            number,
-                            number,
-                          ],
-                        },
-                      },
-                    }}
-                    className={`relative flex flex-col sm:flex-row items-start sm:items-center gap-6 ${isEven ? "sm:flex-row" : "sm:flex-row-reverse"
-                      }`}
-                  >
-                    {/* Content */}
+                  <Reveal key={step.number} delay={i * 100}>
                     <div
-                      className={`flex-1 ${isEven ? "sm:text-right" : "sm:text-left"
+                      className={`relative flex flex-col sm:flex-row items-start sm:items-center gap-6 ${isEven ? "sm:flex-row" : "sm:flex-row-reverse"
                         }`}
                     >
-                      <span className="text-gold-500/60 text-sm font-medium tracking-wider uppercase">
-                        Step {step.number}
-                      </span>
-                      <h3 className="mt-1 font-heading text-xl font-bold text-white">
-                        {step.title}
-                      </h3>
-                      <p className="mt-2 text-white/50 leading-relaxed max-w-sm inline-block">
-                        {step.description}
-                      </p>
-                    </div>
+                      {/* Content */}
+                      <div
+                        className={`flex-1 ${isEven ? "sm:text-right" : "sm:text-left"
+                          }`}
+                      >
+                        <span className="text-gold-500/60 text-sm font-medium tracking-wider uppercase">
+                          Step {step.number}
+                        </span>
+                        <h3 className="mt-1 font-heading text-xl font-bold text-white">
+                          {step.title}
+                        </h3>
+                        <p className="mt-2 text-white/50 leading-relaxed max-w-sm inline-block">
+                          {step.description}
+                        </p>
+                      </div>
 
-                    {/* Number circle */}
-                    <div className="relative z-10 flex-shrink-0 w-14 h-14 rounded-full bg-navy-800 border-2 border-gold-500/40 flex items-center justify-center shadow-lg shadow-navy-950/50">
-                      <StepIcon className="w-6 h-6 text-gold-400" />
-                    </div>
+                      {/* Number circle */}
+                      <div className="relative z-10 flex-shrink-0 w-14 h-14 rounded-full bg-navy-800 border-2 border-gold-500/40 flex items-center justify-center shadow-lg shadow-navy-950/50">
+                        <StepIcon className="w-6 h-6 text-gold-400" />
+                      </div>
 
-                    {/* Spacer for alternating layout */}
-                    <div className="flex-1 hidden sm:block" />
-                  </motion.div>
+                      {/* Spacer for alternating layout */}
+                      <div className="flex-1 hidden sm:block" />
+                    </div>
+                  </Reveal>
                 );
               })}
             </div>

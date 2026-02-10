@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { FAQItem } from "@/types/common";
@@ -47,22 +46,14 @@ export function FAQAccordion({ items, className }: FAQAccordionProps) {
                 )}
               </span>
             </button>
-            <AnimatePresence initial={false}>
-              {isOpen && (
-                <motion.div
-                  key="content"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                  className="overflow-hidden"
-                >
-                  <p className="pb-5 text-white/60 leading-relaxed font-body">
-                    {item.answer}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* CSS grid-template-rows animation instead of framer-motion */}
+            <div className={cn("accordion-body", isOpen && "open")}>
+              <div>
+                <p className="pb-5 text-white/60 leading-relaxed font-body">
+                  {item.answer}
+                </p>
+              </div>
+            </div>
           </div>
         );
       })}

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Palette,
   PaintBucket,
@@ -17,20 +16,8 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { SITE_CONFIG } from "@/lib/constants";
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
 
 const brandwaveServices = [
   {
@@ -137,45 +124,24 @@ export function BrandwavePageContent() {
         </div>
 
         <Container className="relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
-          >
+          <div className="animate-hero-1">
             <Badge variant="gold">Brandwave</Badge>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.1,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <h1
+            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto animate-hero-2"
           >
             Yacht Branding &{" "}
             <span className="text-gold-gradient">Marketing Services</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.2,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <p
+            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed animate-hero-3"
           >
             Brandwave is Imperial Yachting&apos;s creative division dedicated to
             elevating yacht brands through identity design, digital marketing,
             and luxury positioning.
-          </motion.p>
+          </p>
         </Container>
       </section>
 
@@ -192,13 +158,9 @@ export function BrandwavePageContent() {
             {brandwaveServices.map((service, i) => {
               const Icon = service.icon;
               return (
-                <motion.div
+                <Reveal
                   key={service.title}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  variants={cardVariants}
+                  delay={i * 100}
                   className="glass-card rounded-2xl p-8 hover:border-gold-500/30 transition-all duration-500"
                 >
                   <div className="mb-5 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gold-500/10 text-gold-400">
@@ -210,7 +172,7 @@ export function BrandwavePageContent() {
                   <p className="mt-3 text-sm text-white/50 leading-relaxed">
                     {service.description}
                   </p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
@@ -230,13 +192,9 @@ export function BrandwavePageContent() {
             {processSteps.map((step, i) => {
               const StepIcon = step.icon;
               return (
-                <motion.div
+                <Reveal
                   key={step.number}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  variants={cardVariants}
+                  delay={i * 100}
                   className="text-center"
                 >
                   <div className="relative mx-auto w-16 h-16 rounded-full bg-navy-800 border-2 border-gold-500/30 flex items-center justify-center mb-5">
@@ -251,7 +209,7 @@ export function BrandwavePageContent() {
                   <p className="mt-2 text-sm text-white/50 leading-relaxed">
                     {step.description}
                   </p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
@@ -269,13 +227,9 @@ export function BrandwavePageContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {portfolioPlaceholders.map((project, i) => (
-              <motion.div
+              <Reveal
                 key={project.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={cardVariants}
+                delay={i * 100}
                 className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer"
               >
                 {/* Gradient placeholder */}
@@ -300,7 +254,7 @@ export function BrandwavePageContent() {
                     {project.title}
                   </h3>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </Container>

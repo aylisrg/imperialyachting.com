@@ -1,9 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Shield, Package, MapPin } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Reveal } from "@/components/ui/Reveal";
 
 const pillars = [
   {
@@ -26,19 +26,6 @@ const pillars = [
   },
 ];
 
-const pillarVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.15,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
-
 export function WhyImperial() {
   return (
     <section className="py-24 sm:py-32 bg-navy-950">
@@ -54,28 +41,21 @@ export function WhyImperial() {
             const Icon = pillar.icon;
 
             return (
-              <motion.div
-                key={pillar.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={pillarVariants}
-                className="text-center"
-              >
-                {/* Icon in gold circle */}
-                <div className="mx-auto mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-gold-500/20 to-gold-400/5 border border-gold-500/20">
-                  <Icon className="w-7 h-7 text-gold-400" />
+              <Reveal key={pillar.title} delay={i * 150}>
+                <div className="text-center">
+                  <div className="mx-auto mb-6 flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-gold-500/20 to-gold-400/5 border border-gold-500/20">
+                    <Icon className="w-7 h-7 text-gold-400" />
+                  </div>
+
+                  <h3 className="font-heading text-xl font-bold text-white">
+                    {pillar.title}
+                  </h3>
+
+                  <p className="mt-3 text-white/50 leading-relaxed max-w-sm mx-auto">
+                    {pillar.description}
+                  </p>
                 </div>
-
-                <h3 className="font-heading text-xl font-bold text-white">
-                  {pillar.title}
-                </h3>
-
-                <p className="mt-3 text-white/50 leading-relaxed max-w-sm mx-auto">
-                  {pillar.description}
-                </p>
-              </motion.div>
+              </Reveal>
             );
           })}
         </div>

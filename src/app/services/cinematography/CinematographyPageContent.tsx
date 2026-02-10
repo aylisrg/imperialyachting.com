@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Video,
   Plane,
@@ -17,20 +16,8 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Reveal } from "@/components/ui/Reveal";
 import { SITE_CONFIG } from "@/lib/constants";
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
 
 const cinematographyServices = [
   {
@@ -119,45 +106,24 @@ export function CinematographyPageContent() {
         </div>
 
         <Container className="relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
-          >
+          <div className="animate-hero-1">
             <Badge variant="gold">Cinematographic Bureau</Badge>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.1,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <h1
+            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto animate-hero-2"
           >
             Yacht Cinematography &{" "}
             <span className="text-gold-gradient">Content Production</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.2,
-              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-            }}
+          <p
+            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed animate-hero-3"
           >
             Professional film production, drone footage, and content creation
             for yachts, brands, and events. Powered by Imperial Yachting&apos;s
             in-house Cinematographic Bureau.
-          </motion.p>
+          </p>
         </Container>
       </section>
 
@@ -174,13 +140,9 @@ export function CinematographyPageContent() {
             {cinematographyServices.map((service, i) => {
               const Icon = service.icon;
               return (
-                <motion.div
+                <Reveal
                   key={service.title}
-                  custom={i}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-50px" }}
-                  variants={cardVariants}
+                  delay={i * 100}
                   className="glass-card rounded-2xl p-8 hover:border-gold-500/30 transition-all duration-500"
                 >
                   <div className="mb-5 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gold-500/10 text-gold-400">
@@ -192,7 +154,7 @@ export function CinematographyPageContent() {
                   <p className="mt-3 text-sm text-white/50 leading-relaxed">
                     {service.description}
                   </p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
@@ -212,28 +174,9 @@ export function CinematographyPageContent() {
             {equipment.map((item, i) => {
               const Icon = item.icon;
               return (
-                <motion.div
+                <Reveal
                   key={item.label}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-30px" }}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: {
-                      opacity: 1,
-                      y: 0,
-                      transition: {
-                        delay: i * 0.06,
-                        duration: 0.5,
-                        ease: [0.22, 1, 0.36, 1] as [
-                          number,
-                          number,
-                          number,
-                          number,
-                        ],
-                      },
-                    },
-                  }}
+                  delay={i * 60}
                   className="text-center"
                 >
                   <div className="mx-auto w-12 h-12 rounded-xl bg-sea-500/10 flex items-center justify-center mb-3">
@@ -242,7 +185,7 @@ export function CinematographyPageContent() {
                   <p className="text-sm text-white/60 leading-snug">
                     {item.label}
                   </p>
-                </motion.div>
+                </Reveal>
               );
             })}
           </div>
@@ -260,13 +203,9 @@ export function CinematographyPageContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {portfolioPlaceholders.map((project, i) => (
-              <motion.div
+              <Reveal
                 key={project.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={cardVariants}
+                delay={i * 100}
                 className="group relative aspect-video rounded-2xl overflow-hidden cursor-pointer"
               >
                 {/* Gradient placeholder background */}
@@ -291,7 +230,7 @@ export function CinematographyPageContent() {
                     {project.title}
                   </h3>
                 </div>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
         </Container>

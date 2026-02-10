@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   FileText,
   Building2,
@@ -13,20 +12,8 @@ import {
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
+import { Reveal } from "@/components/ui/Reveal";
 import { SITE_CONFIG } from "@/lib/constants";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.6,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-    },
-  }),
-};
 
 const companyDetails = [
   {
@@ -100,52 +87,29 @@ export function DocumentsPageClient() {
 
         <Container className="relative z-10">
           <div className="max-w-3xl">
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{
-                duration: 1,
-                delay: 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="origin-left mb-8"
-            >
+            <div className="origin-left mb-8 animate-hero-line">
               <div className="gold-line" />
-            </motion.div>
+            </div>
 
-            <motion.div
-              custom={0}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="mb-6"
-            >
+            <div className="mb-6 animate-hero-1">
               <FileText
                 className="w-8 h-8 text-gold-500/60"
                 strokeWidth={1.5}
               />
-            </motion.div>
+            </div>
 
-            <motion.h1
-              custom={1}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white"
+            <h1
+              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white animate-hero-2"
             >
               Documents &amp; Resources
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              custom={2}
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed"
+            <p
+              className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed animate-hero-3"
             >
               Company information, banking details, and guest documentation for
               partners and charter clients.
-            </motion.p>
+            </p>
           </div>
         </Container>
       </section>
@@ -158,14 +122,7 @@ export function DocumentsPageClient() {
             subtitle="Official registration and licensing details for Imperial Charter Yachting Services."
           />
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={fadeUp}
-            custom={0}
-            className="glass-card rounded-xl p-8"
-          >
+          <Reveal className="glass-card rounded-xl p-8">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center">
                 <Building2 className="w-5 h-5 text-gold-400" />
@@ -187,7 +144,7 @@ export function DocumentsPageClient() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </Reveal>
         </Container>
       </section>
 
@@ -199,14 +156,7 @@ export function DocumentsPageClient() {
             subtitle="Banking details for wire transfers and direct payments."
           />
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-            variants={fadeUp}
-            custom={0}
-            className="glass-card rounded-xl p-8 max-w-2xl"
-          >
+          <Reveal className="glass-card rounded-xl p-8 max-w-2xl">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center">
                 <Landmark className="w-5 h-5 text-gold-400" />
@@ -247,7 +197,7 @@ export function DocumentsPageClient() {
                 for payment queries.
               </p>
             </div>
-          </motion.div>
+          </Reveal>
         </Container>
       </section>
 
@@ -261,13 +211,9 @@ export function DocumentsPageClient() {
 
           <div className="grid gap-6 md:grid-cols-3">
             {guestDocuments.map((doc, i) => (
-              <motion.div
+              <Reveal
                 key={doc.title}
-                custom={i}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                variants={fadeUp}
+                delay={i * 100}
                 className="glass-card rounded-xl p-6 group"
               >
                 <div className="w-12 h-12 rounded-lg bg-gold-500/10 flex items-center justify-center mb-5">
@@ -283,7 +229,7 @@ export function DocumentsPageClient() {
                 </p>
 
                 <Badge variant="white">Available on request</Badge>
-              </motion.div>
+              </Reveal>
             ))}
           </div>
 

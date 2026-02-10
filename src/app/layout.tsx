@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Syne, Inter, Playfair_Display } from "next/font/google";
 import { SITE_CONFIG } from "@/lib/constants";
 import { Header } from "@/components/layout/Header";
@@ -22,7 +23,7 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
   display: "swap",
-  style: ["normal", "italic"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -88,28 +89,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <head>
-        <script
-          async
-          src={`https://www.googletagmanager.com/gtag/js?id=${SITE_CONFIG.googleAnalyticsId}`}
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${SITE_CONFIG.googleAnalyticsId}');
-            `,
-          }}
-        />
-      </head>
       <body
         className={`${syne.variable} ${inter.variable} ${playfair.variable} antialiased`}
       >
         <Header />
         <main>{children}</main>
         <Footer />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${SITE_CONFIG.googleAnalyticsId}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${SITE_CONFIG.googleAnalyticsId}');`}
+        </Script>
       </body>
     </html>
   );
