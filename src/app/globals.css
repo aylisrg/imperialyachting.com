@@ -173,6 +173,41 @@ html {
   pointer-events: auto;
 }
 
+/* Admin panel input styles */
+.admin-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-navy-900);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.admin-input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.admin-input:focus {
+  border-color: rgba(201, 168, 76, 0.5);
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.15);
+}
+
+textarea.admin-input {
+  resize: vertical;
+  min-height: 100px;
+}
+
+select.admin-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .reveal,
