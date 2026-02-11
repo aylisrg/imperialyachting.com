@@ -21,8 +21,8 @@ export const companyInfo = {
   ],
   stats: {
     yearsInBusiness: new Date().getFullYear() - 2023,
-    fleetSize: 3,
-    happyClients: "500+",
+    fleetSize: 4,
+    happyClients: "1,200+",
     charterHours: "5,000+",
   },
   values: [

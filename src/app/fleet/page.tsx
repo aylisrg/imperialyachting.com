@@ -5,15 +5,15 @@ import { Badge } from "@/components/ui/Badge";
 import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
-import { yachts } from "@/data/yachts";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
+import { fetchAllYachts } from "@/lib/yachts-db";
 import { FleetGrid } from "./FleetGrid";
 
 export const metadata: Metadata = {
   title: "Our Fleet",
   description:
-    "Explore Imperial Yachting's premium fleet of luxury motor yachts available for charter in Dubai. From the 60ft Monte Carlo 6 to the iconic Van Dutch 40, find your perfect vessel at Dubai Harbour.",
+    "Explore Imperial Yachting's premium fleet of luxury motor yachts available for charter in Dubai. Find your perfect vessel at Dubai Harbour.",
   openGraph: {
     title: "Our Fleet | Imperial Yachting",
     description:
@@ -32,8 +32,9 @@ function getLowestDailyPrice(
   }, null);
 }
 
+export default async function FleetPage() {
+  const yachts = await fetchAllYachts();
 
-export default function FleetPage() {
   const itemListSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -69,7 +70,7 @@ export default function FleetPage() {
               Our Fleet
             </h1>
             <p className="mt-5 text-lg sm:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
-              Three premium motor yachts, exclusively owned and maintained to
+              Premium motor yachts, exclusively owned and maintained to
               the highest standards. Berthed at Dubai Harbour Yacht Club, ready
               for your next unforgettable experience on the water.
             </p>

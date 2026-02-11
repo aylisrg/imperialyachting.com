@@ -173,6 +173,16 @@ html {
   pointer-events: auto;
 }
 
+/* Invisible bridge above dropdown so mouse doesn't lose hover crossing the gap */
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+
 /* Admin panel input styles */
 .admin-input {
   width: 100%;
