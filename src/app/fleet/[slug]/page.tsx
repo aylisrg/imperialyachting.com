@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/Badge";
 import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
+import { YachtGallery } from "@/components/gallery/YachtGallery";
 import { yachts, getYachtBySlug } from "@/data/yachts";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -45,14 +46,6 @@ const amenityIconMap: Record<string, React.ComponentType<{ className?: string }>
   snowflake: Snowflake,
 };
 
-const imageGradients = [
-  "from-gold-500/20 via-gold-400/10 to-navy-700",
-  "from-sea-500/20 via-sea-400/10 to-navy-700",
-  "from-gold-600/15 via-navy-700 to-sea-500/10",
-  "from-navy-700 via-gold-500/10 to-sea-400/10",
-  "from-sea-400/15 via-gold-500/10 to-navy-700",
-  "from-gold-400/10 via-navy-700 to-gold-500/15",
-];
 
 export function generateStaticParams() {
   return yachts.map((yacht) => ({
@@ -172,35 +165,8 @@ export default async function YachtDetailPage({
             </Badge>
           </div>
 
-          {/* Image Gallery Placeholder */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            {/* Main hero image */}
-            <div
-              className={`lg:col-span-2 aspect-[16/10] rounded-xl bg-gradient-to-br ${imageGradients[0]} overflow-hidden relative`}
-            >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-heading text-3xl font-bold text-white/15 tracking-wider">
-                  {yacht.name}
-                </span>
-              </div>
-            </div>
-
-            {/* Thumbnail grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
-              {yacht.images.slice(1, 4).map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`aspect-[4/3] lg:aspect-auto lg:h-full rounded-xl bg-gradient-to-br ${imageGradients[(idx + 1) % imageGradients.length]} overflow-hidden relative`}
-                >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-heading text-sm font-bold text-white/15 tracking-wider">
-                      View {idx + 2}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Image Gallery */}
+          <YachtGallery images={yacht.images} yachtName={yacht.name} />
         </Container>
       </section>
 

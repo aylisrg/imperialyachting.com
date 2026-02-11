@@ -32,11 +32,6 @@ function getLowestDailyPrice(
   }, null);
 }
 
-const yachtGradients = [
-  "from-gold-500/20 via-gold-400/10 to-navy-700",
-  "from-sea-500/20 via-sea-400/10 to-navy-700",
-  "from-gold-600/15 via-sea-500/10 to-navy-700",
-];
 
 export default function FleetPage() {
   const itemListSchema = {
@@ -86,7 +81,7 @@ export default function FleetPage() {
       <section className="py-16 sm:py-24 bg-navy-950">
         <Container>
           <FleetGrid
-            yachts={yachts.map((yacht, i) => ({
+            yachts={yachts.map((yacht) => ({
               slug: yacht.slug,
               name: yacht.name,
               tagline: yacht.tagline,
@@ -97,9 +92,9 @@ export default function FleetPage() {
               lengthFeet: yacht.length.feet,
               lengthMeters: yacht.length.meters,
               capacity: yacht.capacity,
-              location: yacht.location,
               lowestPrice: getLowestDailyPrice(yacht.pricing),
-              gradientClass: yachtGradients[i % yachtGradients.length],
+              heroImage: yacht.heroImage,
+              images: yacht.images,
             }))}
           />
         </Container>
