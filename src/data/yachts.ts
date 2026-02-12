@@ -48,6 +48,7 @@ export const yachts: Yacht[] = [
       {
         season: "Regular Season",
         period: "October — April",
+        hourly: null,
         daily: 18000,
         weekly: 75000,
         monthly: 250000,
@@ -55,6 +56,7 @@ export const yachts: Yacht[] = [
       {
         season: "Shoulder Season",
         period: "May & September",
+        hourly: null,
         daily: 15000,
         weekly: 60000,
         monthly: 200000,
@@ -62,6 +64,7 @@ export const yachts: Yacht[] = [
       {
         season: "Low Season",
         period: "June — August",
+        hourly: null,
         daily: null,
         weekly: null,
         monthly: 160000,
@@ -69,6 +72,7 @@ export const yachts: Yacht[] = [
       {
         season: "Super Season",
         period: "December",
+        hourly: null,
         daily: 20000,
         weekly: 90000,
         monthly: 280000,
@@ -76,6 +80,7 @@ export const yachts: Yacht[] = [
       {
         season: "New Year's Eve",
         period: "Dec 31",
+        hourly: null,
         daily: 52000,
         weekly: null,
         monthly: null,
@@ -132,6 +137,7 @@ export const yachts: Yacht[] = [
       {
         season: "Regular Season",
         period: "October — April",
+        hourly: null,
         daily: 13000,
         weekly: 45000,
         monthly: 95000,
@@ -142,6 +148,7 @@ export const yachts: Yacht[] = [
       {
         season: "Shoulder Season",
         period: "May & September",
+        hourly: null,
         daily: 12000,
         weekly: 18000,
         monthly: 75000,
@@ -152,6 +159,7 @@ export const yachts: Yacht[] = [
       {
         season: "Low Season",
         period: "June — August",
+        hourly: null,
         daily: null,
         weekly: null,
         monthly: 45000,
@@ -162,6 +170,7 @@ export const yachts: Yacht[] = [
       {
         season: "Super Season",
         period: "December",
+        hourly: null,
         daily: 15500,
         weekly: 38000,
         monthly: 110000,
@@ -172,6 +181,7 @@ export const yachts: Yacht[] = [
       {
         season: "New Year's Eve",
         period: "Dec 31",
+        hourly: null,
         daily: 18000,
         weekly: null,
         monthly: null,
@@ -225,6 +235,7 @@ export const yachts: Yacht[] = [
       {
         season: "Regular Season",
         period: "October — April",
+        hourly: null,
         daily: 14000,
         weekly: 55000,
         monthly: 180000,
@@ -232,6 +243,7 @@ export const yachts: Yacht[] = [
       {
         season: "Shoulder Season",
         period: "May & September",
+        hourly: null,
         daily: 12000,
         weekly: 45000,
         monthly: 150000,
@@ -239,6 +251,7 @@ export const yachts: Yacht[] = [
       {
         season: "Low Season",
         period: "June — August",
+        hourly: null,
         daily: null,
         weekly: null,
         monthly: 120000,
@@ -246,6 +259,7 @@ export const yachts: Yacht[] = [
       {
         season: "Super Season",
         period: "December",
+        hourly: null,
         daily: 16000,
         weekly: 65000,
         monthly: 220000,

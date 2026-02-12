@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   Clock,
   MapPin,
@@ -14,7 +15,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
-import { destinations } from "@/data/destinations";
+import type { Destination } from "@/types/common";
 import { SITE_CONFIG } from "@/lib/constants";
 
 const gradients = [
@@ -44,7 +45,7 @@ const seasons = [
   },
 ];
 
-export function DestinationsPageClient() {
+export function DestinationsPageClient({ destinations }: { destinations: Destination[] }) {
   return (
     <>
       {/* Hero */}
@@ -118,15 +119,25 @@ export function DestinationsPageClient() {
                 <article
                   className="rounded-xl overflow-hidden border border-white/5 hover:border-gold-500/15 transition-colors duration-500 group"
                 >
-                  {/* Gradient placeholder */}
+                  {/* Image or gradient placeholder */}
                   <div
                     className={`relative aspect-[16/10] bg-gradient-to-br ${gradients[i % gradients.length]}`}
                   >
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="font-heading text-xl font-bold text-white/15 tracking-wider text-center px-4">
-                        {destination.name}
-                      </span>
-                    </div>
+                    {destination.image ? (
+                      <Image
+                        src={destination.image}
+                        alt={destination.name}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="font-heading text-xl font-bold text-white/15 tracking-wider text-center px-4">
+                          {destination.name}
+                        </span>
+                      </div>
+                    )}
 
                     {/* Sailing time badge */}
                     <div className="absolute top-3 right-3">

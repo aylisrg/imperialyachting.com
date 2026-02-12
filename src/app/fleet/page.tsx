@@ -22,14 +22,24 @@ export const metadata: Metadata = {
   },
 };
 
-function getLowestDailyPrice(
-  pricing: { daily: number | null }[]
-): number | null {
-  return pricing.reduce<number | null>((min, season) => {
-    if (season.daily === null) return min;
-    if (min === null) return season.daily;
-    return season.daily < min ? season.daily : min;
-  }, null);
+function getLowestPrice(
+  pricing: { hourly: number | null; daily: number | null; weekly: number | null; monthly: number | null }[]
+): { amount: number; unit: string } | null {
+  let result: { amount: number; unit: string } | null = null;
+  for (const season of pricing) {
+    const tiers: [number | null, string][] = [
+      [season.hourly, "/hr"],
+      [season.daily, "/day"],
+      [season.weekly, "/week"],
+      [season.monthly, "/month"],
+    ];
+    for (const [price, unit] of tiers) {
+      if (price !== null && (result === null || price < result.amount)) {
+        result = { amount: price, unit };
+      }
+    }
+  }
+  return result;
 }
 
 export default async function FleetPage() {
@@ -93,7 +103,7 @@ export default async function FleetPage() {
               lengthFeet: yacht.length.feet,
               lengthMeters: yacht.length.meters,
               capacity: yacht.capacity,
-              lowestPrice: getLowestDailyPrice(yacht.pricing),
+              lowestPrice: getLowestPrice(yacht.pricing),
               heroImage: yacht.heroImage,
               images: yacht.images,
             }))}

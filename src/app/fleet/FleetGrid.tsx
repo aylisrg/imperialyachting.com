@@ -13,7 +13,7 @@ interface FleetYachtCard {
   lengthFeet: number;
   lengthMeters: number;
   capacity: number;
-  lowestPrice: number | null;
+  lowestPrice: { amount: number; unit: string } | null;
   heroImage: string;
   images: string[];
 }

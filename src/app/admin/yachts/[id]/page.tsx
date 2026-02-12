@@ -648,9 +648,11 @@ function PricingTab({
                 yacht_id: "",
                 season: "",
                 period: "",
+                hourly: null,
                 daily: null,
                 weekly: null,
                 monthly: null,
+                hourly_b2b: null,
                 daily_b2b: null,
                 weekly_b2b: null,
                 monthly_b2b: null,
@@ -695,7 +697,22 @@ function PricingTab({
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
+              <Field label="Hourly" compact>
+                <input
+                  type="number"
+                  value={season.hourly ?? ""}
+                  onChange={(e) =>
+                    updatePricing(
+                      i,
+                      "hourly",
+                      e.target.value ? parseInt(e.target.value) : null
+                    )
+                  }
+                  className="admin-input"
+                  placeholder="—"
+                />
+              </Field>
               <Field label="Daily" compact>
                 <input
                   type="number"
@@ -743,7 +760,22 @@ function PricingTab({
               </Field>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
+              <Field label="Hourly B2B" compact>
+                <input
+                  type="number"
+                  value={season.hourly_b2b ?? ""}
+                  onChange={(e) =>
+                    updatePricing(
+                      i,
+                      "hourly_b2b",
+                      e.target.value ? parseInt(e.target.value) : null
+                    )
+                  }
+                  className="admin-input"
+                  placeholder="—"
+                />
+              </Field>
               <Field label="Daily B2B" compact>
                 <input
                   type="number"

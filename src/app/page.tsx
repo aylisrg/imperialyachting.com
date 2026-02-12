@@ -7,7 +7,8 @@ import {
   localBusinessSchema,
   websiteSchema,
 } from "@/components/seo/schemas";
-import { fetchFeaturedYachts } from "@/lib/yachts-db";
+import { fetchAllYachts } from "@/lib/yachts-db";
+import { fetchAllDestinations } from "@/lib/destinations-db";
 
 // Below-fold sections — lazy loaded to reduce initial JS bundle
 const FleetPreview = dynamic(
@@ -32,18 +33,31 @@ const FAQSection = dynamic(
   () => import("@/components/sections/FAQSection").then((m) => m.FAQSection),
 );
 
-function getLowestDailyPrice(
-  pricing: { daily: number | null }[]
-): number | null {
-  return pricing.reduce<number | null>((min, season) => {
-    if (season.daily === null) return min;
-    if (min === null) return season.daily;
-    return season.daily < min ? season.daily : min;
-  }, null);
+function getLowestPrice(
+  pricing: { hourly: number | null; daily: number | null; weekly: number | null; monthly: number | null }[]
+): { amount: number; unit: string } | null {
+  let result: { amount: number; unit: string } | null = null;
+  for (const season of pricing) {
+    const tiers: [number | null, string][] = [
+      [season.hourly, "/hr"],
+      [season.daily, "/day"],
+      [season.weekly, "/week"],
+      [season.monthly, "/month"],
+    ];
+    for (const [price, unit] of tiers) {
+      if (price !== null && (result === null || price < result.amount)) {
+        result = { amount: price, unit };
+      }
+    }
+  }
+  return result;
 }
 
 export default async function HomePage() {
-  const yachts = await fetchFeaturedYachts();
+  const [yachts, destinations] = await Promise.all([
+    fetchAllYachts(),
+    fetchAllDestinations(),
+  ]);
 
   const fleetPreviewData = yachts.map((yacht) => ({
     slug: yacht.slug,
@@ -54,7 +68,7 @@ export default async function HomePage() {
     capacity: yacht.capacity,
     location: yacht.location,
     heroImage: yacht.heroImage,
-    lowestPrice: getLowestDailyPrice(yacht.pricing),
+    lowestPrice: getLowestPrice(yacht.pricing),
   }));
 
   return (
@@ -69,7 +83,7 @@ export default async function HomePage() {
       <ServicesOverview />
       <WhyImperial />
       <TestimonialCarousel />
-      <DestinationsSection />
+      <DestinationsSection destinations={destinations} />
       <CTASection />
       <FAQSection />
     </>

@@ -87,17 +87,33 @@ function formatPrice(value: number | null): string {
   return `AED ${value.toLocaleString("en-US")}`;
 }
 
-function getLowestDailyPrice(yacht: Yacht): number | null {
-  return yacht.pricing.reduce<number | null>((min, season) => {
-    if (season.daily === null) return min;
-    if (min === null) return season.daily;
-    return season.daily < min ? season.daily : min;
-  }, null);
+function getLowestPrice(yacht: Yacht): { amount: number; unit: string } | null {
+  let result: { amount: number; unit: string } | null = null;
+  for (const season of yacht.pricing) {
+    const tiers: [number | null, string][] = [
+      [season.hourly, "/hr"],
+      [season.daily, "/day"],
+      [season.weekly, "/week"],
+      [season.monthly, "/month"],
+    ];
+    for (const [price, unit] of tiers) {
+      if (price !== null && (result === null || price < result.amount)) {
+        result = { amount: price, unit };
+      }
+    }
+  }
+  return result;
 }
 
 function hasAnyB2B(yacht: Yacht): boolean {
   return yacht.pricing.some(
-    (s) => s.dailyB2B != null || s.weeklyB2B != null || s.monthlyB2B != null
+    (s) => s.hourlyB2B != null || s.dailyB2B != null || s.weeklyB2B != null || s.monthlyB2B != null
+  );
+}
+
+function hasAnyHourly(yacht: Yacht): boolean {
+  return yacht.pricing.some(
+    (s) => s.hourly != null || s.hourlyB2B != null
   );
 }
 
@@ -113,8 +129,9 @@ export default async function YachtDetailPage({
     notFound();
   }
 
-  const lowestPrice = getLowestDailyPrice(yacht);
+  const lowestPrice = getLowestPrice(yacht);
   const showB2B = hasAnyB2B(yacht);
+  const showHourly = hasAnyHourly(yacht);
 
   return (
     <>
@@ -231,9 +248,9 @@ export default async function YachtDetailPage({
                   Charter from
                 </span>
                 <span className="font-heading text-2xl font-bold text-white">
-                  AED {lowestPrice.toLocaleString("en-US")}
+                  AED {lowestPrice.amount.toLocaleString("en-US")}
                 </span>
-                <span className="text-white/50">/day</span>
+                <span className="text-white/50">{lowestPrice.unit}</span>
               </div>
             )}
           </div>
@@ -299,6 +316,11 @@ export default async function YachtDetailPage({
                       <th className="py-4 px-4 text-left text-sm font-heading font-semibold text-white/70">
                         Period
                       </th>
+                      {showHourly && (
+                        <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-white/70">
+                          Hourly
+                        </th>
+                      )}
                       <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-white/70">
                         Daily
                       </th>
@@ -310,7 +332,12 @@ export default async function YachtDetailPage({
                       </th>
                       {showB2B && (
                         <>
-                          <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-gold-400/70 border-l border-white/5">
+                          {showHourly && (
+                            <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-gold-400/70 border-l border-white/5">
+                              Hourly B2B
+                            </th>
+                          )}
+                          <th className={`py-4 px-4 text-right text-sm font-heading font-semibold text-gold-400/70 ${!showHourly ? "border-l border-white/5" : ""}`}>
                             Daily B2B
                           </th>
                           <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-gold-400/70">
@@ -335,6 +362,11 @@ export default async function YachtDetailPage({
                         <td className="py-4 px-4 text-sm text-white/50">
                           {season.period}
                         </td>
+                        {showHourly && (
+                          <td className="py-4 px-4 text-sm text-right text-white/80 font-medium">
+                            {formatPrice(season.hourly)}
+                          </td>
+                        )}
                         <td className="py-4 px-4 text-sm text-right text-white/80 font-medium">
                           {formatPrice(season.daily)}
                         </td>
@@ -346,7 +378,12 @@ export default async function YachtDetailPage({
                         </td>
                         {showB2B && (
                           <>
-                            <td className="py-4 px-4 text-sm text-right text-gold-400/70 font-medium border-l border-white/5">
+                            {showHourly && (
+                              <td className="py-4 px-4 text-sm text-right text-gold-400/70 font-medium border-l border-white/5">
+                                {formatPrice(season.hourlyB2B ?? null)}
+                              </td>
+                            )}
+                            <td className={`py-4 px-4 text-sm text-right text-gold-400/70 font-medium ${!showHourly ? "border-l border-white/5" : ""}`}>
                               {formatPrice(season.dailyB2B ?? null)}
                             </td>
                             <td className="py-4 px-4 text-sm text-right text-gold-400/70 font-medium">

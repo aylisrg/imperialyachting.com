@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Syne, Inter, Playfair_Display } from "next/font/google";
 import { SITE_CONFIG } from "@/lib/constants";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { SiteShell } from "@/components/layout/SiteShell";
 import "./globals.css";
 
 const syne = Syne({
@@ -92,9 +91,7 @@ export default function RootLayout({
       <body
         className={`${syne.variable} ${inter.variable} ${playfair.variable} antialiased`}
       >
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <SiteShell>{children}</SiteShell>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${SITE_CONFIG.googleAnalyticsId}`}
           strategy="afterInteractive"
