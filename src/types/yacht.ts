@@ -11,9 +11,11 @@ export interface YachtAmenity {
 export interface SeasonPricing {
   season: string;
   period: string;
+  hourly: number | null;
   daily: number | null;
   weekly: number | null;
   monthly: number | null;
+  hourlyB2B?: number | null;
   dailyB2B?: number | null;
   weeklyB2B?: number | null;
   monthlyB2B?: number | null;

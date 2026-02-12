@@ -147,9 +147,11 @@ async function mapYachtFromDB(supabase: any, dbYacht: any, full: boolean): Promi
     pricing: pricing.map((p: any) => ({
       season: p.season,
       period: p.period,
+      hourly: p.hourly ?? null,
       daily: p.daily,
       weekly: p.weekly,
       monthly: p.monthly,
+      hourlyB2B: p.hourly_b2b ?? undefined,
       dailyB2B: p.daily_b2b ?? undefined,
       weeklyB2B: p.weekly_b2b ?? undefined,
       monthlyB2B: p.monthly_b2b ?? undefined,

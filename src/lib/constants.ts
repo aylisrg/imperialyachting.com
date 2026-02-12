@@ -10,7 +10,7 @@ export const SITE_CONFIG = {
   whatsapp: "https://wa.me/971528355939",
   instagram: "https://instagram.com/dubai.yachts.rental",
   youtube: "https://youtube.com/@imperial_wave",
-  linkedinCeo: "https://linkedin.com/in/aylisrgeenko",
+  linkedinCeo: "https://www.linkedin.com/in/aylis",
   address: {
     street: "The Binary by Omniyat, Office 1914-261",
     area: "Business Bay",

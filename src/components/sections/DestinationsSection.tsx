@@ -1,14 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { Clock } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { destinations } from "@/data/destinations";
-
-const featured = destinations.slice(0, 4);
+import type { Destination } from "@/types/common";
 
 const gradients = [
   "from-sea-500/30 via-navy-700 to-navy-800",
@@ -17,7 +16,13 @@ const gradients = [
   "from-gold-400/15 via-navy-800 to-navy-900",
 ];
 
-export function DestinationsSection() {
+interface DestinationsSectionProps {
+  destinations: Destination[];
+}
+
+export function DestinationsSection({ destinations }: DestinationsSectionProps) {
+  const featured = destinations.slice(0, 4);
+
   return (
     <section className="py-24 sm:py-32 bg-navy-900">
       <Container>
@@ -34,11 +39,21 @@ export function DestinationsSection() {
                 <div
                   className={`relative aspect-[3/2] bg-gradient-to-br ${gradients[i % gradients.length]}`}
                 >
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-heading text-lg font-bold text-white/15 tracking-wider text-center px-4">
-                      {destination.name}
-                    </span>
-                  </div>
+                  {destination.image ? (
+                    <Image
+                      src={destination.image}
+                      alt={destination.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 288px, 25vw"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="font-heading text-lg font-bold text-white/15 tracking-wider text-center px-4">
+                        {destination.name}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="absolute top-3 right-3">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-navy-950/70 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white/80">

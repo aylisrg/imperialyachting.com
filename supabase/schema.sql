@@ -66,9 +66,11 @@ create table public.yacht_pricing (
   yacht_id uuid not null references public.yachts(id) on delete cascade,
   season text not null,
   period text not null,
+  hourly int,
   daily int,
   weekly int,
   monthly int,
+  hourly_b2b int,
   daily_b2b int,
   weekly_b2b int,
   monthly_b2b int,
@@ -181,3 +183,61 @@ create policy "Admins can update yacht photos"
 create policy "Admins can delete yacht photos"
   on storage.objects for delete
   using (bucket_id = 'yacht-photos' and auth.role() = 'authenticated');
+
+-- ============================================================
+-- DESTINATIONS
+-- ============================================================
+
+create table public.destinations (
+  id uuid primary key default uuid_generate_v4(),
+  slug text unique not null,
+  name text not null,
+  description text not null default '',
+  sailing_time text not null default '',
+  best_for text[] not null default '{}',
+  image text not null default '',
+  highlights text[] not null default '{}',
+  sort_order int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index idx_destinations_slug on public.destinations(slug);
+
+create trigger on_destinations_updated
+  before update on public.destinations
+  for each row execute function public.handle_updated_at();
+
+alter table public.destinations enable row level security;
+
+create policy "Public can view destinations" on public.destinations
+  for select using (true);
+
+create policy "Admins can manage destinations" on public.destinations
+  for all using (auth.role() = 'authenticated');
+
+-- Storage bucket for destination photos
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'destination-photos',
+  'destination-photos',
+  true,
+  5242880,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+);
+
+create policy "Public can view destination photos"
+  on storage.objects for select
+  using (bucket_id = 'destination-photos');
+
+create policy "Admins can upload destination photos"
+  on storage.objects for insert
+  with check (bucket_id = 'destination-photos' and auth.role() = 'authenticated');
+
+create policy "Admins can update destination photos"
+  on storage.objects for update
+  using (bucket_id = 'destination-photos' and auth.role() = 'authenticated');
+
+create policy "Admins can delete destination photos"
+  on storage.objects for delete
+  using (bucket_id = 'destination-photos' and auth.role() = 'authenticated');

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { DestinationsPageClient } from "@/components/pages/DestinationsPageClient";
+import { fetchAllDestinations } from "@/lib/destinations-db";
 
 export const metadata: Metadata = {
   title: "Dubai Yacht Destinations",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DestinationsPage() {
-  return <DestinationsPageClient />;
+export default async function DestinationsPage() {
+  const destinations = await fetchAllDestinations();
+  return <DestinationsPageClient destinations={destinations} />;
 }
