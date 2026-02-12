@@ -7,6 +7,7 @@ import {
   localBusinessSchema,
   websiteSchema,
 } from "@/components/seo/schemas";
+import { fetchFeaturedYachts } from "@/lib/yachts-db";
 
 // Below-fold sections — lazy loaded to reduce initial JS bundle
 const FleetPreview = dynamic(
@@ -31,7 +32,31 @@ const FAQSection = dynamic(
   () => import("@/components/sections/FAQSection").then((m) => m.FAQSection),
 );
 
-export default function HomePage() {
+function getLowestDailyPrice(
+  pricing: { daily: number | null }[]
+): number | null {
+  return pricing.reduce<number | null>((min, season) => {
+    if (season.daily === null) return min;
+    if (min === null) return season.daily;
+    return season.daily < min ? season.daily : min;
+  }, null);
+}
+
+export default async function HomePage() {
+  const yachts = await fetchFeaturedYachts();
+
+  const fleetPreviewData = yachts.map((yacht) => ({
+    slug: yacht.slug,
+    name: yacht.name,
+    tagline: yacht.tagline,
+    lengthFeet: yacht.length.feet,
+    lengthMeters: yacht.length.meters,
+    capacity: yacht.capacity,
+    location: yacht.location,
+    heroImage: yacht.heroImage,
+    lowestPrice: getLowestDailyPrice(yacht.pricing),
+  }));
+
   return (
     <>
       <JsonLd data={organizationSchema()} />
@@ -40,7 +65,7 @@ export default function HomePage() {
 
       <Hero />
       <TrustBar />
-      <FleetPreview />
+      <FleetPreview yachts={fleetPreviewData} />
       <ServicesOverview />
       <WhyImperial />
       <TestimonialCarousel />

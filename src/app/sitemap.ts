@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { yachts } from "@/data/yachts";
+import { fetchAllYachts } from "@/lib/yachts-db";
 
 const BASE_URL = "https://imperialyachting.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     { url: BASE_URL, changeFrequency: "weekly" as const, priority: 1.0 },
     { url: `${BASE_URL}/fleet`, changeFrequency: "weekly" as const, priority: 0.9 },
@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/terms`, changeFrequency: "yearly" as const, priority: 0.3 },
   ];
 
+  const yachts = await fetchAllYachts();
   const yachtPages = yachts.map((yacht) => ({
     url: `${BASE_URL}/fleet/${yacht.slug}`,
     changeFrequency: "weekly" as const,

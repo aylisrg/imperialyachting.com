@@ -11,26 +11,25 @@ export function Hero() {
   const [isMobile, setIsMobile] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // Detect mobile on mount
   useEffect(() => {
-    const mobile = window.innerWidth < 768;
-    setIsMobile(mobile);
-
-    // Only load video on desktop — saves ~4.5MB on mobile
-    if (!mobile && videoRef.current) {
-      const video = videoRef.current;
-      const webm = document.createElement("source");
-      webm.src = "/media/hero/hero-desktop.webm";
-      webm.type = "video/webm";
-      const mp4 = document.createElement("source");
-      mp4.src = "/media/hero/hero-desktop.mp4";
-      mp4.type = "video/mp4";
-
-      video.appendChild(webm);
-      video.appendChild(mp4);
-      video.load();
-      video.play().catch(() => {});
-    }
+    setIsMobile(window.innerWidth < 768);
   }, []);
+
+  // Load video only on desktop — after isMobile is determined and video element is in DOM
+  useEffect(() => {
+    if (isMobile) return;
+    const video = videoRef.current;
+    if (!video) return;
+
+    const mp4 = document.createElement("source");
+    mp4.src = "/media/hero/hero-desktop.mp4";
+    mp4.type = "video/mp4";
+
+    video.appendChild(mp4);
+    video.load();
+    video.play().catch(() => {});
+  }, [isMobile]);
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">

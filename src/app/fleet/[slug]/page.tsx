@@ -29,7 +29,7 @@ import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
 import { YachtGallery } from "@/components/gallery/YachtGallery";
-import { yachts, getYachtBySlug } from "@/data/yachts";
+import { fetchAllYachts, fetchYachtBySlug } from "@/lib/yachts-db";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import type { Yacht, YachtAmenity } from "@/types/yacht";
@@ -46,8 +46,8 @@ const amenityIconMap: Record<string, React.ComponentType<{ className?: string }>
   snowflake: Snowflake,
 };
 
-
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const yachts = await fetchAllYachts();
   return yachts.map((yacht) => ({
     slug: yacht.slug,
   }));
@@ -59,7 +59,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const yacht = getYachtBySlug(slug);
+  const yacht = await fetchYachtBySlug(slug);
 
   if (!yacht) {
     return {
@@ -107,7 +107,7 @@ export default async function YachtDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const yacht = getYachtBySlug(slug);
+  const yacht = await fetchYachtBySlug(slug);
 
   if (!yacht) {
     notFound();
@@ -241,146 +241,154 @@ export default async function YachtDetailPage({
       </section>
 
       {/* Full Specifications */}
-      <section className="py-16 sm:py-24 bg-navy-900">
-        <Container>
-          <SectionHeading title="Specifications" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-1 max-w-3xl">
-            {yacht.specs.map((spec) => (
-              <div
-                key={spec.label}
-                className="flex items-center justify-between py-4 border-b border-white/5"
-              >
-                <span className="text-white/50 text-sm">{spec.label}</span>
-                <span className="text-white font-medium text-sm">
-                  {spec.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {yacht.specs.length > 0 && (
+        <section className="py-16 sm:py-24 bg-navy-900">
+          <Container>
+            <SectionHeading title="Specifications" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-1 max-w-3xl">
+              {yacht.specs.map((spec) => (
+                <div
+                  key={spec.label}
+                  className="flex items-center justify-between py-4 border-b border-white/5"
+                >
+                  <span className="text-white/50 text-sm">{spec.label}</span>
+                  <span className="text-white font-medium text-sm">
+                    {spec.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Amenities */}
-      <section className="py-16 sm:py-24 bg-navy-950">
-        <Container>
-          <SectionHeading
-            title="Amenities"
-            subtitle="Everything on board for your comfort and enjoyment."
-          />
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {yacht.amenities.map((amenity) => (
-              <AmenityCard key={amenity.label} amenity={amenity} />
-            ))}
-          </div>
-        </Container>
-      </section>
+      {yacht.amenities.length > 0 && (
+        <section className="py-16 sm:py-24 bg-navy-950">
+          <Container>
+            <SectionHeading
+              title="Amenities"
+              subtitle="Everything on board for your comfort and enjoyment."
+            />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {yacht.amenities.map((amenity) => (
+                <AmenityCard key={amenity.label} amenity={amenity} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Pricing Table */}
-      <section className="py-16 sm:py-24 bg-navy-900">
-        <Container>
-          <SectionHeading
-            title="Charter Rates"
-            subtitle="All prices in AED. Rates include crew, fuel, and standard amenities."
-          />
+      {yacht.pricing.length > 0 && (
+        <section className="py-16 sm:py-24 bg-navy-900">
+          <Container>
+            <SectionHeading
+              title="Charter Rates"
+              subtitle="All prices in AED. Rates include crew, fuel, and standard amenities."
+            />
 
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <div className="inline-block min-w-full px-4 sm:px-0">
-              <table className="min-w-full">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="py-4 pr-4 text-left text-sm font-heading font-semibold text-white/70">
-                      Season
-                    </th>
-                    <th className="py-4 px-4 text-left text-sm font-heading font-semibold text-white/70">
-                      Period
-                    </th>
-                    <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-white/70">
-                      Daily
-                    </th>
-                    <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-white/70">
-                      Weekly
-                    </th>
-                    <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-white/70">
-                      Monthly
-                    </th>
-                    {showB2B && (
-                      <>
-                        <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-gold-400/70 border-l border-white/5">
-                          Daily B2B
-                        </th>
-                        <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-gold-400/70">
-                          Weekly B2B
-                        </th>
-                        <th className="py-4 pl-4 text-right text-sm font-heading font-semibold text-gold-400/70">
-                          Monthly B2B
-                        </th>
-                      </>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {yacht.pricing.map((season) => (
-                    <tr
-                      key={season.season}
-                      className="hover:bg-white/[0.02] transition-colors"
-                    >
-                      <td className="py-4 pr-4 text-sm font-semibold text-white">
-                        {season.season}
-                      </td>
-                      <td className="py-4 px-4 text-sm text-white/50">
-                        {season.period}
-                      </td>
-                      <td className="py-4 px-4 text-sm text-right text-white/80 font-medium">
-                        {formatPrice(season.daily)}
-                      </td>
-                      <td className="py-4 px-4 text-sm text-right text-white/80 font-medium">
-                        {formatPrice(season.weekly)}
-                      </td>
-                      <td className="py-4 px-4 text-sm text-right text-white/80 font-medium">
-                        {formatPrice(season.monthly)}
-                      </td>
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="inline-block min-w-full px-4 sm:px-0">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="py-4 pr-4 text-left text-sm font-heading font-semibold text-white/70">
+                        Season
+                      </th>
+                      <th className="py-4 px-4 text-left text-sm font-heading font-semibold text-white/70">
+                        Period
+                      </th>
+                      <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-white/70">
+                        Daily
+                      </th>
+                      <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-white/70">
+                        Weekly
+                      </th>
+                      <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-white/70">
+                        Monthly
+                      </th>
                       {showB2B && (
                         <>
-                          <td className="py-4 px-4 text-sm text-right text-gold-400/70 font-medium border-l border-white/5">
-                            {formatPrice(season.dailyB2B ?? null)}
-                          </td>
-                          <td className="py-4 px-4 text-sm text-right text-gold-400/70 font-medium">
-                            {formatPrice(season.weeklyB2B ?? null)}
-                          </td>
-                          <td className="py-4 pl-4 text-sm text-right text-gold-400/70 font-medium">
-                            {formatPrice(season.monthlyB2B ?? null)}
-                          </td>
+                          <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-gold-400/70 border-l border-white/5">
+                            Daily B2B
+                          </th>
+                          <th className="py-4 px-4 text-right text-sm font-heading font-semibold text-gold-400/70">
+                            Weekly B2B
+                          </th>
+                          <th className="py-4 pl-4 text-right text-sm font-heading font-semibold text-gold-400/70">
+                            Monthly B2B
+                          </th>
                         </>
                       )}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {yacht.pricing.map((season) => (
+                      <tr
+                        key={season.season}
+                        className="hover:bg-white/[0.02] transition-colors"
+                      >
+                        <td className="py-4 pr-4 text-sm font-semibold text-white">
+                          {season.season}
+                        </td>
+                        <td className="py-4 px-4 text-sm text-white/50">
+                          {season.period}
+                        </td>
+                        <td className="py-4 px-4 text-sm text-right text-white/80 font-medium">
+                          {formatPrice(season.daily)}
+                        </td>
+                        <td className="py-4 px-4 text-sm text-right text-white/80 font-medium">
+                          {formatPrice(season.weekly)}
+                        </td>
+                        <td className="py-4 px-4 text-sm text-right text-white/80 font-medium">
+                          {formatPrice(season.monthly)}
+                        </td>
+                        {showB2B && (
+                          <>
+                            <td className="py-4 px-4 text-sm text-right text-gold-400/70 font-medium border-l border-white/5">
+                              {formatPrice(season.dailyB2B ?? null)}
+                            </td>
+                            <td className="py-4 px-4 text-sm text-right text-gold-400/70 font-medium">
+                              {formatPrice(season.weeklyB2B ?? null)}
+                            </td>
+                            <td className="py-4 pl-4 text-sm text-right text-gold-400/70 font-medium">
+                              {formatPrice(season.monthlyB2B ?? null)}
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </Container>
-      </section>
+          </Container>
+        </section>
+      )}
 
       {/* What's Included */}
-      <section className="py-16 sm:py-24 bg-navy-950">
-        <Container>
-          <SectionHeading
-            title="What's Included"
-            subtitle="Every charter comes with these essentials at no extra cost."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
-            {yacht.included.map((item) => (
-              <div
-                key={item}
-                className="flex items-center gap-3 py-3 px-4 rounded-lg bg-navy-800/50 border border-white/5"
-              >
-                <CheckCircle className="w-5 h-5 text-gold-500 flex-shrink-0" />
-                <span className="text-white/80 text-sm">{item}</span>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {yacht.included.length > 0 && (
+        <section className="py-16 sm:py-24 bg-navy-950">
+          <Container>
+            <SectionHeading
+              title="What's Included"
+              subtitle="Every charter comes with these essentials at no extra cost."
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
+              {yacht.included.map((item) => (
+                <div
+                  key={item}
+                  className="flex items-center gap-3 py-3 px-4 rounded-lg bg-navy-800/50 border border-white/5"
+                >
+                  <CheckCircle className="w-5 h-5 text-gold-500 flex-shrink-0" />
+                  <span className="text-white/80 text-sm">{item}</span>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Quick Inquiry CTA */}
       <section className="relative py-20 sm:py-28 overflow-hidden">

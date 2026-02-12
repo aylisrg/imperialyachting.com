@@ -111,7 +111,9 @@ export function yachtProductSchema(yacht: Yacht) {
     "@type": "Product",
     name: yacht.name,
     description: yacht.description,
-    image: yacht.images.map((img) => `${SITE_CONFIG.url}${img}`),
+    image: yacht.images.map((img) =>
+      img.startsWith("http") ? img : `${SITE_CONFIG.url}${img}`
+    ),
     brand: {
       "@type": "Brand",
       name: yacht.builder,
