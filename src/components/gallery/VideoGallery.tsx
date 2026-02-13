@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { Play, X, ChevronLeft, ChevronRight, Film } from "lucide-react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface VideoGalleryProps {
@@ -10,10 +10,6 @@ interface VideoGalleryProps {
   yachtName: string;
 }
 
-/**
- * Extract YouTube video ID from various URL formats.
- * Supports: youtube.com/watch?v=ID, youtu.be/ID, youtube.com/shorts/ID, youtube.com/embed/ID
- */
 function extractYoutubeId(url: string): string | null {
   if (!url) return null;
   const patterns = [
@@ -29,24 +25,16 @@ function extractYoutubeId(url: string): string | null {
   return null;
 }
 
-function ShortsThumbnail({ videoId }: { videoId: string }) {
-  return (
-    <img
-      src={`https://img.youtube.com/vi/${videoId}/oar2.jpg`}
-      alt=""
-      className="absolute inset-0 w-full h-full object-cover"
-      loading="lazy"
-    />
-  );
-}
-
 export function VideoGallery({
   youtubeShorts,
   youtubeVideo,
   yachtName,
 }: VideoGalleryProps) {
-  const [activeShortsIndex, setActiveShortsIndex] = useState<number | null>(null);
+  const [activeShortsIndex, setActiveShortsIndex] = useState<number | null>(
+    null
+  );
   const [showMainVideo, setShowMainVideo] = useState(false);
+  const touchStartX = useRef<number | null>(null);
 
   const shortsIds = youtubeShorts
     .map(extractYoutubeId)
@@ -72,114 +60,218 @@ export function VideoGallery({
     );
   }, [shortsIds.length]);
 
+  // Keyboard navigation for fullscreen player
+  useEffect(() => {
+    if (activeShortsIndex === null) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeShortsPlayer();
+      if (e.key === "ArrowRight") goNextShort();
+      if (e.key === "ArrowLeft") goPrevShort();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [activeShortsIndex, closeShortsPlayer, goNextShort, goPrevShort]);
+
+  // Lock body scroll when fullscreen player open
+  useEffect(() => {
+    if (activeShortsIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeShortsIndex]);
+
+  // Touch swipe handlers for fullscreen player
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current === null) return;
+      const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+      const threshold = 60;
+      if (deltaX > threshold) goPrevShort();
+      else if (deltaX < -threshold) goNextShort();
+      touchStartX.current = null;
+    },
+    [goNextShort, goPrevShort]
+  );
+
   if (!hasShorts && !hasMainVideo) return null;
 
   return (
     <>
       <div className="space-y-8">
         {/* Section header */}
-        <div className="flex items-center gap-3">
-          <Film className="w-5 h-5 text-gold-500" />
-          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-white">
+        <div className="flex items-center gap-4">
+          <div className="gold-line" />
+          <h2 className="font-heading text-xl sm:text-2xl font-bold text-white uppercase tracking-wider">
             Video
           </h2>
         </div>
 
-        {/* Main YouTube Video */}
+        {/* ── Main YouTube Video ── */}
         {hasMainVideo && (
-          <div className="relative w-full">
+          <div>
             {showMainVideo ? (
-              <div className="relative aspect-video rounded-xl overflow-hidden bg-navy-800">
+              <div className="relative aspect-video rounded-2xl overflow-hidden bg-navy-800 shadow-2xl shadow-black/40">
                 <iframe
                   src={`https://www.youtube-nocookie.com/embed/${mainVideoId}?autoplay=1&rel=0&modestbranding=1`}
                   title={`${yachtName} — Video`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="absolute inset-0 w-full h-full"
-                  loading="lazy"
                 />
               </div>
             ) : (
               <button
                 onClick={() => setShowMainVideo(true)}
-                className="relative w-full aspect-video rounded-xl overflow-hidden group cursor-pointer bg-navy-800"
+                className="relative w-full aspect-video rounded-2xl overflow-hidden group cursor-pointer bg-navy-800"
               >
+                {/* Thumbnail */}
                 <img
                   src={`https://img.youtube.com/vi/${mainVideoId}/maxresdefault.jpg`}
                   alt={`${yachtName} video`}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-navy-950/30 group-hover:bg-navy-950/20 transition-colors duration-300" />
+
+                {/* Cinematic gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/10 to-navy-950/30" />
+                <div className="absolute inset-0 bg-navy-950/10 group-hover:bg-navy-950/0 transition-colors duration-500" />
+
+                {/* Play button — gold ring */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-20 h-20 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center group-hover:bg-white/25 group-hover:scale-110 transition-all duration-300 ring-2 ring-white/20">
-                    <Play className="w-9 h-9 text-white ml-1" fill="white" />
+                  <div className="relative">
+                    {/* Pulse ring */}
+                    <div className="absolute inset-0 rounded-full bg-gold-500/20 animate-ping" style={{ animationDuration: "2s" }} />
+                    <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center ring-2 ring-gold-500/60 group-hover:ring-gold-400 group-hover:bg-white/15 group-hover:scale-110 transition-all duration-500">
+                      <Play
+                        className="w-8 h-8 sm:w-10 sm:h-10 text-white ml-1"
+                        fill="white"
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="absolute bottom-4 left-4 px-3 py-1.5 rounded-full bg-navy-950/60 backdrop-blur-sm text-white/80 text-xs font-medium">
-                  Watch Video
+
+                {/* Bottom info */}
+                <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
+                  <p className="text-gold-400/80 text-xs sm:text-sm font-medium uppercase tracking-wider mb-1">
+                    Watch Full Video
+                  </p>
+                  <p className="text-white text-lg sm:text-xl font-heading font-bold">
+                    {yachtName}
+                  </p>
                 </div>
               </button>
             )}
           </div>
         )}
 
-        {/* YouTube Shorts Grid */}
+        {/* ── YouTube Shorts ── */}
         {hasShorts && (
           <div>
-            <p className="text-sm text-white/40 uppercase tracking-wider font-medium mb-4">
+            <p className="text-xs text-gold-400/50 uppercase tracking-[0.2em] font-medium mb-4">
               Shorts
             </p>
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-              {shortsIds.map((videoId, idx) => (
-                <button
-                  key={videoId}
-                  onClick={() => setActiveShortsIndex(idx)}
-                  className="relative aspect-[9/16] rounded-xl overflow-hidden group cursor-pointer bg-navy-800"
-                >
-                  <ShortsThumbnail videoId={videoId} />
-                  <div className="absolute inset-0 bg-navy-950/20 group-hover:bg-navy-950/10 transition-colors duration-300" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center ring-2 ring-white/20">
-                      <Play className="w-5 h-5 text-white ml-0.5" fill="white" />
+
+            {/* Horizontal scroll container */}
+            <div className="relative group/scroll">
+              <div className="flex gap-3 sm:gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 -mx-1 px-1">
+                {shortsIds.map((videoId, idx) => (
+                  <button
+                    key={videoId}
+                    onClick={() => setActiveShortsIndex(idx)}
+                    className="relative flex-shrink-0 w-[140px] sm:w-[156px] lg:w-[172px] aspect-[9/16] rounded-2xl overflow-hidden cursor-pointer snap-start group/card"
+                  >
+                    {/* Thumbnail */}
+                    <img
+                      src={`https://img.youtube.com/vi/${videoId}/oar2.jpg`}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
+                      loading="lazy"
+                    />
+
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-transparent to-navy-950/20 opacity-60 group-hover/card:opacity-40 transition-opacity duration-300" />
+
+                    {/* Glass border on hover */}
+                    <div className="absolute inset-0 rounded-2xl ring-1 ring-white/10 group-hover/card:ring-2 group-hover/card:ring-gold-500/50 transition-all duration-300" />
+
+                    {/* Play icon — appears on hover */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-all duration-300">
+                      <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center ring-1 ring-white/30 scale-75 group-hover/card:scale-100 transition-transform duration-300">
+                        <Play
+                          className="w-5 h-5 text-white ml-0.5"
+                          fill="white"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  {/* Shorts badge */}
-                  <div className="absolute top-2 right-2 w-6 h-6 rounded-md bg-red-600 flex items-center justify-center">
-                    <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22.95.25 1.45.03.5.04 1.05.04 1.38 0 .33-.01.88-.04 1.38-.03.5-.12.98-.25 1.45-.27.95-1.04 1.72-2 2.04-.47.13-.95.22-1.45.25-.5.03-1.05.04-1.38.04H7.27c-.33 0-.88-.01-1.38-.04-.5-.03-.98-.12-1.45-.25-.95-.32-1.72-1.09-2-2.04-.13-.47-.22-.95-.25-1.45C2.16 12.88 2.15 12.33 2.15 12s.01-.88.04-1.38c.03-.5.12-.98.25-1.45.28-.95 1.05-1.72 2-2.04.47-.13.95-.22 1.45-.25.5-.03 1.05-.04 1.38-.04h9.46c.33 0 .88.01 1.38.04.5.03.98.12 1.45.25.96.32 1.73 1.09 2 2.04z"/>
-                    </svg>
-                  </div>
-                </button>
-              ))}
+
+                    {/* YouTube Shorts badge */}
+                    <div className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm">
+                      <svg
+                        className="w-3 h-3 text-red-500"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22.95.25 1.45.03.5.04 1.05.04 1.38 0 .33-.01.88-.04 1.38-.03.5-.12.98-.25 1.45-.27.95-1.04 1.72-2 2.04-.47.13-.95.22-1.45.25-.5.03-1.05.04-1.38.04H7.27c-.33 0-.88-.01-1.38-.04-.5-.03-.98-.12-1.45-.25-.95-.32-1.72-1.09-2-2.04-.13-.47-.22-.95-.25-1.45C2.16 12.88 2.15 12.33 2.15 12s.01-.88.04-1.38c.03-.5.12-.98.25-1.45.28-.95 1.05-1.72 2-2.04.47-.13.95-.22 1.45-.25.5-.03 1.05-.04 1.38-.04h9.46c.33 0 .88.01 1.38.04.5.03.98.12 1.45.25.96.32 1.73 1.09 2 2.04z" />
+                      </svg>
+                      <span className="text-[10px] text-white/80 font-semibold">
+                        Shorts
+                      </span>
+                    </div>
+
+                    {/* Bottom number badge */}
+                    <div className="absolute bottom-2.5 left-2.5 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                      <span className="text-[11px] text-white/70 font-semibold">
+                        {idx + 1}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Scroll fade edges — desktop only */}
+              {shortsIds.length > 4 && (
+                <div className="hidden lg:block absolute right-0 top-0 bottom-2 w-16 bg-gradient-to-l from-navy-950 to-transparent pointer-events-none" />
+              )}
             </div>
           </div>
         )}
       </div>
 
-      {/* Shorts Fullscreen Player */}
+      {/* ── Fullscreen Shorts Player ── */}
       {activeShortsIndex !== null && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center"
           onClick={closeShortsPlayer}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
-          {/* Close */}
+          {/* Close button */}
           <button
             onClick={closeShortsPlayer}
-            className="absolute top-4 right-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+            className="absolute top-4 right-4 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors duration-200"
             aria-label="Close"
           >
             <X className="w-6 h-6" />
           </button>
 
           {/* Counter */}
-          <div className="absolute top-4 left-4 z-10 px-4 py-2 rounded-full bg-white/10 text-white/80 text-sm font-medium">
-            {activeShortsIndex + 1} / {shortsIds.length}
+          <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+            <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/80 text-sm font-medium">
+              {activeShortsIndex + 1} / {shortsIds.length}
+            </div>
           </div>
 
-          {/* Player container — vertical 9:16 */}
+          {/* Player container — 9:16 vertical */}
           <div
-            className="relative w-full max-w-[360px] aspect-[9/16] rounded-2xl overflow-hidden shadow-2xl"
+            className="relative w-full max-w-[380px] aspect-[9/16] rounded-2xl overflow-hidden shadow-2xl shadow-black/60 ring-1 ring-white/10"
             onClick={(e) => e.stopPropagation()}
           >
             <iframe
@@ -192,7 +284,7 @@ export function VideoGallery({
             />
           </div>
 
-          {/* Nav arrows */}
+          {/* Navigation arrows */}
           {shortsIds.length > 1 && (
             <>
               <button
@@ -200,27 +292,27 @@ export function VideoGallery({
                   e.stopPropagation();
                   goPrevShort();
                 }}
-                className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                className="absolute left-3 sm:left-8 top-1/2 -translate-y-1/2 z-10 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-105"
                 aria-label="Previous short"
               >
-                <ChevronLeft className="w-6 h-6" />
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   goNextShort();
                 }}
-                className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                className="absolute right-3 sm:right-8 top-1/2 -translate-y-1/2 z-10 p-3 sm:p-4 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-200 hover:scale-105"
                 aria-label="Next short"
               >
-                <ChevronRight className="w-6 h-6" />
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </>
           )}
 
-          {/* Bottom thumbnails */}
+          {/* Bottom thumbnail strip */}
           {shortsIds.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 px-4 py-3 rounded-2xl bg-black/60 backdrop-blur-sm max-w-[90vw] overflow-x-auto no-scrollbar">
+            <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2 px-4 py-3 rounded-2xl bg-black/60 backdrop-blur-md max-w-[90vw] overflow-x-auto no-scrollbar">
               {shortsIds.map((videoId, idx) => (
                 <button
                   key={videoId}
@@ -229,17 +321,26 @@ export function VideoGallery({
                     setActiveShortsIndex(idx);
                   }}
                   className={cn(
-                    "relative flex-shrink-0 w-10 h-[70px] rounded-lg overflow-hidden transition-all duration-200",
+                    "relative flex-shrink-0 w-10 h-[70px] rounded-lg overflow-hidden transition-all duration-300",
                     idx === activeShortsIndex
                       ? "ring-2 ring-gold-500 opacity-100 scale-110"
                       : "opacity-40 hover:opacity-70"
                   )}
                 >
-                  <ShortsThumbnail videoId={videoId} />
+                  <img
+                    src={`https://img.youtube.com/vi/${videoId}/oar2.jpg`}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
           )}
+
+          {/* Swipe hint — mobile only, shown briefly */}
+          <div className="sm:hidden absolute bottom-20 left-1/2 -translate-x-1/2 z-10 text-white/30 text-xs font-medium animate-pulse">
+            Swipe to navigate
+          </div>
         </div>
       )}
     </>

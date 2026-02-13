@@ -178,8 +178,8 @@ export default async function YachtDetailPage({
             </Badge>
           </div>
 
-          {/* Video Gallery — shown only if enabled and has content */}
-          {yacht.showVideos && (yacht.youtubeShorts.length > 0 || yacht.youtubeVideo) && (
+          {/* Video Gallery — shown when video content exists */}
+          {(yacht.youtubeShorts.length > 0 || yacht.youtubeVideo) && (
             <div className="mb-10">
               <VideoGallery
                 youtubeShorts={yacht.youtubeShorts}
