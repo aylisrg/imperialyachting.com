@@ -96,6 +96,13 @@ export const yachts: Yacht[] = [
       "Swimming & snorkeling gear",
     ],
     featured: true,
+    youtubeShorts: [
+      "https://www.youtube.com/shorts/etsUaQzo9po",
+      "https://www.youtube.com/shorts/MEmdyLA_JKQ",
+      "https://www.youtube.com/shorts/kiioRyh5O2g",
+    ],
+    youtubeVideo: "",
+    showVideos: true,
   },
   {
     slug: "van-dutch-40",
@@ -198,6 +205,9 @@ export const yachts: Yacht[] = [
       "Swimming & snorkeling gear",
     ],
     featured: true,
+    youtubeShorts: [],
+    youtubeVideo: "",
+    showVideos: false,
   },
   {
     slug: "evo-43",
@@ -273,6 +283,9 @@ export const yachts: Yacht[] = [
       "Swimming gear",
     ],
     featured: true,
+    youtubeShorts: [],
+    youtubeVideo: "",
+    showVideos: false,
   },
 ];
 

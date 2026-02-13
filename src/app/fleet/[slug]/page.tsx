@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -29,7 +31,8 @@ import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
 import { YachtGallery } from "@/components/gallery/YachtGallery";
-import { fetchAllYachts, fetchYachtBySlug } from "@/lib/yachts-db";
+import { VideoGallery } from "@/components/gallery/VideoGallery";
+import { fetchYachtBySlug } from "@/lib/yachts-db";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import type { Yacht, YachtAmenity } from "@/types/yacht";
@@ -45,13 +48,6 @@ const amenityIconMap: Record<string, React.ComponentType<{ className?: string }>
   anchor: Anchor,
   snowflake: Snowflake,
 };
-
-export async function generateStaticParams() {
-  const yachts = await fetchAllYachts();
-  return yachts.map((yacht) => ({
-    slug: yacht.slug,
-  }));
-}
 
 export async function generateMetadata({
   params,
@@ -181,6 +177,17 @@ export default async function YachtDetailPage({
               {yacht.location}
             </Badge>
           </div>
+
+          {/* Video Gallery — shown only if enabled and has content */}
+          {yacht.showVideos && (yacht.youtubeShorts.length > 0 || yacht.youtubeVideo) && (
+            <div className="mb-10">
+              <VideoGallery
+                youtubeShorts={yacht.youtubeShorts}
+                youtubeVideo={yacht.youtubeVideo}
+                yachtName={yacht.name}
+              />
+            </div>
+          )}
 
           {/* Image Gallery */}
           <YachtGallery images={yacht.images} yachtName={yacht.name} />

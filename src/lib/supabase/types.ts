@@ -17,6 +17,9 @@ export interface Database {
           cabins: number | null;
           location: string;
           featured: boolean;
+          youtube_shorts: string[];
+          youtube_video: string;
+          show_videos: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -35,6 +38,9 @@ export interface Database {
           cabins?: number | null;
           location?: string;
           featured?: boolean;
+          youtube_shorts?: string[];
+          youtube_video?: string;
+          show_videos?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -53,6 +59,9 @@ export interface Database {
           cabins?: number | null;
           location?: string;
           featured?: boolean;
+          youtube_shorts?: string[];
+          youtube_video?: string;
+          show_videos?: boolean;
           created_at?: string;
           updated_at?: string;
         };

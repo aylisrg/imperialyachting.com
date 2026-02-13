@@ -41,4 +41,7 @@ export interface Yacht {
   pricing: SeasonPricing[];
   included: string[];
   featured: boolean;
+  youtubeShorts: string[];
+  youtubeVideo: string;
+  showVideos: boolean;
 }

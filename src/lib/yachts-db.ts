@@ -1,10 +1,9 @@
 import { createServerSupabase } from "./supabase/server";
 import type { Yacht } from "@/types/yacht";
-import { yachts as staticYachts, getFeaturedYachts as getStaticFeatured, getYachtBySlug as getStaticBySlug } from "@/data/yachts";
 
 /**
  * Fetch all yachts from Supabase with images and pricing.
- * Falls back to static data if Supabase is unavailable.
+ * Returns only data from the admin panel — no hardcoded fallback.
  */
 export async function fetchAllYachts(): Promise<Yacht[]> {
   try {
@@ -15,19 +14,19 @@ export async function fetchAllYachts(): Promise<Yacht[]> {
       .select("*")
       .order("created_at", { ascending: true });
 
-    if (!yachts || yachts.length === 0) return staticYachts;
+    if (!yachts || yachts.length === 0) return [];
 
     return Promise.all(
       yachts.map((y) => mapYachtFromDB(supabase, y, false))
     );
   } catch {
-    return staticYachts;
+    return [];
   }
 }
 
 /**
  * Fetch featured yachts from Supabase.
- * Falls back to static data if Supabase is unavailable.
+ * Returns only data from the admin panel — no hardcoded fallback.
  */
 export async function fetchFeaturedYachts(): Promise<Yacht[]> {
   try {
@@ -39,19 +38,19 @@ export async function fetchFeaturedYachts(): Promise<Yacht[]> {
       .eq("featured", true)
       .order("created_at", { ascending: true });
 
-    if (!yachts || yachts.length === 0) return getStaticFeatured();
+    if (!yachts || yachts.length === 0) return [];
 
     return Promise.all(
       yachts.map((y) => mapYachtFromDB(supabase, y, false))
     );
   } catch {
-    return getStaticFeatured();
+    return [];
   }
 }
 
 /**
  * Fetch a single yacht with all relations (specs, amenities, pricing, included).
- * Falls back to static data if Supabase is unavailable.
+ * Returns only data from the admin panel — no hardcoded fallback.
  */
 export async function fetchYachtBySlug(slug: string): Promise<Yacht | null> {
   try {
@@ -63,11 +62,11 @@ export async function fetchYachtBySlug(slug: string): Promise<Yacht | null> {
       .eq("slug", slug)
       .single();
 
-    if (!yacht) return getStaticBySlug(slug) ?? null;
+    if (!yacht) return null;
 
     return mapYachtFromDB(supabase, yacht, true);
   } catch {
-    return getStaticBySlug(slug) ?? null;
+    return null;
   }
 }
 
@@ -158,5 +157,8 @@ async function mapYachtFromDB(supabase: any, dbYacht: any, full: boolean): Promi
     })),
     included: included.map((i: any) => i.item),
     featured: dbYacht.featured,
+    youtubeShorts: dbYacht.youtube_shorts || [],
+    youtubeVideo: dbYacht.youtube_video || "",
+    showVideos: dbYacht.show_videos ?? false,
   };
 }
