@@ -10,6 +10,9 @@ import {
   ImageIcon,
   Eye,
   Loader2,
+  Star,
+  Sparkles,
+  Tag,
 } from "lucide-react";
 import { AdminHeader } from "../components/AdminHeader";
 import { createClient } from "@/lib/supabase/client";
@@ -140,9 +143,32 @@ export default function AdminDestinations() {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-heading text-lg font-bold text-white truncate">
-                    {dest.name}
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-heading text-lg font-bold text-white truncate">
+                      {dest.name}
+                    </h3>
+                    {dest.featured && (
+                      <Star className="w-4 h-4 text-gold-400 flex-shrink-0" />
+                    )}
+                    <span
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold flex-shrink-0 ${
+                        dest.category === "experience"
+                          ? "bg-sea-500/15 text-sea-400"
+                          : dest.category === "activity"
+                          ? "bg-sea-400/15 text-sea-400"
+                          : "bg-gold-500/15 text-gold-400"
+                      }`}
+                    >
+                      {dest.category === "experience" ? (
+                        <Sparkles className="w-2.5 h-2.5" />
+                      ) : dest.category === "activity" ? (
+                        <Tag className="w-2.5 h-2.5" />
+                      ) : (
+                        <MapPin className="w-2.5 h-2.5" />
+                      )}
+                      {dest.category || "destination"}
+                    </span>
+                  </div>
                   <p className="mt-1 text-sm text-white/40 truncate">
                     {dest.sailing_time} &middot;{" "}
                     {dest.best_for?.join(", ") || "No tags"}
@@ -152,7 +178,7 @@ export default function AdminDestinations() {
                 {/* Actions */}
                 <div className="flex items-center gap-2">
                   <a
-                    href="/destinations"
+                    href={`/destinations/${dest.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition-colors"

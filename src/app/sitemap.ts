@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { fetchAllYachts } from "@/lib/yachts-db";
+import { fetchAllDestinations } from "@/lib/destinations-db";
 
 const BASE_URL = "https://imperialyachting.com";
 
@@ -29,5 +30,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
   }));
 
-  return [...staticPages, ...yachtPages];
+  const destinations = await fetchAllDestinations();
+  const destinationPages = destinations.map((dest) => ({
+    url: `${BASE_URL}/destinations/${dest.slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+    lastModified: new Date(),
+  }));
+
+  return [...staticPages, ...yachtPages, ...destinationPages];
 }

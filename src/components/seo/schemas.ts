@@ -1,6 +1,6 @@
 import { SITE_CONFIG } from "@/lib/constants";
 import type { Yacht } from "@/types/yacht";
-import type { FAQItem } from "@/types/common";
+import type { FAQItem, Destination } from "@/types/common";
 
 export function organizationSchema() {
   return {
@@ -208,6 +208,47 @@ export function articleSchema(opts: ArticleSchemaOptions) {
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": opts.url,
+    },
+  };
+}
+
+export function destinationSchema(destination: Destination) {
+  const imageUrl = destination.coverImage.startsWith("http")
+    ? destination.coverImage
+    : `${SITE_CONFIG.url}${destination.coverImage}`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    name: destination.name,
+    description:
+      destination.shortDescription || destination.description.slice(0, 160),
+    image: imageUrl,
+    url: `${SITE_CONFIG.url}/destinations/${destination.slug}`,
+    ...(destination.latitude && destination.longitude
+      ? {
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: destination.latitude,
+            longitude: destination.longitude,
+          },
+        }
+      : {}),
+    ...(destination.priceFrom
+      ? {
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "AED",
+            price: destination.priceFrom,
+            availability: "https://schema.org/InStock",
+          },
+        }
+      : {}),
+    touristType: destination.bestFor,
+    provider: {
+      "@type": "Organization",
+      name: SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
     },
   };
 }

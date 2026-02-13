@@ -19,14 +19,29 @@ export interface Testimonial {
   date: string;
 }
 
+export type DestinationCategory = "destination" | "experience" | "activity";
+
 export interface Destination {
   slug: string;
   name: string;
   description: string;
+  shortDescription: string;
   sailingTime: string;
   bestFor: string[];
   image: string;
+  coverImage: string;
+  galleryImages: string[];
   highlights: string[];
+  category: DestinationCategory;
+  duration: string;
+  priceFrom: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  mapLabel: string;
+  videoUrl: string;
+  featured: boolean;
+  whatIncluded: string[];
+  itinerary: string[];
 }
 
 export interface ServiceItem {
