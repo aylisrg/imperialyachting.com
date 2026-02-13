@@ -104,13 +104,19 @@ export default function YachtEditPage() {
     setSaving(true);
     const supabase = createClient();
 
+    // Always sanitize slug before saving
+    const sanitizedYacht = {
+      ...yacht,
+      slug: generateSlug(yacht.slug || yacht.name),
+    };
+
     try {
       let yachtId = id;
 
       if (isNew) {
         const { data, error } = await supabase
           .from("yachts")
-          .insert(yacht as Database["public"]["Tables"]["yachts"]["Insert"])
+          .insert(sanitizedYacht as Database["public"]["Tables"]["yachts"]["Insert"])
           .select("id")
           .single();
         if (error) throw error;
@@ -118,7 +124,7 @@ export default function YachtEditPage() {
       } else {
         const { error } = await supabase
           .from("yachts")
-          .update(yacht as Database["public"]["Tables"]["yachts"]["Update"])
+          .update(sanitizedYacht as Database["public"]["Tables"]["yachts"]["Update"])
           .eq("id", id);
         if (error) throw error;
       }
@@ -325,7 +331,7 @@ function DetailsTab({
           <input
             type="text"
             value={yacht.slug}
-            onChange={(e) => update("slug", e.target.value)}
+            onChange={(e) => update("slug", generateSlug(e.target.value))}
             className="admin-input"
             placeholder="monte-carlo-6"
           />
