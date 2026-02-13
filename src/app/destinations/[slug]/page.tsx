@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -8,11 +10,6 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { destinationSchema } from "@/components/seo/schemas";
 import { DestinationDetailClient } from "./DestinationDetailClient";
-
-export async function generateStaticParams() {
-  const destinations = await fetchAllDestinations();
-  return destinations.map((d) => ({ slug: d.slug }));
-}
 
 export async function generateMetadata({
   params,

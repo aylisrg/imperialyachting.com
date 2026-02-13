@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -29,7 +31,7 @@ import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
 import { YachtGallery } from "@/components/gallery/YachtGallery";
-import { fetchAllYachts, fetchYachtBySlug } from "@/lib/yachts-db";
+import { fetchYachtBySlug } from "@/lib/yachts-db";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import type { Yacht, YachtAmenity } from "@/types/yacht";
@@ -45,13 +47,6 @@ const amenityIconMap: Record<string, React.ComponentType<{ className?: string }>
   anchor: Anchor,
   snowflake: Snowflake,
 };
-
-export async function generateStaticParams() {
-  const yachts = await fetchAllYachts();
-  return yachts.map((yacht) => ({
-    slug: yacht.slug,
-  }));
-}
 
 export async function generateMetadata({
   params,

@@ -1,7 +1,6 @@
 import { createServerSupabase } from "./supabase/server";
 import type { Destination, DestinationCategory } from "@/types/common";
 import type { DestinationRow } from "./supabase/types";
-import { destinations as staticDestinations } from "@/data/destinations";
 
 function mapDestination(d: DestinationRow): Destination {
   return {
@@ -30,7 +29,7 @@ function mapDestination(d: DestinationRow): Destination {
 
 /**
  * Fetch all destinations from Supabase.
- * Falls back to static data if Supabase is unavailable or empty.
+ * Returns only data from the admin panel — no hardcoded fallback.
  */
 export async function fetchAllDestinations(): Promise<Destination[]> {
   try {
@@ -43,17 +42,17 @@ export async function fetchAllDestinations(): Promise<Destination[]> {
 
     const rows = destinations as DestinationRow[] | null;
 
-    if (!rows || rows.length === 0) return staticDestinations;
+    if (!rows || rows.length === 0) return [];
 
     return rows.map(mapDestination);
   } catch {
-    return staticDestinations;
+    return [];
   }
 }
 
 /**
  * Fetch a single destination by slug.
- * Falls back to static data if Supabase is unavailable.
+ * Returns only data from the admin panel — no hardcoded fallback.
  */
 export async function fetchDestinationBySlug(
   slug: string
@@ -71,16 +70,15 @@ export async function fetchDestinationBySlug(
 
     if (row) return mapDestination(row);
 
-    // Fallback to static data
-    return staticDestinations.find((d) => d.slug === slug) ?? null;
+    return null;
   } catch {
-    return staticDestinations.find((d) => d.slug === slug) ?? null;
+    return null;
   }
 }
 
 /**
  * Fetch featured destinations for homepage.
- * Falls back to static data filtered by featured flag.
+ * Returns only data from the admin panel — no hardcoded fallback.
  */
 export async function fetchFeaturedDestinations(): Promise<Destination[]> {
   try {
@@ -94,12 +92,10 @@ export async function fetchFeaturedDestinations(): Promise<Destination[]> {
 
     const rows = destinations as DestinationRow[] | null;
 
-    if (!rows || rows.length === 0) {
-      return staticDestinations.filter((d) => d.featured);
-    }
+    if (!rows || rows.length === 0) return [];
 
     return rows.map(mapDestination);
   } catch {
-    return staticDestinations.filter((d) => d.featured);
+    return [];
   }
 }

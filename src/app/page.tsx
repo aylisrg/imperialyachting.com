@@ -1,4 +1,6 @@
-import dynamic from "next/dynamic";
+export const dynamic = "force-dynamic";
+
+import dynamicImport from "next/dynamic";
 import { Hero } from "@/components/sections/Hero";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -11,25 +13,25 @@ import { fetchAllYachts } from "@/lib/yachts-db";
 import { fetchAllDestinations } from "@/lib/destinations-db";
 
 // Below-fold sections — lazy loaded to reduce initial JS bundle
-const FleetPreview = dynamic(
+const FleetPreview = dynamicImport(
   () => import("@/components/sections/FleetPreview").then((m) => m.FleetPreview),
 );
-const ServicesOverview = dynamic(
+const ServicesOverview = dynamicImport(
   () => import("@/components/sections/ServicesOverview").then((m) => m.ServicesOverview),
 );
-const WhyImperial = dynamic(
+const WhyImperial = dynamicImport(
   () => import("@/components/sections/WhyImperial").then((m) => m.WhyImperial),
 );
-const TestimonialCarousel = dynamic(
+const TestimonialCarousel = dynamicImport(
   () => import("@/components/sections/TestimonialCarousel").then((m) => m.TestimonialCarousel),
 );
-const DestinationsSection = dynamic(
+const DestinationsSection = dynamicImport(
   () => import("@/components/sections/DestinationsSection").then((m) => m.DestinationsSection),
 );
-const CTASection = dynamic(
+const CTASection = dynamicImport(
   () => import("@/components/sections/CTASection").then((m) => m.CTASection),
 );
-const FAQSection = dynamic(
+const FAQSection = dynamicImport(
   () => import("@/components/sections/FAQSection").then((m) => m.FAQSection),
 );
 

@@ -23,6 +23,15 @@ interface FleetGridProps {
 }
 
 export function FleetGrid({ yachts }: FleetGridProps) {
+  if (yachts.length === 0) {
+    return (
+      <div className="text-center py-16 text-white/40">
+        <p className="text-lg">No yachts available at the moment.</p>
+        <p className="mt-2 text-sm">Please check back soon for our premium fleet offerings.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {yachts.map((yacht, i) => (

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { DestinationsPageClient } from "@/components/pages/DestinationsPageClient";
