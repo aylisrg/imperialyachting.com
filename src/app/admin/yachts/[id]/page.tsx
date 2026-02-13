@@ -104,13 +104,19 @@ export default function YachtEditPage() {
     setSaving(true);
     const supabase = createClient();
 
+    // Always sanitize slug before saving
+    const sanitizedYacht = {
+      ...yacht,
+      slug: generateSlug(yacht.slug || yacht.name),
+    };
+
     try {
       let yachtId = id;
 
       if (isNew) {
         const { data, error } = await supabase
           .from("yachts")
-          .insert(yacht as Database["public"]["Tables"]["yachts"]["Insert"])
+          .insert(sanitizedYacht as Database["public"]["Tables"]["yachts"]["Insert"])
           .select("id")
           .single();
         if (error) throw error;
@@ -118,7 +124,7 @@ export default function YachtEditPage() {
       } else {
         const { error } = await supabase
           .from("yachts")
-          .update(yacht as Database["public"]["Tables"]["yachts"]["Update"])
+          .update(sanitizedYacht as Database["public"]["Tables"]["yachts"]["Update"])
           .eq("id", id);
         if (error) throw error;
       }
@@ -325,7 +331,7 @@ function DetailsTab({
           <input
             type="text"
             value={yacht.slug}
-            onChange={(e) => update("slug", e.target.value)}
+            onChange={(e) => update("slug", generateSlug(e.target.value))}
             className="admin-input"
             placeholder="monte-carlo-6"
           />
@@ -884,24 +890,13 @@ function VideosTab({
 
   return (
     <div className="space-y-8">
-      {/* Show/Hide Toggle */}
+      {/* Info banner */}
       <div className="p-5 bg-navy-800 rounded-xl border border-white/5">
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            id="show_videos"
-            checked={yacht.show_videos}
-            onChange={(e) =>
-              setYacht({ ...yacht, show_videos: e.target.checked })
-            }
-            className="w-4 h-4 rounded border-white/20 bg-navy-900 text-gold-500 focus:ring-gold-500/50"
-          />
-          <label htmlFor="show_videos" className="text-sm text-white/80 font-medium">
-            Show video section on yacht page
-          </label>
-        </div>
-        <p className="mt-2 text-xs text-white/40 ml-7">
-          When disabled, the video block will be completely hidden even if videos are added below.
+        <p className="text-sm text-white/80 font-medium">
+          Video section appears automatically when you add video URLs below.
+        </p>
+        <p className="mt-1 text-xs text-white/40">
+          Remove all URLs to hide the video section from the yacht page.
         </p>
       </div>
 

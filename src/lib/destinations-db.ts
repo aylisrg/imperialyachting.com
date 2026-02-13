@@ -35,17 +35,23 @@ export async function fetchAllDestinations(): Promise<Destination[]> {
   try {
     const supabase = await createServerSupabase();
 
-    const { data: destinations } = await supabase
+    const { data: destinations, error } = await supabase
       .from("destinations")
       .select("*")
       .order("sort_order", { ascending: true });
+
+    if (error) {
+      console.error("[fetchAllDestinations] Supabase query error:", error.message);
+      return [];
+    }
 
     const rows = destinations as DestinationRow[] | null;
 
     if (!rows || rows.length === 0) return [];
 
     return rows.map(mapDestination);
-  } catch {
+  } catch (error) {
+    console.error("[fetchAllDestinations] Unexpected error:", error);
     return [];
   }
 }
@@ -60,18 +66,24 @@ export async function fetchDestinationBySlug(
   try {
     const supabase = await createServerSupabase();
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("destinations")
       .select("*")
       .eq("slug", slug)
       .single();
+
+    if (error) {
+      console.error(`[fetchDestinationBySlug] Supabase query error for "${slug}":`, error.message);
+      return null;
+    }
 
     const row = data as DestinationRow | null;
 
     if (row) return mapDestination(row);
 
     return null;
-  } catch {
+  } catch (error) {
+    console.error(`[fetchDestinationBySlug] Unexpected error for "${slug}":`, error);
     return null;
   }
 }
@@ -84,18 +96,24 @@ export async function fetchFeaturedDestinations(): Promise<Destination[]> {
   try {
     const supabase = await createServerSupabase();
 
-    const { data: destinations } = await supabase
+    const { data: destinations, error } = await supabase
       .from("destinations")
       .select("*")
       .eq("featured", true)
       .order("sort_order", { ascending: true });
+
+    if (error) {
+      console.error("[fetchFeaturedDestinations] Supabase query error:", error.message);
+      return [];
+    }
 
     const rows = destinations as DestinationRow[] | null;
 
     if (!rows || rows.length === 0) return [];
 
     return rows.map(mapDestination);
-  } catch {
+  } catch (error) {
+    console.error("[fetchFeaturedDestinations] Unexpected error:", error);
     return [];
   }
 }

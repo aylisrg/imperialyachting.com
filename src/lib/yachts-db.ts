@@ -9,17 +9,23 @@ export async function fetchAllYachts(): Promise<Yacht[]> {
   try {
     const supabase = await createServerSupabase();
 
-    const { data: yachts } = await supabase
+    const { data: yachts, error } = await supabase
       .from("yachts")
       .select("*")
       .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("[fetchAllYachts] Supabase query error:", error.message);
+      return [];
+    }
 
     if (!yachts || yachts.length === 0) return [];
 
     return Promise.all(
       yachts.map((y) => mapYachtFromDB(supabase, y, false))
     );
-  } catch {
+  } catch (error) {
+    console.error("[fetchAllYachts] Unexpected error:", error);
     return [];
   }
 }
@@ -32,18 +38,24 @@ export async function fetchFeaturedYachts(): Promise<Yacht[]> {
   try {
     const supabase = await createServerSupabase();
 
-    const { data: yachts } = await supabase
+    const { data: yachts, error } = await supabase
       .from("yachts")
       .select("*")
       .eq("featured", true)
       .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("[fetchFeaturedYachts] Supabase query error:", error.message);
+      return [];
+    }
 
     if (!yachts || yachts.length === 0) return [];
 
     return Promise.all(
       yachts.map((y) => mapYachtFromDB(supabase, y, false))
     );
-  } catch {
+  } catch (error) {
+    console.error("[fetchFeaturedYachts] Unexpected error:", error);
     return [];
   }
 }
@@ -56,16 +68,22 @@ export async function fetchYachtBySlug(slug: string): Promise<Yacht | null> {
   try {
     const supabase = await createServerSupabase();
 
-    const { data: yacht } = await supabase
+    const { data: yacht, error } = await supabase
       .from("yachts")
       .select("*")
       .eq("slug", slug)
       .single();
 
+    if (error) {
+      console.error(`[fetchYachtBySlug] Supabase query error for "${slug}":`, error.message);
+      return null;
+    }
+
     if (!yacht) return null;
 
     return mapYachtFromDB(supabase, yacht, true);
-  } catch {
+  } catch (error) {
+    console.error(`[fetchYachtBySlug] Unexpected error for "${slug}":`, error);
     return null;
   }
 }
