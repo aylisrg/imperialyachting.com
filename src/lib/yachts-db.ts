@@ -157,5 +157,8 @@ async function mapYachtFromDB(supabase: any, dbYacht: any, full: boolean): Promi
     })),
     included: included.map((i: any) => i.item),
     featured: dbYacht.featured,
+    youtubeShorts: dbYacht.youtube_shorts || [],
+    youtubeVideo: dbYacht.youtube_video || "",
+    showVideos: dbYacht.show_videos ?? false,
   };
 }

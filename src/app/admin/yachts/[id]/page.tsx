@@ -9,6 +9,7 @@ import {
   Plus,
   Trash2,
   GripVertical,
+  Video,
 } from "lucide-react";
 import { AdminHeader } from "../../components/AdminHeader";
 import { PhotoUploader } from "../../components/PhotoUploader";
@@ -39,6 +40,9 @@ const defaultYacht: FormYacht = {
   cabins: null,
   location: "Dubai Harbour",
   featured: false,
+  youtube_shorts: [],
+  youtube_video: "",
+  show_videos: false,
 };
 
 export default function YachtEditPage() {
@@ -55,7 +59,7 @@ export default function YachtEditPage() {
   const [included, setIncluded] = useState<Omit<YachtIncluded, "id">[]>([]);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"details" | "photos" | "specs" | "pricing">("details");
+  const [activeTab, setActiveTab] = useState<"details" | "photos" | "videos" | "specs" | "pricing">("details");
 
   const loadYacht = useCallback(async () => {
     if (isNew) return;
@@ -198,6 +202,7 @@ export default function YachtEditPage() {
   const tabs = [
     { id: "details" as const, label: "Details" },
     { id: "photos" as const, label: `Photos (${images.length})`, disabled: isNew },
+    { id: "videos" as const, label: `Videos${yacht.youtube_shorts.length > 0 ? ` (${yacht.youtube_shorts.length})` : ""}` },
     { id: "specs" as const, label: "Specs & Amenities" },
     { id: "pricing" as const, label: "Pricing" },
   ];
@@ -261,6 +266,9 @@ export default function YachtEditPage() {
         )}
         {activeTab === "photos" && !isNew && (
           <PhotoUploader yachtId={id} images={images} onRefresh={loadYacht} />
+        )}
+        {activeTab === "videos" && (
+          <VideosTab yacht={yacht} setYacht={setYacht} />
         )}
         {activeTab === "specs" && (
           <SpecsTab
@@ -824,6 +832,179 @@ function PricingTab({
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   Tab: Videos
+   ============================================================ */
+function VideosTab({
+  yacht,
+  setYacht,
+}: {
+  yacht: FormYacht;
+  setYacht: (y: FormYacht) => void;
+}) {
+  function addShort() {
+    setYacht({
+      ...yacht,
+      youtube_shorts: [...yacht.youtube_shorts, ""],
+    });
+  }
+
+  function updateShort(index: number, value: string) {
+    const updated = [...yacht.youtube_shorts];
+    updated[index] = value;
+    setYacht({ ...yacht, youtube_shorts: updated });
+  }
+
+  function removeShort(index: number) {
+    setYacht({
+      ...yacht,
+      youtube_shorts: yacht.youtube_shorts.filter((_, i) => i !== index),
+    });
+  }
+
+  function extractVideoId(url: string): string | null {
+    if (!url) return null;
+    const patterns = [
+      /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+      /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
+      /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+      /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+    ];
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Show/Hide Toggle */}
+      <div className="p-5 bg-navy-800 rounded-xl border border-white/5">
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="show_videos"
+            checked={yacht.show_videos}
+            onChange={(e) =>
+              setYacht({ ...yacht, show_videos: e.target.checked })
+            }
+            className="w-4 h-4 rounded border-white/20 bg-navy-900 text-gold-500 focus:ring-gold-500/50"
+          />
+          <label htmlFor="show_videos" className="text-sm text-white/80 font-medium">
+            Show video section on yacht page
+          </label>
+        </div>
+        <p className="mt-2 text-xs text-white/40 ml-7">
+          When disabled, the video block will be completely hidden even if videos are added below.
+        </p>
+      </div>
+
+      {/* Main YouTube Video */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <Video className="w-5 h-5 text-gold-500" />
+          <h3 className="font-heading text-lg font-bold text-white">
+            Main Video (YouTube)
+          </h3>
+        </div>
+        <p className="text-xs text-white/40 mb-3">
+          Paste a YouTube video URL. This will be displayed as a large player with a thumbnail preview.
+        </p>
+        <input
+          type="text"
+          value={yacht.youtube_video}
+          onChange={(e) =>
+            setYacht({ ...yacht, youtube_video: e.target.value })
+          }
+          className="admin-input w-full"
+          placeholder="https://www.youtube.com/watch?v=..."
+        />
+        {yacht.youtube_video && extractVideoId(yacht.youtube_video) && (
+          <div className="mt-3 relative aspect-video max-w-md rounded-lg overflow-hidden bg-navy-900">
+            <img
+              src={`https://img.youtube.com/vi/${extractVideoId(yacht.youtube_video)}/mqdefault.jpg`}
+              alt="Video preview"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                <div className="w-0 h-0 border-l-[18px] border-l-white border-y-[12px] border-y-transparent ml-1" />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* YouTube Shorts */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22.95.25 1.45.03.5.04 1.05.04 1.38 0 .33-.01.88-.04 1.38-.03.5-.12.98-.25 1.45-.27.95-1.04 1.72-2 2.04-.47.13-.95.22-1.45.25-.5.03-1.05.04-1.38.04H7.27c-.33 0-.88-.01-1.38-.04-.5-.03-.98-.12-1.45-.25-.95-.32-1.72-1.09-2-2.04-.13-.47-.22-.95-.25-1.45C2.16 12.88 2.15 12.33 2.15 12s.01-.88.04-1.38c.03-.5.12-.98.25-1.45.28-.95 1.05-1.72 2-2.04.47-.13.95-.22 1.45-.25.5-.03 1.05-.04 1.38-.04h9.46c.33 0 .88.01 1.38.04.5.03.98.12 1.45.25.96.32 1.73 1.09 2 2.04z"/>
+            </svg>
+            <h3 className="font-heading text-lg font-bold text-white">
+              YouTube Shorts
+            </h3>
+          </div>
+          <button
+            onClick={addShort}
+            className="flex items-center gap-1 text-sm text-gold-400 hover:text-gold-300"
+          >
+            <Plus className="w-4 h-4" /> Add Short
+          </button>
+        </div>
+        <p className="text-xs text-white/40 mb-3">
+          Paste YouTube Shorts URLs. They will be displayed as vertical 9:16 video cards.
+        </p>
+        <div className="space-y-3">
+          {yacht.youtube_shorts.map((url, i) => {
+            const videoId = extractVideoId(url);
+            return (
+              <div key={i} className="flex items-center gap-3">
+                <GripVertical className="w-4 h-4 text-white/20 flex-shrink-0" />
+                {videoId && (
+                  <div className="relative w-10 h-[70px] rounded-md overflow-hidden flex-shrink-0 bg-navy-900">
+                    <img
+                      src={`https://img.youtube.com/vi/${videoId}/oar2.jpg`}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <input
+                  type="text"
+                  value={url}
+                  onChange={(e) => updateShort(i, e.target.value)}
+                  className="admin-input flex-1"
+                  placeholder="https://www.youtube.com/shorts/..."
+                />
+                <button
+                  onClick={() => removeShort(i)}
+                  className="p-2 text-white/30 hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            );
+          })}
+          {yacht.youtube_shorts.length === 0 && (
+            <div className="text-center py-8 text-white/30 border border-dashed border-white/10 rounded-xl">
+              <p className="text-sm">No shorts added yet</p>
+              <button
+                onClick={addShort}
+                className="mt-2 text-sm text-gold-400 hover:text-gold-300"
+              >
+                + Add your first Short
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

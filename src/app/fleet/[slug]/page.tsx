@@ -31,6 +31,7 @@ import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
 import { YachtGallery } from "@/components/gallery/YachtGallery";
+import { VideoGallery } from "@/components/gallery/VideoGallery";
 import { fetchYachtBySlug } from "@/lib/yachts-db";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
@@ -176,6 +177,17 @@ export default async function YachtDetailPage({
               {yacht.location}
             </Badge>
           </div>
+
+          {/* Video Gallery — shown only if enabled and has content */}
+          {yacht.showVideos && (yacht.youtubeShorts.length > 0 || yacht.youtubeVideo) && (
+            <div className="mb-10">
+              <VideoGallery
+                youtubeShorts={yacht.youtubeShorts}
+                youtubeVideo={yacht.youtubeVideo}
+                yachtName={yacht.name}
+              />
+            </div>
+          )}
 
           {/* Image Gallery */}
           <YachtGallery images={yacht.images} yachtName={yacht.name} />
