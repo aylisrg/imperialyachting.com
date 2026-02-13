@@ -1,29 +1,34 @@
 "use client";
 
-import Image from "next/image";
+import { useState, useMemo, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
-  Clock,
-  MapPin,
   Compass,
+  MapPin,
+  Sparkles,
+  Tag,
   Sun,
   Thermometer,
   Anchor,
-  CheckCircle2,
+  LayoutGrid,
 } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
-import type { Destination } from "@/types/common";
+import { DestinationCard } from "@/components/cards/DestinationCard";
+import { DubaiCoastMap } from "@/components/maps/DubaiCoastMap";
+import type { Destination, DestinationCategory } from "@/types/common";
 import { SITE_CONFIG } from "@/lib/constants";
 
-const gradients = [
-  "from-sea-500/30 via-navy-700 to-navy-800",
-  "from-gold-500/20 via-navy-700 to-navy-800",
-  "from-sea-400/25 via-navy-800 to-navy-900",
-  "from-gold-400/15 via-navy-800 to-navy-900",
-  "from-sea-600/20 via-navy-700 to-navy-900",
+type FilterTab = "all" | DestinationCategory;
+
+const tabs: { id: FilterTab; label: string; icon: React.ReactNode }[] = [
+  { id: "all", label: "All", icon: <LayoutGrid className="w-3.5 h-3.5" /> },
+  { id: "destination", label: "Destinations", icon: <MapPin className="w-3.5 h-3.5" /> },
+  { id: "experience", label: "Experiences", icon: <Sparkles className="w-3.5 h-3.5" /> },
+  { id: "activity", label: "Activities", icon: <Tag className="w-3.5 h-3.5" /> },
 ];
 
 const seasons = [
@@ -45,7 +50,43 @@ const seasons = [
   },
 ];
 
-export function DestinationsPageClient({ destinations }: { destinations: Destination[] }) {
+export function DestinationsPageClient({
+  destinations,
+}: {
+  destinations: Destination[];
+}) {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<FilterTab>("all");
+
+  const filtered = useMemo(
+    () =>
+      activeTab === "all"
+        ? destinations
+        : destinations.filter((d) => d.category === activeTab),
+    [destinations, activeTab]
+  );
+
+  const mapDestinations = useMemo(
+    () => destinations.filter((d) => d.latitude && d.longitude),
+    [destinations]
+  );
+
+  const handleMarkerClick = useCallback(
+    (slug: string) => {
+      router.push(`/destinations/${slug}`);
+    },
+    [router]
+  );
+
+  // Compute which tabs actually have destinations
+  const tabCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: destinations.length };
+    for (const d of destinations) {
+      counts[d.category] = (counts[d.category] || 0) + 1;
+    }
+    return counts;
+  }, [destinations]);
+
   return (
     <>
       {/* Hero */}
@@ -77,23 +118,17 @@ export function DestinationsPageClient({ destinations }: { destinations: Destina
               />
             </div>
 
-            <h1
-              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white animate-hero-2"
-            >
-              Discover Dubai by Sea
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white animate-hero-2">
+              Dubai&apos;s Finest Yacht Experiences
             </h1>
 
-            <p
-              className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed animate-hero-3"
-            >
-              From iconic landmarks to secluded island escapes, explore
-              Dubai&apos;s most spectacular destinations from the deck of a
-              luxury yacht.
+            <p className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed animate-hero-3">
+              From iconic coastal destinations to curated on-water
+              experiences — discover everything you can do aboard a luxury
+              yacht in Dubai.
             </p>
 
-            <div
-              className="mt-8 flex items-center gap-2 text-white/40 animate-hero-4"
-            >
+            <div className="mt-8 flex items-center gap-2 text-white/40 animate-hero-4">
               <MapPin className="w-4 h-4 text-gold-500/60" />
               <span className="text-sm font-medium tracking-wide uppercase">
                 Departing from Dubai Harbour
@@ -104,96 +139,98 @@ export function DestinationsPageClient({ destinations }: { destinations: Destina
         </Container>
       </section>
 
-      {/* Destinations Grid */}
-      <section className="py-24 sm:py-32 bg-navy-900">
+      {/* Interactive Map */}
+      {mapDestinations.length > 0 && (
+        <section className="py-16 sm:py-24 bg-navy-900">
+          <Container>
+            <SectionHeading
+              title="Explore Our Routes"
+              subtitle="Click any destination on the map to learn more about the experience."
+              align="center"
+            />
+            <Reveal>
+              <DubaiCoastMap
+                destinations={mapDestinations}
+                onMarkerClick={handleMarkerClick}
+              />
+            </Reveal>
+          </Container>
+        </section>
+      )}
+
+      {/* Category Filters + Destination Cards Grid */}
+      <section className="py-24 sm:py-32 bg-navy-950">
         <Container>
           <SectionHeading
-            title="Our Destinations"
+            title="Our Destinations & Experiences"
             subtitle="Every charter route is carefully curated to showcase the best of Dubai's coastline and waterways."
             align="center"
           />
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {destinations.map((destination, i) => (
-              <Reveal key={destination.slug} delay={i * 100}>
-                <article
-                  className="rounded-xl overflow-hidden border border-white/5 hover:border-gold-500/15 transition-colors duration-500 group"
-                >
-                  {/* Image or gradient placeholder */}
-                  <div
-                    className={`relative aspect-[16/10] bg-gradient-to-br ${gradients[i % gradients.length]}`}
+          {/* Filter Tabs */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex items-center gap-1 p-1 rounded-xl bg-navy-800 border border-white/5">
+              {tabs.map((tab) => {
+                const count = tabCounts[tab.id] || 0;
+                if (tab.id !== "all" && count === 0) return null;
+
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`
+                      flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                      ${
+                        activeTab === tab.id
+                          ? "bg-gradient-to-r from-gold-500 to-gold-600 text-navy-950 shadow-lg shadow-gold-500/20"
+                          : "text-white/50 hover:text-white/80 hover:bg-white/5"
+                      }
+                    `}
                   >
-                    {destination.image ? (
-                      <Image
-                        src={destination.image}
-                        alt={destination.name}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="font-heading text-xl font-bold text-white/15 tracking-wider text-center px-4">
-                          {destination.name}
-                        </span>
-                      </div>
-                    )}
+                    {tab.icon}
+                    <span className="hidden sm:inline">{tab.label}</span>
+                    <span
+                      className={`text-xs px-1.5 py-0.5 rounded-full ${
+                        activeTab === tab.id
+                          ? "bg-navy-950/20 text-navy-950"
+                          : "bg-white/5 text-white/30"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-                    {/* Sailing time badge */}
-                    <div className="absolute top-3 right-3">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-navy-950/70 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white/80">
-                        <Clock className="w-3 h-3 text-gold-400" />
-                        {destination.sailingTime}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="bg-navy-800 p-6">
-                    <h3 className="font-heading text-xl font-bold text-white group-hover:text-gold-400 transition-colors">
-                      {destination.name}
-                    </h3>
-
-                    <p className="mt-3 text-sm text-white/50 leading-relaxed line-clamp-3">
-                      {destination.description}
-                    </p>
-
-                    {/* Best-for tags */}
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {destination.bestFor.map((tag) => (
-                        <Badge key={tag} variant="gold">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-
-                    {/* Highlights */}
-                    <div className="mt-5 pt-5 border-t border-white/5">
-                      <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-3">
-                        Highlights
-                      </p>
-                      <ul className="space-y-2">
-                        {destination.highlights.map((highlight) => (
-                          <li
-                            key={highlight}
-                            className="flex items-start gap-2 text-sm text-white/60"
-                          >
-                            <CheckCircle2 className="w-4 h-4 text-gold-500/50 flex-shrink-0 mt-0.5" />
-                            {highlight}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </article>
+          {/* Cards Grid */}
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((destination, i) => (
+              <Reveal key={destination.slug} delay={i * 80}>
+                <DestinationCard destination={destination} index={i} />
               </Reveal>
             ))}
           </div>
+
+          {/* Empty state */}
+          {filtered.length === 0 && (
+            <div className="text-center py-16">
+              <MapPin className="w-12 h-12 text-white/10 mx-auto mb-4" />
+              <p className="text-white/40 text-lg">
+                No {activeTab === "all" ? "" : activeTab + " "}destinations
+                available yet.
+              </p>
+              <p className="text-white/25 text-sm mt-2">
+                Check back soon for new experiences.
+              </p>
+            </div>
+          )}
         </Container>
       </section>
 
       {/* Seasonal Guide */}
-      <section className="py-24 sm:py-32 bg-navy-950">
+      <section className="py-24 sm:py-32 bg-navy-900">
         <Container>
           <SectionHeading
             title="When to Charter"
