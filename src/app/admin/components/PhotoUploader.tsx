@@ -13,6 +13,12 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { YachtImage } from "@/lib/supabase/types";
+import {
+  compressImage,
+  shouldCompressImage,
+  formatFileSize,
+  getOptimalCompressionSettings,
+} from "@/lib/image-compression";
 
 const CATEGORIES = [
   { value: "hero", label: "Hero (Main)" },
@@ -63,7 +69,53 @@ export function PhotoUploader({ yachtId, images, onRefresh }: PhotoUploaderProps
       }
 
       for (const file of fileArray) {
-        const fileName = `${Date.now()}-${file.name.replace(/[^a-z0-9.-]/gi, "_")}`;
+        const originalSize = formatFileSize(file.size);
+        let processedFile = file;
+
+        // Compress image if needed
+        if (shouldCompressImage(file, 2)) {
+          setUploadProgress((prev) => [
+            ...prev,
+            `Compressing ${file.name} (${originalSize})...`,
+          ]);
+
+          try {
+            const compressionSettings = getOptimalCompressionSettings(file.size);
+            const result = await compressImage(file, {
+              ...compressionSettings,
+              onProgress: (progress) => {
+                setUploadProgress((prev) => {
+                  const newProgress = [...prev];
+                  newProgress[newProgress.length - 1] =
+                    `Compressing ${file.name}: ${progress}%`;
+                  return newProgress;
+                });
+              },
+            });
+
+            processedFile = result.compressedFile;
+            const compressedSize = formatFileSize(result.compressedSize);
+            setUploadProgress((prev) => [
+              ...prev.slice(0, -1),
+              `Compressed ${file.name}: ${originalSize} → ${compressedSize} (${result.compressionPercentage}% saved)`,
+            ]);
+          } catch (error) {
+            console.error("Compression failed:", error);
+            setUploadProgress((prev) => [
+              ...prev.slice(0, -1),
+              `Compression failed for ${file.name}, uploading original...`,
+            ]);
+            // Continue with original file if compression fails
+          }
+        } else {
+          setUploadProgress((prev) => [
+            ...prev,
+            `${file.name} is already optimized (${originalSize})`,
+          ]);
+        }
+
+        // Generate filename from processed file
+        const fileName = `${Date.now()}-${processedFile.name.replace(/[^a-z0-9.-]/gi, "_")}`;
         const storagePath = `${yachtId}/${fileName}`;
 
         setUploadProgress((prev) => [...prev, `Uploading ${file.name}...`]);
@@ -71,7 +123,7 @@ export function PhotoUploader({ yachtId, images, onRefresh }: PhotoUploaderProps
         // Upload to Supabase Storage
         const { error: uploadError } = await supabase.storage
           .from("yacht-photos")
-          .upload(storagePath, file, {
+          .upload(storagePath, processedFile, {
             cacheControl: "31536000",
             upsert: false,
           });
@@ -111,7 +163,7 @@ export function PhotoUploader({ yachtId, images, onRefresh }: PhotoUploaderProps
 
         setUploadProgress((prev) => [
           ...prev.slice(0, -1),
-          `Uploaded: ${file.name}`,
+          `✓ Uploaded: ${file.name}`,
         ]);
       }
 
@@ -223,7 +275,11 @@ export function PhotoUploader({ yachtId, images, onRefresh }: PhotoUploaderProps
               Drag & drop photos here, or click to browse
             </p>
             <p className="mt-2 text-sm text-white/30">
-              JPEG, PNG, WebP, AVIF &middot; Max 5MB per file
+              JPEG, PNG, WebP, AVIF &middot; Large files will be automatically
+              compressed
+            </p>
+            <p className="mt-1 text-xs text-white/20">
+              Max recommended: 2048px &middot; Files &gt;2MB compressed to ~2MB
             </p>
           </>
         )}
