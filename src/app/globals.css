@@ -233,6 +233,82 @@ select.admin-input {
   box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.3);
 }
 
+/* Map marker highlight glow (for time-of-day filtering) */
+@keyframes marker-highlight {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(201, 168, 76, 0.6)); }
+  50% { filter: drop-shadow(0 0 14px rgba(201, 168, 76, 0.9)); }
+}
+
+.map-marker-highlighted {
+  animation: marker-highlight 2s ease-in-out infinite;
+}
+
+/* SVG route line draw animation */
+@keyframes route-draw {
+  from { stroke-dashoffset: var(--route-length); }
+  to { stroke-dashoffset: 0; }
+}
+
+.route-line {
+  stroke-dasharray: var(--route-length);
+  stroke-dashoffset: var(--route-length);
+  animation: route-draw 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Map view/catalog view crossfade */
+.view-panel {
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.view-panel-hidden {
+  opacity: 0;
+  transform: scale(0.97);
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+.view-panel-active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* Route drawer slide-in */
+.route-drawer {
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.route-drawer.open {
+  transform: translateX(0);
+}
+
+/* Map tooltip fade */
+.map-tooltip {
+  opacity: 0;
+  transform: translateY(8px) scale(0.95);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.map-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Water shimmer effect for SVG */
+@keyframes water-shimmer {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.06; }
+}
+
+.water-shimmer {
+  animation: water-shimmer 4s ease-in-out infinite;
+}
+
 /* Itinerary timeline connector */
 .itinerary-line {
   position: relative;
@@ -259,11 +335,29 @@ select.admin-input {
   .mobile-menu,
   .accordion-body,
   .map-marker,
-  .map-marker-active {
+  .map-marker-active,
+  .map-marker-highlighted,
+  .route-line,
+  .view-panel,
+  .route-drawer,
+  .map-tooltip,
+  .water-shimmer {
     animation: none !important;
     transition: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .route-line {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .route-drawer.open {
+    transform: translateX(0) !important;
+  }
+
+  .view-panel-hidden {
+    display: none !important;
   }
 
   .accordion-body,

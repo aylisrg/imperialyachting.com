@@ -1,42 +1,47 @@
 "use client";
 
 import { useMemo } from "react";
-import { MapPin, Anchor, Navigation } from "lucide-react";
+import { MapPin, Anchor } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
-import { DestinationCard } from "@/components/cards/DestinationCard";
+import { DubaiSchematicMap } from "@/components/map/DubaiSchematicMap";
+import { TimeFilter } from "@/components/map/TimeFilter";
+import { ViewToggle } from "@/components/map/ViewToggle";
+import { RouteCalculator } from "@/components/map/RouteCalculator";
+import { CatalogGrid } from "@/components/destinations/CatalogGrid";
+import { RouteDrawer } from "@/components/destinations/RouteDrawer";
+import { useAdventuresState } from "@/hooks/useAdventuresState";
+import { mergeWithAdventures } from "@/lib/adventures";
 import type { Destination } from "@/types/common";
-import { SITE_CONFIG, DEPARTURE_POINT_SLUG } from "@/lib/constants";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export function DestinationsPageClient({
   destinations,
 }: {
   destinations: Destination[];
 }) {
-  const browsable = useMemo(
-    () => destinations.filter((d) => d.slug !== DEPARTURE_POINT_SLUG),
+  const allItems = useMemo(
+    () => mergeWithAdventures(destinations),
     [destinations]
   );
 
-  const mapDestinations = useMemo(
-    () => browsable.filter((d) => d.latitude && d.longitude),
-    [browsable]
-  );
-
-  // Build a Google Maps embed URL showing all destinations
-  const mapsEmbedUrl = useMemo(() => {
-    const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
-    if (!key || mapDestinations.length === 0) return null;
-    return `https://www.google.com/maps/embed/v1/view?key=${key}&center=25.12,55.14&zoom=12&maptype=satellite`;
-  }, [mapDestinations]);
-
-  // Fallback: link to Google Maps
-  const mapsLinkUrl = useMemo(() => {
-    if (mapDestinations.length === 0) return null;
-    return "https://www.google.com/maps/@25.12,55.14,12z";
-  }, [mapDestinations]);
+  const {
+    state,
+    filteredItems,
+    highlightedSlugs,
+    selectedItem,
+    hasActiveFilter,
+    setView,
+    selectItem,
+    deselectItem,
+    hoverItem,
+    setTimeFilter,
+    setCategoryFilter,
+    closeDrawer,
+    setDrawerTab,
+  } = useAdventuresState(allItems);
 
   return (
     <>
@@ -61,12 +66,12 @@ export function DestinationsPageClient({
             </div>
 
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white animate-hero-1">
-              Dubai&apos;s Finest Yacht Destinations
+              Adventures & Destinations
             </h1>
 
             <p className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed animate-hero-2">
-              Discover the most spectacular coastal destinations you can explore
-              aboard a luxury yacht from Dubai Harbour.
+              From iconic landmarks to exclusive sunrise expeditions — discover every
+              experience waiting for you on Dubai&apos;s coastline.
             </p>
 
             <div className="mt-8 flex items-center gap-2 text-white/40 animate-hero-3">
@@ -80,54 +85,80 @@ export function DestinationsPageClient({
         </Container>
       </section>
 
-      {/* Google Maps */}
-      {(mapsEmbedUrl || mapsLinkUrl) && (
-        <section className="py-16 sm:py-24 bg-navy-900">
-          <Container>
-            <SectionHeading
-              title="Explore the Coast"
-              subtitle="All yacht charters depart from Dubai Harbour. Explore our destinations along the Arabian Gulf coastline."
-              align="center"
-            />
-            <Reveal>
-              {mapsEmbedUrl ? (
-                <div className="relative aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden border border-white/5">
-                  <iframe
-                    src={mapsEmbedUrl}
-                    title="Dubai yacht destinations map"
-                    className="absolute inset-0 w-full h-full"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                </div>
-              ) : mapsLinkUrl ? (
-                <a
-                  href={mapsLinkUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block rounded-2xl border border-white/5 hover:border-gold-500/15 bg-navy-800 p-8 sm:p-12 text-center transition-all duration-300 group"
-                >
-                  <Navigation className="w-10 h-10 text-gold-500/60 mx-auto mb-4 group-hover:text-gold-400 transition-colors" />
-                  <p className="font-heading text-lg font-semibold text-white group-hover:text-gold-400 transition-colors">
-                    View destinations on Google Maps
-                  </p>
-                  <p className="mt-2 text-sm text-white/40">
-                    Dubai Harbour &middot; Palm Jumeirah &middot; Dubai Marina &middot; World Islands &middot; Ain Dubai
-                  </p>
-                </a>
-              ) : null}
-            </Reveal>
-          </Container>
-        </section>
-      )}
+      {/* Interactive Map */}
+      <section className="py-16 sm:py-24 bg-navy-900">
+        <Container>
+          <SectionHeading
+            title="Explore the Coast"
+            subtitle="Click any point on the map to see route details, sailing time, and pricing."
+            align="center"
+          />
 
-      {/* Departure Point Banner + Destination Cards Grid */}
+          {/* Controls */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+            <TimeFilter
+              activeFilter={state.activeTimeFilter}
+              onFilterChange={setTimeFilter}
+            />
+            <ViewToggle
+              view={state.view}
+              onViewChange={setView}
+            />
+          </div>
+
+          {/* Map / Catalog toggle */}
+          <div className="relative min-h-[400px]">
+            {/* Map View */}
+            <div
+              className={`view-panel ${
+                state.view === "map" ? "view-panel-active" : "view-panel-hidden"
+              }`}
+            >
+              <Reveal>
+                <div className="relative">
+                  <div className="rounded-2xl overflow-hidden border border-white/5">
+                    <DubaiSchematicMap
+                      items={allItems}
+                      selectedSlug={state.selectedSlug}
+                      hoveredSlug={state.hoveredSlug}
+                      highlightedSlugs={highlightedSlugs}
+                      hasActiveFilter={hasActiveFilter}
+                      onMarkerClick={selectItem}
+                      onMarkerHover={hoverItem}
+                    />
+                  </div>
+
+                  {selectedItem && (
+                    <div className="mt-4 sm:absolute sm:bottom-4 sm:right-4 sm:mt-0">
+                      <RouteCalculator item={selectedItem} />
+                    </div>
+                  )}
+                </div>
+              </Reveal>
+            </div>
+
+            {/* Catalog View */}
+            <div
+              className={`view-panel ${
+                state.view === "catalog" ? "view-panel-active" : "view-panel-hidden"
+              }`}
+            >
+              <CatalogGrid
+                items={filteredItems}
+                activeCategoryFilter={state.activeCategoryFilter}
+                onCategoryChange={setCategoryFilter}
+                onItemClick={selectItem}
+              />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Departure Point Banner + Full Card Grid */}
       <section className="py-24 sm:py-32 bg-navy-950">
         <Container>
           <SectionHeading
-            title="Our Destinations"
+            title="All Adventures"
             subtitle="Every charter route is carefully curated to showcase the best of Dubai's coastline and waterways."
             align="center"
           />
@@ -146,26 +177,13 @@ export function DestinationsPageClient({
             </div>
           </Reveal>
 
-          {/* Cards Grid */}
-          {browsable.length > 0 ? (
-            <div className="grid gap-8 md:grid-cols-2">
-              {browsable.map((destination, i) => (
-                <Reveal key={destination.slug} delay={i * 80}>
-                  <DestinationCard destination={destination} index={i} />
-                </Reveal>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <MapPin className="w-12 h-12 text-white/10 mx-auto mb-4" />
-              <p className="text-white/40 text-lg">
-                No destinations available yet.
-              </p>
-              <p className="text-white/25 text-sm mt-2">
-                Check back soon for new experiences.
-              </p>
-            </div>
-          )}
+          {/* Full catalog */}
+          <CatalogGrid
+            items={allItems}
+            activeCategoryFilter={null}
+            onCategoryChange={() => {}}
+            onItemClick={selectItem}
+          />
         </Container>
       </section>
 
@@ -190,8 +208,8 @@ export function DestinationsPageClient({
 
           <p className="mt-5 text-lg text-white/50 max-w-xl mx-auto leading-relaxed">
             Our crew will tailor the perfect route for your charter experience.
-            Whether it&apos;s a sunset cruise or a full-day island adventure,
-            we&apos;ll make it unforgettable.
+            Whether it&apos;s a sunrise dolphin expedition or a full-day island
+            adventure, we&apos;ll make it unforgettable.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
@@ -207,6 +225,18 @@ export function DestinationsPageClient({
           </div>
         </Container>
       </section>
+
+      {/* Route Drawer */}
+      <RouteDrawer
+        item={selectedItem}
+        isOpen={state.drawerOpen}
+        activeTab={state.drawerTab}
+        onClose={() => {
+          closeDrawer();
+          deselectItem();
+        }}
+        onTabChange={setDrawerTab}
+      />
     </>
   );
 }

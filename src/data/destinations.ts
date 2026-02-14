@@ -1,4 +1,15 @@
-import type { Destination } from "@/types/common";
+import type { Destination, MapPosition } from "@/types/common";
+
+export const MAP_POSITIONS: Record<string, MapPosition> = {
+  dubaiHarbour: { x: 350, y: 330 },
+  palmJumeirah: { x: 250, y: 220 },
+  dubaiMarina: { x: 370, y: 380 },
+  worldIslands: { x: 560, y: 120 },
+  ainDubai: { x: 290, y: 355 },
+  openSea: { x: 160, y: 170 },
+  jumeirahBay: { x: 480, y: 275 },
+  moonIsland: { x: 630, y: 160 },
+};
 
 export const destinations: Destination[] = [
   {
@@ -29,6 +40,11 @@ export const destinations: Destination[] = [
     featured: false,
     whatIncluded: [],
     itinerary: [],
+    mapPosition: MAP_POSITIONS.dubaiHarbour,
+    distanceNM: 0,
+    cruisingTimeMinutes: 0,
+    timeOfDay: ["anytime"],
+    area: "Dubai Harbour",
   },
   {
     slug: "palm-jumeirah",
@@ -58,6 +74,11 @@ export const destinations: Destination[] = [
     featured: true,
     whatIncluded: [],
     itinerary: [],
+    mapPosition: MAP_POSITIONS.palmJumeirah,
+    distanceNM: 4,
+    cruisingTimeMinutes: 20,
+    timeOfDay: ["morning", "afternoon", "sunset"],
+    area: "Palm Jumeirah",
   },
   {
     slug: "dubai-marina",
@@ -87,6 +108,11 @@ export const destinations: Destination[] = [
     featured: true,
     whatIncluded: [],
     itinerary: [],
+    mapPosition: MAP_POSITIONS.dubaiMarina,
+    distanceNM: 2,
+    cruisingTimeMinutes: 15,
+    timeOfDay: ["afternoon", "sunset", "evening"],
+    area: "Dubai Marina",
   },
   {
     slug: "world-islands",
@@ -116,6 +142,12 @@ export const destinations: Destination[] = [
     featured: true,
     whatIncluded: [],
     itinerary: [],
+    mapPosition: MAP_POSITIONS.worldIslands,
+    distanceNM: 15,
+    cruisingTimeMinutes: 50,
+    timeOfDay: ["morning", "afternoon"],
+    specialLabel: "Must See",
+    area: "The World Islands",
   },
   {
     slug: "ain-dubai",
@@ -145,5 +177,10 @@ export const destinations: Destination[] = [
     featured: false,
     whatIncluded: [],
     itinerary: [],
+    mapPosition: MAP_POSITIONS.ainDubai,
+    distanceNM: 1,
+    cruisingTimeMinutes: 8,
+    timeOfDay: ["afternoon", "sunset", "evening"],
+    area: "Bluewaters Island",
   },
 ];
