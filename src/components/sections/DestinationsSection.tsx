@@ -6,15 +6,17 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
 import { DestinationCard } from "@/components/cards/DestinationCard";
 import type { Destination } from "@/types/common";
+import { DEPARTURE_POINT_SLUG } from "@/lib/constants";
 
 interface DestinationsSectionProps {
   destinations: Destination[];
 }
 
 export function DestinationsSection({ destinations }: DestinationsSectionProps) {
-  // Show featured first, then fill up to 4
-  const featured = destinations.filter((d) => d.featured);
-  const rest = destinations.filter((d) => !d.featured);
+  // Exclude departure point, show featured first, then fill up to 4
+  const browsable = destinations.filter((d) => d.slug !== DEPARTURE_POINT_SLUG);
+  const featured = browsable.filter((d) => d.featured);
+  const rest = browsable.filter((d) => !d.featured);
   const display = [...featured, ...rest].slice(0, 4);
 
   return (

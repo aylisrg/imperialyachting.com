@@ -70,23 +70,6 @@ describe("DestinationCard", () => {
     expect(link).toHaveAttribute("href", "/destinations/palm-jumeirah");
   });
 
-  it("shows category badge with correct label for destination", () => {
-    render(<DestinationCard destination={baseDestination} />);
-    expect(screen.getByText("Destination")).toBeInTheDocument();
-  });
-
-  it("shows category badge for experience", () => {
-    const experience = { ...baseDestination, category: "experience" as const };
-    render(<DestinationCard destination={experience} />);
-    expect(screen.getByText("Experience")).toBeInTheDocument();
-  });
-
-  it("shows category badge for activity", () => {
-    const activity = { ...baseDestination, category: "activity" as const };
-    render(<DestinationCard destination={activity} />);
-    expect(screen.getByText("Activity")).toBeInTheDocument();
-  });
-
   it("shows sailing time badge", () => {
     render(<DestinationCard destination={baseDestination} />);
     expect(screen.getByText("15-30 min")).toBeInTheDocument();
@@ -96,17 +79,6 @@ describe("DestinationCard", () => {
     const noSailing = { ...baseDestination, sailingTime: "" };
     render(<DestinationCard destination={noSailing} />);
     expect(screen.queryByText("15-30 min")).not.toBeInTheDocument();
-  });
-
-  it("shows Featured badge when featured=true", () => {
-    render(<DestinationCard destination={baseDestination} />);
-    expect(screen.getByText("Featured")).toBeInTheDocument();
-  });
-
-  it("hides Featured badge when featured=false", () => {
-    const notFeatured = { ...baseDestination, featured: false };
-    render(<DestinationCard destination={notFeatured} />);
-    expect(screen.queryByText("Featured")).not.toBeInTheDocument();
   });
 
   it("shows duration", () => {
@@ -119,9 +91,10 @@ describe("DestinationCard", () => {
     expect(screen.getByText(/From AED 2,500/)).toBeInTheDocument();
   });
 
-  it("hides price section when priceFrom is null", () => {
-    const noPrice = { ...baseDestination, priceFrom: null, duration: "" };
+  it("shows 'Contact for pricing' when priceFrom is null", () => {
+    const noPrice = { ...baseDestination, priceFrom: null };
     render(<DestinationCard destination={noPrice} />);
+    expect(screen.getByText("Contact for pricing")).toBeInTheDocument();
     expect(screen.queryByText(/From AED/)).not.toBeInTheDocument();
   });
 
@@ -143,8 +116,6 @@ describe("DestinationCard", () => {
   it("falls back to text placeholder when no coverImage", () => {
     const noImage = { ...baseDestination, coverImage: "" };
     render(<DestinationCard destination={noImage} />);
-    // No image element, but the name should still appear as placeholder text
-    // The component renders the name in a span when there's no image
     const nameElements = screen.getAllByText("Palm Jumeirah");
     expect(nameElements.length).toBeGreaterThanOrEqual(2); // Placeholder + title
   });

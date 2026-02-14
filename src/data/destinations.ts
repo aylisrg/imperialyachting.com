@@ -26,7 +26,7 @@ export const destinations: Destination[] = [
     longitude: 55.1403,
     mapLabel: "Dubai Harbour",
     videoUrl: "",
-    featured: true,
+    featured: false,
     whatIncluded: [],
     itinerary: [],
   },

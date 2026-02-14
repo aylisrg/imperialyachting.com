@@ -35,6 +35,8 @@ export const SITE_CONFIG = {
   },
 } as const;
 
+export const DEPARTURE_POINT_SLUG = "dubai-harbour";
+
 export const NAV_LINKS = [
   { label: "Fleet", href: "/fleet" },
   { label: "Services", href: "/services" },
