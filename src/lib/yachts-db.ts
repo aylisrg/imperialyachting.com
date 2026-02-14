@@ -1,10 +1,9 @@
 import { createServerSupabase } from "./supabase/server";
 import type { Yacht } from "@/types/yacht";
-import { yachts as staticYachts } from "@/data/yachts";
 
 /**
  * Fetch all yachts from Supabase with images and pricing.
- * Falls back to static data if Supabase returns empty or errors.
+ * Returns empty array if Supabase is unavailable — no static fallback.
  */
 export async function fetchAllYachts(): Promise<Yacht[]> {
   try {
@@ -17,26 +16,25 @@ export async function fetchAllYachts(): Promise<Yacht[]> {
 
     if (error) {
       console.error("[fetchAllYachts] Supabase query error:", error.message);
-      return staticYachts;
+      return [];
     }
 
-    if (!yachts || yachts.length === 0) return staticYachts;
+    if (!yachts || yachts.length === 0) return [];
 
     return Promise.all(
       yachts.map((y) => mapYachtFromDB(supabase, y, false))
     );
   } catch (error) {
     console.error("[fetchAllYachts] Unexpected error:", error);
-    return staticYachts;
+    return [];
   }
 }
 
 /**
  * Fetch featured yachts from Supabase.
- * Falls back to static featured yachts if Supabase returns empty or errors.
+ * Returns empty array if Supabase is unavailable — no static fallback.
  */
 export async function fetchFeaturedYachts(): Promise<Yacht[]> {
-  const staticFeatured = staticYachts.filter((y) => y.featured);
   try {
     const supabase = await createServerSupabase();
 
@@ -48,26 +46,25 @@ export async function fetchFeaturedYachts(): Promise<Yacht[]> {
 
     if (error) {
       console.error("[fetchFeaturedYachts] Supabase query error:", error.message);
-      return staticFeatured;
+      return [];
     }
 
-    if (!yachts || yachts.length === 0) return staticFeatured;
+    if (!yachts || yachts.length === 0) return [];
 
     return Promise.all(
       yachts.map((y) => mapYachtFromDB(supabase, y, false))
     );
   } catch (error) {
     console.error("[fetchFeaturedYachts] Unexpected error:", error);
-    return staticFeatured;
+    return [];
   }
 }
 
 /**
  * Fetch a single yacht with all relations (specs, amenities, pricing, included).
- * Falls back to static data if Supabase returns null or errors.
+ * Returns null if not found or Supabase is unavailable — no static fallback.
  */
 export async function fetchYachtBySlug(slug: string): Promise<Yacht | null> {
-  const staticMatch = staticYachts.find((y) => y.slug === slug) ?? null;
   try {
     const supabase = await createServerSupabase();
 
@@ -79,15 +76,15 @@ export async function fetchYachtBySlug(slug: string): Promise<Yacht | null> {
 
     if (error) {
       console.error(`[fetchYachtBySlug] Supabase query error for "${slug}":`, error.message);
-      return staticMatch;
+      return null;
     }
 
-    if (!yacht) return staticMatch;
+    if (!yacht) return null;
 
     return mapYachtFromDB(supabase, yacht, true);
   } catch (error) {
     console.error(`[fetchYachtBySlug] Unexpected error for "${slug}":`, error);
-    return staticMatch;
+    return null;
   }
 }
 
@@ -138,7 +135,7 @@ async function mapYachtFromDB(supabase: any, dbYacht: any, full: boolean): Promi
   const heroImage =
     images.find((img: any) => img.category === "hero")?.url ??
     images[0]?.url ??
-    `/media/yachts/${dbYacht.slug}/hero.jpg`;
+    "";
 
   const imageUrls: string[] = images.map((img: any) => img.url);
 
