@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -8,32 +8,23 @@ import {
   Clock,
   Timer,
   MapPin,
-  Sparkles,
-  Tag,
   CheckCircle,
   Play,
   MessageCircle,
   Phone,
   Anchor,
-  Compass,
+  Navigation,
+  Ship,
 } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { YachtGallery } from "@/components/gallery/YachtGallery";
-import { DubaiCoastMap } from "@/components/maps/DubaiCoastMap";
 import { DestinationCard } from "@/components/cards/DestinationCard";
 import { getEmbedUrl } from "@/lib/utils";
 import { SITE_CONFIG } from "@/lib/constants";
 import type { Destination } from "@/types/common";
-
-const categoryLabels: Record<string, string> = {
-  destination: "Destination",
-  experience: "Experience",
-  activity: "Activity",
-};
 
 interface Props {
   destination: Destination;
@@ -45,6 +36,18 @@ export function DestinationDetailClient({ destination, related }: Props) {
   const embedUrl = getEmbedUrl(destination.videoUrl);
   const hasVideo = !!embedUrl;
   const hasGallery = destination.galleryImages.length > 0;
+
+  // Google Maps embed or link for this destination
+  const mapsEmbedUrl = useMemo(() => {
+    const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
+    if (!key || !destination.latitude || !destination.longitude) return null;
+    return `https://www.google.com/maps/embed/v1/place?key=${key}&q=${destination.latitude},${destination.longitude}&zoom=14&maptype=satellite`;
+  }, [destination.latitude, destination.longitude]);
+
+  const mapsLinkUrl = useMemo(() => {
+    if (!destination.latitude || !destination.longitude) return null;
+    return `https://www.google.com/maps?q=${destination.latitude},${destination.longitude}`;
+  }, [destination.latitude, destination.longitude]);
 
   return (
     <>
@@ -74,31 +77,16 @@ export function DestinationDetailClient({ destination, related }: Props) {
       {/* Hero — video or cover image */}
       <section className="pt-8 pb-12 sm:pb-16 bg-navy-950">
         <Container>
-          {/* Title + category */}
-          <div className="flex flex-wrap items-start gap-4 mb-8">
-            <div>
-              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
-                {destination.name}
-              </h1>
-              {destination.shortDescription && (
-                <p className="mt-2 text-lg sm:text-xl text-white/50 max-w-2xl">
-                  {destination.shortDescription}
-                </p>
-              )}
-            </div>
-            <Badge
-              variant={destination.category === "destination" ? "gold" : "sea"}
-              className="mt-2 sm:mt-3"
-            >
-              {destination.category === "experience" ? (
-                <Sparkles className="w-3 h-3 mr-1" />
-              ) : destination.category === "activity" ? (
-                <Tag className="w-3 h-3 mr-1" />
-              ) : (
-                <MapPin className="w-3 h-3 mr-1" />
-              )}
-              {categoryLabels[destination.category] || "Destination"}
-            </Badge>
+          {/* Title */}
+          <div className="mb-8">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
+              {destination.name}
+            </h1>
+            {destination.shortDescription && (
+              <p className="mt-2 text-lg sm:text-xl text-white/50 max-w-2xl">
+                {destination.shortDescription}
+              </p>
+            )}
           </div>
 
           {/* Video with facade pattern */}
@@ -157,7 +145,7 @@ export function DestinationDetailClient({ destination, related }: Props) {
       {/* Quick Info Bar */}
       <section className="py-8 bg-navy-900 border-y border-white/5">
         <Container>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
             {destination.duration && (
               <QuickInfo
                 icon={<Timer className="w-5 h-5 text-gold-500" />}
@@ -165,13 +153,15 @@ export function DestinationDetailClient({ destination, related }: Props) {
                 value={destination.duration}
               />
             )}
-            {destination.priceFrom && (
-              <QuickInfo
-                icon={<Tag className="w-5 h-5 text-gold-500" />}
-                label="Starting from"
-                value={`AED ${destination.priceFrom.toLocaleString("en-US")}`}
-              />
-            )}
+            <QuickInfo
+              icon={<Ship className="w-5 h-5 text-gold-500" />}
+              label="Starting from"
+              value={
+                destination.priceFrom
+                  ? `AED ${destination.priceFrom.toLocaleString("en-US")}`
+                  : "Contact for pricing"
+              }
+            />
             {destination.sailingTime && (
               <QuickInfo
                 icon={<Clock className="w-5 h-5 text-gold-500" />}
@@ -179,21 +169,16 @@ export function DestinationDetailClient({ destination, related }: Props) {
                 value={destination.sailingTime}
               />
             )}
-            <QuickInfo
-              icon={<Compass className="w-5 h-5 text-gold-500" />}
-              label="Type"
-              value={categoryLabels[destination.category] || "Destination"}
-            />
           </div>
         </Container>
       </section>
 
-      {/* Long Description */}
+      {/* Description + Highlights (merged) */}
       <section className="py-16 sm:py-24 bg-navy-950">
         <Container>
           <div className="max-w-4xl">
             <SectionHeading
-              title="About This Experience"
+              title="About This Destination"
               subtitle="Discover what makes this destination exceptional."
             />
             <p className="text-white/70 text-lg leading-relaxed whitespace-pre-line">
@@ -208,6 +193,26 @@ export function DestinationDetailClient({ destination, related }: Props) {
                 <span className="font-heading text-2xl font-bold text-white">
                   AED {destination.priceFrom.toLocaleString("en-US")}
                 </span>
+              </div>
+            )}
+
+            {/* Highlights inline */}
+            {destination.highlights.length > 0 && (
+              <div className="mt-10">
+                <h3 className="font-heading text-xl font-bold text-white mb-4">
+                  Highlights
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {destination.highlights.map((highlight) => (
+                    <div
+                      key={highlight}
+                      className="flex items-center gap-3 py-2"
+                    >
+                      <CheckCircle className="w-4 h-4 text-gold-500/70 flex-shrink-0" />
+                      <span className="text-white/60 text-sm">{highlight}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -264,7 +269,6 @@ export function DestinationDetailClient({ destination, related }: Props) {
               {destination.itinerary.map((step, i) => (
                 <Reveal key={i} delay={i * 80}>
                   <div className="relative flex items-start gap-4">
-                    {/* Step number circle */}
                     <div className="absolute -left-10 top-0.5 w-8 h-8 rounded-full bg-gold-500/10 border-2 border-gold-500/30 flex items-center justify-center flex-shrink-0">
                       <span className="text-xs font-heading font-bold text-gold-400">
                         {i + 1}
@@ -283,41 +287,47 @@ export function DestinationDetailClient({ destination, related }: Props) {
         </section>
       )}
 
-      {/* Highlights */}
-      {destination.highlights.length > 0 && (
-        <section className="py-16 sm:py-24 bg-navy-950">
-          <Container>
-            <SectionHeading
-              title="Highlights"
-              subtitle="Key features of this experience."
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
-              {destination.highlights.map((highlight, i) => (
-                <Reveal key={highlight} delay={i * 60}>
-                  <div className="flex items-center gap-3 py-3 px-4 rounded-lg bg-navy-800/50 border border-white/5 hover:border-gold-500/10 transition-colors">
-                    <CheckCircle className="w-5 h-5 text-gold-500/70 flex-shrink-0" />
-                    <span className="text-white/70 text-sm">{highlight}</span>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </Container>
-        </section>
-      )}
-
       {/* Map */}
-      {destination.latitude && destination.longitude && (
+      {(mapsEmbedUrl || mapsLinkUrl) && (
         <section className="py-16 sm:py-24 bg-navy-900">
           <Container>
             <SectionHeading
               title="Location"
               subtitle={`${destination.name} on the Dubai coastline.`}
             />
-            <DubaiCoastMap
-              destinations={[destination]}
-              highlightSlug={destination.slug}
-              compact
-            />
+            {mapsEmbedUrl ? (
+              <div className="relative aspect-[16/9] rounded-xl overflow-hidden border border-white/5">
+                <iframe
+                  src={mapsEmbedUrl}
+                  title={`${destination.name} location on map`}
+                  className="absolute inset-0 w-full h-full"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            ) : mapsLinkUrl ? (
+              <a
+                href={mapsLinkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 rounded-xl border border-white/5 hover:border-gold-500/15 bg-navy-800 p-6 transition-all duration-300 group"
+              >
+                <div className="w-12 h-12 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold-500/20 transition-colors">
+                  <Navigation className="w-6 h-6 text-gold-400" />
+                </div>
+                <div>
+                  <p className="font-heading font-semibold text-white group-hover:text-gold-400 transition-colors">
+                    View on Google Maps
+                  </p>
+                  <p className="text-sm text-white/40 mt-0.5">
+                    <MapPin className="w-3 h-3 inline mr-1" />
+                    {destination.name} — Dubai, UAE
+                  </p>
+                </div>
+              </a>
+            ) : null}
           </Container>
         </section>
       )}
@@ -348,6 +358,9 @@ export function DestinationDetailClient({ destination, related }: Props) {
             <Button variant="primary" size="lg" href={SITE_CONFIG.whatsapp}>
               <MessageCircle className="w-5 h-5" />
               WhatsApp Us
+            </Button>
+            <Button variant="secondary" size="lg" href="/fleet">
+              View Our Fleet
             </Button>
             <Button variant="secondary" size="lg" href="/contact">
               <Phone className="w-5 h-5" />

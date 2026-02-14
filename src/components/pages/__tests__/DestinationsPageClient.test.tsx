@@ -1,13 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { DestinationsPageClient } from "../DestinationsPageClient";
 import type { Destination } from "@/types/common";
-
-// Mock next/navigation
-const mockPush = vi.fn();
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
-}));
 
 // Mock next/image
 vi.mock("next/image", () => ({
@@ -59,24 +53,22 @@ const makeDestination = (
 
 const testDestinations: Destination[] = [
   makeDestination({
+    slug: "dubai-harbour",
+    name: "Dubai Harbour",
+    sailingTime: "Departure point",
+    duration: "",
+  }),
+  makeDestination({
     slug: "palm",
     name: "Palm Jumeirah",
-    category: "destination",
   }),
   makeDestination({
     slug: "world",
     name: "World Islands",
-    category: "destination",
   }),
   makeDestination({
-    slug: "efoil",
-    name: "Efoil Trip",
-    category: "experience",
-  }),
-  makeDestination({
-    slug: "fishing",
-    name: "Deep Sea Fishing",
-    category: "activity",
+    slug: "marina",
+    name: "Dubai Marina",
   }),
 ];
 
@@ -84,44 +76,42 @@ describe("DestinationsPageClient", () => {
   it("renders the hero heading", () => {
     render(<DestinationsPageClient destinations={testDestinations} />);
     expect(
-      screen.getByText(/Dubai's Finest Yacht Experiences/i)
+      screen.getByText(/Dubai's Finest Yacht Destinations/i)
     ).toBeInTheDocument();
   });
 
-  it("renders all filter tabs with correct counts", () => {
+  it("renders departure point banner", () => {
     render(<DestinationsPageClient destinations={testDestinations} />);
-    // All (4), Destinations (2), Experiences (1), Activities (1)
-    expect(screen.getByText("4")).toBeInTheDocument();
-    expect(screen.getByText("2")).toBeInTheDocument();
-    // Both experience and activity have count "1" — use getAllByText
-    const onesSpans = screen.getAllByText("1");
-    expect(onesSpans.length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText(/All charters depart from/i)).toBeInTheDocument();
+    expect(screen.getByText("Dubai Harbour")).toBeInTheDocument();
   });
 
-  it("renders destination cards for all destinations by default", () => {
+  it("excludes Dubai Harbour from destination cards grid", () => {
     render(<DestinationsPageClient destinations={testDestinations} />);
-    expect(screen.getByText("Palm Jumeirah")).toBeInTheDocument();
-    expect(screen.getByText("World Islands")).toBeInTheDocument();
-    expect(screen.getByText("Efoil Trip")).toBeInTheDocument();
-    expect(screen.getByText("Deep Sea Fishing")).toBeInTheDocument();
+    // Dubai Harbour should appear in the departure banner text but not as a card
+    // Cards render destination names as h3 headings
+    const headings = screen.getAllByRole("heading", { level: 3 });
+    const cardNames = headings.map((h) => h.textContent);
+    expect(cardNames).not.toContain("Dubai Harbour");
+    // Browsable destinations should be shown
+    expect(cardNames).toContain("Palm Jumeirah");
+    expect(cardNames).toContain("World Islands");
+    expect(cardNames).toContain("Dubai Marina");
   });
 
-  it("renders Explore Our Routes heading for map section", () => {
-    render(<DestinationsPageClient destinations={testDestinations} />);
-    expect(screen.getByText("Explore Our Routes")).toBeInTheDocument();
-  });
-
-  it("renders seasonal guide section", () => {
-    render(<DestinationsPageClient destinations={testDestinations} />);
-    expect(screen.getByText("When to Charter")).toBeInTheDocument();
-    expect(screen.getByText("Peak Season")).toBeInTheDocument();
-    expect(screen.getByText("Summer Season")).toBeInTheDocument();
-  });
-
-  it("renders CTA section", () => {
+  it("renders CTA section with fleet link", () => {
     render(<DestinationsPageClient destinations={testDestinations} />);
     expect(
       screen.getByText(/Ready to Explore Dubai's Coastline/i)
+    ).toBeInTheDocument();
+    expect(screen.getByText("View Our Fleet")).toBeInTheDocument();
+  });
+
+  it("renders Google Maps link when destinations have coordinates", () => {
+    render(<DestinationsPageClient destinations={testDestinations} />);
+    expect(screen.getByText("Explore the Coast")).toBeInTheDocument();
+    expect(
+      screen.getByText("View destinations on Google Maps")
     ).toBeInTheDocument();
   });
 
@@ -132,33 +122,26 @@ describe("DestinationsPageClient", () => {
       longitude: null,
     }));
     render(<DestinationsPageClient destinations={noCoords} />);
-    expect(screen.queryByText("Explore Our Routes")).not.toBeInTheDocument();
+    expect(screen.queryByText("Explore the Coast")).not.toBeInTheDocument();
   });
 
-  it("shows empty state text when empty destinations array", () => {
+  it("shows empty state when only departure point exists", () => {
+    const onlyDeparture = [
+      makeDestination({
+        slug: "dubai-harbour",
+        name: "Dubai Harbour",
+      }),
+    ];
+    render(<DestinationsPageClient destinations={onlyDeparture} />);
+    expect(
+      screen.getByText(/No destinations available yet/i)
+    ).toBeInTheDocument();
+  });
+
+  it("shows empty state when destinations array is empty", () => {
     render(<DestinationsPageClient destinations={[]} />);
-    expect(screen.getByText(/No.*destinations available yet/i)).toBeInTheDocument();
-  });
-
-  it("filters destinations by tab click", () => {
-    render(<DestinationsPageClient destinations={testDestinations} />);
-
-    // Find and click the button containing the Destinations count "2"
-    // Tab buttons contain: icon + label + count
-    const allButtons = screen.getAllByRole("button");
-    // Find the Destinations tab — it has count "2"
-    const destinationsTab = allButtons.find((btn) =>
-      btn.textContent?.includes("Destinations")
-    );
-
-    if (destinationsTab) {
-      fireEvent.click(destinationsTab);
-      // After clicking, should show only destinations
-      expect(screen.getByText("Palm Jumeirah")).toBeInTheDocument();
-      expect(screen.getByText("World Islands")).toBeInTheDocument();
-      // Experiences and activities should be hidden
-      expect(screen.queryByText("Efoil Trip")).not.toBeInTheDocument();
-      expect(screen.queryByText("Deep Sea Fishing")).not.toBeInTheDocument();
-    }
+    expect(
+      screen.getByText(/No destinations available yet/i)
+    ).toBeInTheDocument();
   });
 });

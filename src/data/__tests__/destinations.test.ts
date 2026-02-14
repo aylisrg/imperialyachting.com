@@ -53,8 +53,8 @@ describe("static destinations data", () => {
     }
   });
 
-  it("has 4 featured destinations", () => {
-    expect(destinations.filter((d) => d.featured)).toHaveLength(4);
+  it("has 3 featured destinations", () => {
+    expect(destinations.filter((d) => d.featured)).toHaveLength(3);
   });
 
   it("array fields are arrays", () => {

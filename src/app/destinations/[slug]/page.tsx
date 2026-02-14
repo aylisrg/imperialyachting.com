@@ -6,7 +6,7 @@ import {
   fetchAllDestinations,
   fetchDestinationBySlug,
 } from "@/lib/destinations-db";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SITE_CONFIG, DEPARTURE_POINT_SLUG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { destinationSchema } from "@/components/seo/schemas";
 import { DestinationDetailClient } from "./DestinationDetailClient";
@@ -52,20 +52,11 @@ export default async function DestinationDetailPage({
     notFound();
   }
 
-  // Fetch related destinations (same category, excluding self)
+  // Fetch related destinations (excluding self and departure point)
   const all = await fetchAllDestinations();
   const related = all
-    .filter((d) => d.slug !== slug)
-    .filter((d) => d.category === destination.category)
+    .filter((d) => d.slug !== slug && d.slug !== DEPARTURE_POINT_SLUG)
     .slice(0, 3);
-
-  // If not enough same-category, fill from others
-  if (related.length < 3) {
-    const others = all
-      .filter((d) => d.slug !== slug && !related.find((r) => r.slug === d.slug))
-      .slice(0, 3 - related.length);
-    related.push(...others);
-  }
 
   return (
     <>

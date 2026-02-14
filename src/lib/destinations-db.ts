@@ -1,6 +1,7 @@
 import { createServerSupabase } from "./supabase/server";
 import type { Destination, DestinationCategory } from "@/types/common";
 import type { DestinationRow } from "./supabase/types";
+import { destinations as staticDestinations } from "@/data/destinations";
 
 function mapDestination(d: DestinationRow): Destination {
   return {
@@ -29,7 +30,7 @@ function mapDestination(d: DestinationRow): Destination {
 
 /**
  * Fetch all destinations from Supabase.
- * Returns only data from the admin panel — no hardcoded fallback.
+ * Falls back to static data if Supabase returns empty or errors.
  */
 export async function fetchAllDestinations(): Promise<Destination[]> {
   try {
@@ -42,27 +43,28 @@ export async function fetchAllDestinations(): Promise<Destination[]> {
 
     if (error) {
       console.error("[fetchAllDestinations] Supabase query error:", error.message);
-      return [];
+      return staticDestinations;
     }
 
     const rows = destinations as DestinationRow[] | null;
 
-    if (!rows || rows.length === 0) return [];
+    if (!rows || rows.length === 0) return staticDestinations;
 
     return rows.map(mapDestination);
   } catch (error) {
     console.error("[fetchAllDestinations] Unexpected error:", error);
-    return [];
+    return staticDestinations;
   }
 }
 
 /**
  * Fetch a single destination by slug.
- * Returns only data from the admin panel — no hardcoded fallback.
+ * Falls back to static data if Supabase returns null or errors.
  */
 export async function fetchDestinationBySlug(
   slug: string
 ): Promise<Destination | null> {
+  const staticMatch = staticDestinations.find((d) => d.slug === slug) ?? null;
   try {
     const supabase = await createServerSupabase();
 
@@ -74,25 +76,26 @@ export async function fetchDestinationBySlug(
 
     if (error) {
       console.error(`[fetchDestinationBySlug] Supabase query error for "${slug}":`, error.message);
-      return null;
+      return staticMatch;
     }
 
     const row = data as DestinationRow | null;
 
     if (row) return mapDestination(row);
 
-    return null;
+    return staticMatch;
   } catch (error) {
     console.error(`[fetchDestinationBySlug] Unexpected error for "${slug}":`, error);
-    return null;
+    return staticMatch;
   }
 }
 
 /**
  * Fetch featured destinations for homepage.
- * Returns only data from the admin panel — no hardcoded fallback.
+ * Falls back to static featured destinations if Supabase returns empty or errors.
  */
 export async function fetchFeaturedDestinations(): Promise<Destination[]> {
+  const staticFeatured = staticDestinations.filter((d) => d.featured);
   try {
     const supabase = await createServerSupabase();
 
@@ -104,16 +107,16 @@ export async function fetchFeaturedDestinations(): Promise<Destination[]> {
 
     if (error) {
       console.error("[fetchFeaturedDestinations] Supabase query error:", error.message);
-      return [];
+      return staticFeatured;
     }
 
     const rows = destinations as DestinationRow[] | null;
 
-    if (!rows || rows.length === 0) return [];
+    if (!rows || rows.length === 0) return staticFeatured;
 
     return rows.map(mapDestination);
   } catch (error) {
     console.error("[fetchFeaturedDestinations] Unexpected error:", error);
-    return [];
+    return staticFeatured;
   }
 }

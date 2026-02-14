@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { destinations as staticDestinations } from "@/data/destinations";
 
 // Mock the Supabase server client
 const mockSelect = vi.fn();
@@ -80,22 +81,32 @@ describe("destinations-db", () => {
       expect(result[0].category).toBe("destination");
     });
 
-    it("returns empty array when Supabase returns empty", async () => {
+    it("falls back to static data when Supabase returns empty", async () => {
       setupChain([]);
 
       const { fetchAllDestinations } = await import("../destinations-db");
       const result = await fetchAllDestinations();
 
-      expect(result).toEqual([]);
+      expect(result.length).toBe(staticDestinations.length);
+      expect(result[0].slug).toBe(staticDestinations[0].slug);
     });
 
-    it("returns empty array when Supabase returns null", async () => {
+    it("falls back to static data when Supabase returns null", async () => {
       setupChain(null);
 
       const { fetchAllDestinations } = await import("../destinations-db");
       const result = await fetchAllDestinations();
 
-      expect(result).toEqual([]);
+      expect(result.length).toBe(staticDestinations.length);
+    });
+
+    it("falls back to static data on Supabase query error", async () => {
+      setupChain(null, { message: "connection refused" });
+
+      const { fetchAllDestinations } = await import("../destinations-db");
+      const result = await fetchAllDestinations();
+
+      expect(result.length).toBe(staticDestinations.length);
     });
   });
 
@@ -111,7 +122,7 @@ describe("destinations-db", () => {
       expect(result!.name).toBe("Palm Jumeirah");
     });
 
-    it("returns null when slug not found in database", async () => {
+    it("falls back to static data when slug exists in static but not in DB", async () => {
       mockFrom.mockReturnValue({ select: mockSelect });
       mockSelect.mockReturnValue({ eq: mockEq });
       mockEq.mockReturnValue({ single: mockSingle });
@@ -120,10 +131,11 @@ describe("destinations-db", () => {
       const { fetchDestinationBySlug } = await import("../destinations-db");
       const result = await fetchDestinationBySlug("palm-jumeirah");
 
-      expect(result).toBeNull();
+      expect(result).not.toBeNull();
+      expect(result!.slug).toBe("palm-jumeirah");
     });
 
-    it("returns null for nonexistent slug", async () => {
+    it("returns null for slug that does not exist anywhere", async () => {
       mockFrom.mockReturnValue({ select: mockSelect });
       mockSelect.mockReturnValue({ eq: mockEq });
       mockEq.mockReturnValue({ single: mockSingle });
@@ -148,13 +160,14 @@ describe("destinations-db", () => {
       expect(result.every((d) => d.featured || d.slug === "palm-jumeirah")).toBe(true);
     });
 
-    it("returns empty array on empty response", async () => {
+    it("falls back to static featured data on empty response", async () => {
       setupChain([]);
 
       const { fetchFeaturedDestinations } = await import("../destinations-db");
       const result = await fetchFeaturedDestinations();
 
-      expect(result).toEqual([]);
+      const staticFeatured = staticDestinations.filter((d) => d.featured);
+      expect(result.length).toBe(staticFeatured.length);
     });
   });
 
