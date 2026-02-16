@@ -28,6 +28,7 @@ export const services: ServiceItem[] = [
       "Full-service yacht branding and marketing — brand identity, yacht wrapping, digital campaigns, and luxury brand positioning.",
     icon: "palette",
     href: "/services/brandwave",
+    externalUrl: "https://brandwave.imperialyachting.com/",
   },
 ];
 

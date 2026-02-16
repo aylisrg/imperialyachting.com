@@ -10,6 +10,7 @@ import {
   SlidersHorizontal,
   CheckCircle2,
   Sparkles,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
@@ -129,6 +130,13 @@ export function ServicesPageContent() {
                       </span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                     </div>
+
+                    {service.externalUrl && (
+                      <div className="mt-3 flex items-center gap-2 text-white/40 text-xs font-medium">
+                        <ExternalLink className="w-3 h-3" />
+                        <span>brandwave.imperialyachting.com</span>
+                      </div>
+                    )}
                   </Link>
                 </Reveal>
               );

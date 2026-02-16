@@ -25,6 +25,10 @@ function mapDestination(d: DestinationRow): Destination {
     featured: d.featured ?? false,
     whatIncluded: d.what_included || [],
     itinerary: d.itinerary || [],
+    mapPosition:
+      d.map_x != null && d.map_y != null
+        ? { x: d.map_x, y: d.map_y }
+        : undefined,
   };
 }
 

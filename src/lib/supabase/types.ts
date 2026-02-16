@@ -238,6 +238,8 @@ export interface Database {
           featured: boolean;
           what_included: string[];
           itinerary: string[];
+          map_x: number | null;
+          map_y: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -264,6 +266,8 @@ export interface Database {
           featured?: boolean;
           what_included?: string[];
           itinerary?: string[];
+          map_x?: number | null;
+          map_y?: number | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -290,6 +294,8 @@ export interface Database {
           featured?: boolean;
           what_included?: string[];
           itinerary?: string[];
+          map_x?: number | null;
+          map_y?: number | null;
           created_at?: string;
           updated_at?: string;
         };

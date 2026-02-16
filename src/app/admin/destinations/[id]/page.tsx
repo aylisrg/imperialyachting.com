@@ -14,16 +14,18 @@ import {
   Star,
 } from "lucide-react";
 import { AdminHeader } from "../../components/AdminHeader";
+import { AdminMapEditor } from "../components/AdminMapEditor";
 import { createClient } from "@/lib/supabase/client";
 import { getEmbedUrl } from "@/lib/utils";
 import type { DestinationRow } from "@/lib/supabase/types";
 
-type Tab = "details" | "media" | "content";
+type Tab = "details" | "media" | "content" | "map";
 
 const tabLabels: { id: Tab; label: string }[] = [
   { id: "details", label: "Details" },
   { id: "media", label: "Media" },
   { id: "content", label: "Content" },
+  { id: "map", label: "Map" },
 ];
 
 const categoryOptions = [
@@ -58,6 +60,8 @@ export default function DestinationEditor() {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [mapLabel, setMapLabel] = useState("");
+  const [mapX, setMapX] = useState<number | null>(null);
+  const [mapY, setMapY] = useState<number | null>(null);
 
   // Media tab state
   const [coverImage, setCoverImage] = useState("");
@@ -106,6 +110,8 @@ export default function DestinationEditor() {
       setLatitude(dest.latitude ? String(dest.latitude) : "");
       setLongitude(dest.longitude ? String(dest.longitude) : "");
       setMapLabel(dest.map_label || "");
+      setMapX(dest.map_x ?? null);
+      setMapY(dest.map_y ?? null);
 
       setCoverImage(dest.cover_image || dest.image || "");
       setGalleryImages(dest.gallery_images || []);
@@ -248,6 +254,8 @@ export default function DestinationEditor() {
       latitude: latitude ? parseFloat(latitude) || null : null,
       longitude: longitude ? parseFloat(longitude) || null : null,
       map_label: mapLabel.trim() || null,
+      map_x: mapX,
+      map_y: mapY,
       image: coverImage,
       cover_image: coverImage || null,
       gallery_images: galleryImages,
@@ -835,6 +843,74 @@ export default function DestinationEditor() {
               }
               numbered
             />
+          </div>
+        )}
+
+        {/* Tab 4: Map */}
+        {activeTab === "map" && (
+          <div className="space-y-6">
+            <div className="p-6 bg-navy-800 rounded-xl border border-white/5 space-y-4">
+              <h2 className="font-heading text-lg font-bold text-white">
+                Map Position
+              </h2>
+              <p className="text-sm text-white/40">
+                Drag the marker to set the position on the schematic Dubai map.
+                This determines where the destination appears on the public
+                Destinations page.
+              </p>
+
+              <AdminMapEditor
+                points={[
+                  {
+                    id: id,
+                    name: name || "New Destination",
+                    mapLabel: mapLabel || name || "New",
+                    x: mapX ?? 500,
+                    y: mapY ?? 300,
+                    category: category,
+                  },
+                ]}
+                editingPointId={id}
+                onSave={(pts) => {
+                  const pt = pts[0];
+                  if (pt) {
+                    setMapX(pt.x);
+                    setMapY(pt.y);
+                  }
+                }}
+              />
+
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label className="block text-sm font-medium text-white/60 mb-2">
+                    Map X
+                  </label>
+                  <input
+                    type="number"
+                    value={mapX ?? ""}
+                    onChange={(e) =>
+                      setMapX(e.target.value ? parseInt(e.target.value) : null)
+                    }
+                    className="admin-input"
+                    placeholder="SVG X coordinate"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-white/60 mb-2">
+                    Map Y
+                  </label>
+                  <input
+                    type="number"
+                    value={mapY ?? ""}
+                    onChange={(e) =>
+                      setMapY(e.target.value ? parseInt(e.target.value) : null)
+                    }
+                    className="admin-input"
+                    placeholder="SVG Y coordinate"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
