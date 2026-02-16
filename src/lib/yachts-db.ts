@@ -1,91 +1,86 @@
 import { createServerSupabase } from "./supabase/server";
+import { withRetry } from "./supabase/with-retry";
 import type { Yacht } from "@/types/yacht";
 
 /**
  * Fetch all yachts from Supabase with images and pricing.
- * Returns empty array if Supabase is unavailable — no static fallback.
+ * Retries on transient failures. Throws on persistent failure —
+ * never silently returns empty (let error boundaries handle it).
  */
 export async function fetchAllYachts(): Promise<Yacht[]> {
-  try {
-    const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase();
 
-    const { data: yachts, error } = await supabase
-      .from("yachts")
-      .select("*")
-      .order("created_at", { ascending: true });
+  const yachts = await withRetry(
+    () =>
+      supabase
+        .from("yachts")
+        .select("*")
+        .order("created_at", { ascending: true }),
+    { label: "fetchAllYachts" }
+  );
 
-    if (error) {
-      console.error("[fetchAllYachts] Supabase query error:", error.message);
-      return [];
-    }
+  if (!yachts || (yachts as unknown[]).length === 0) return [];
 
-    if (!yachts || yachts.length === 0) return [];
-
-    return Promise.all(
-      yachts.map((y) => mapYachtFromDB(supabase, y, false))
-    );
-  } catch (error) {
-    console.error("[fetchAllYachts] Unexpected error:", error);
-    return [];
-  }
+  return Promise.all(
+    (yachts as Record<string, unknown>[]).map((y) =>
+      mapYachtFromDB(supabase, y, false)
+    )
+  );
 }
 
 /**
  * Fetch featured yachts from Supabase.
- * Returns empty array if Supabase is unavailable — no static fallback.
+ * Retries on transient failures. Throws on persistent failure.
  */
 export async function fetchFeaturedYachts(): Promise<Yacht[]> {
-  try {
-    const supabase = await createServerSupabase();
+  const supabase = await createServerSupabase();
 
-    const { data: yachts, error } = await supabase
-      .from("yachts")
-      .select("*")
-      .eq("featured", true)
-      .order("created_at", { ascending: true });
+  const yachts = await withRetry(
+    () =>
+      supabase
+        .from("yachts")
+        .select("*")
+        .eq("featured", true)
+        .order("created_at", { ascending: true }),
+    { label: "fetchFeaturedYachts" }
+  );
 
-    if (error) {
-      console.error("[fetchFeaturedYachts] Supabase query error:", error.message);
-      return [];
-    }
+  if (!yachts || (yachts as unknown[]).length === 0) return [];
 
-    if (!yachts || yachts.length === 0) return [];
-
-    return Promise.all(
-      yachts.map((y) => mapYachtFromDB(supabase, y, false))
-    );
-  } catch (error) {
-    console.error("[fetchFeaturedYachts] Unexpected error:", error);
-    return [];
-  }
+  return Promise.all(
+    (yachts as Record<string, unknown>[]).map((y) =>
+      mapYachtFromDB(supabase, y, false)
+    )
+  );
 }
 
 /**
  * Fetch a single yacht with all relations (specs, amenities, pricing, included).
- * Returns null if not found or Supabase is unavailable — no static fallback.
+ * Retries on transient failures. Throws on persistent failure.
+ * Returns null only when the yacht genuinely doesn't exist.
  */
-export async function fetchYachtBySlug(slug: string): Promise<Yacht | null> {
-  try {
-    const supabase = await createServerSupabase();
+export async function fetchYachtBySlug(
+  slug: string
+): Promise<Yacht | null> {
+  const supabase = await createServerSupabase();
 
-    const { data: yacht, error } = await supabase
-      .from("yachts")
-      .select("*")
-      .eq("slug", slug)
-      .single();
+  const yacht = await withRetry(
+    () =>
+      supabase
+        .from("yachts")
+        .select("*")
+        .eq("slug", slug)
+        .single(),
+    { label: `fetchYachtBySlug(${slug})` }
+  );
 
-    if (error) {
-      console.error(`[fetchYachtBySlug] Supabase query error for "${slug}":`, error.message);
-      return null;
-    }
+  if (!yacht) return null;
 
-    if (!yacht) return null;
-
-    return mapYachtFromDB(supabase, yacht, true);
-  } catch (error) {
-    console.error(`[fetchYachtBySlug] Unexpected error for "${slug}":`, error);
-    return null;
-  }
+  return mapYachtFromDB(
+    supabase,
+    yacht as Record<string, unknown>,
+    true
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
