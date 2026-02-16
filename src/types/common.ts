@@ -21,6 +21,13 @@ export interface Testimonial {
 
 export type DestinationCategory = "destination" | "experience" | "activity";
 
+export type TimeOfDay = "sunrise" | "morning" | "afternoon" | "sunset" | "evening" | "anytime";
+
+export interface MapPosition {
+  x: number;
+  y: number;
+}
+
 export interface Destination {
   slug: string;
   name: string;
@@ -42,6 +49,15 @@ export interface Destination {
   featured: boolean;
   whatIncluded: string[];
   itinerary: string[];
+  mapPosition?: MapPosition;
+  distanceNM?: number;
+  cruisingTimeMinutes?: number;
+  recommendedStartTime?: string;
+  timeOfDay?: TimeOfDay[];
+  specialLabel?: string;
+  statistic?: string;
+  startTime?: string;
+  area?: string;
 }
 
 export interface ServiceItem {

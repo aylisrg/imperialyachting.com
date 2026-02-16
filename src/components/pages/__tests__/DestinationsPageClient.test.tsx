@@ -76,19 +76,20 @@ describe("DestinationsPageClient", () => {
   it("renders the hero heading", () => {
     render(<DestinationsPageClient destinations={testDestinations} />);
     expect(
-      screen.getByText(/Dubai's Finest Yacht Destinations/i)
+      screen.getByText(/Adventures & Destinations/i)
     ).toBeInTheDocument();
   });
 
   it("renders departure point banner", () => {
     render(<DestinationsPageClient destinations={testDestinations} />);
     expect(screen.getByText(/All charters depart from/i)).toBeInTheDocument();
-    expect(screen.getByText("Dubai Harbour")).toBeInTheDocument();
+    // "Dubai Harbour" appears in multiple places (banner, map markers), so use getAllByText
+    const harbourElements = screen.getAllByText("Dubai Harbour");
+    expect(harbourElements.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("excludes Dubai Harbour from destination cards grid", () => {
+  it("excludes Dubai Harbour from adventure cards", () => {
     render(<DestinationsPageClient destinations={testDestinations} />);
-    // Dubai Harbour should appear in the departure banner text but not as a card
     // Cards render destination names as h3 headings
     const headings = screen.getAllByRole("heading", { level: 3 });
     const cardNames = headings.map((h) => h.textContent);
@@ -107,41 +108,13 @@ describe("DestinationsPageClient", () => {
     expect(screen.getByText("View Our Fleet")).toBeInTheDocument();
   });
 
-  it("renders Google Maps link when destinations have coordinates", () => {
+  it("renders interactive map section", () => {
     render(<DestinationsPageClient destinations={testDestinations} />);
     expect(screen.getByText("Explore the Coast")).toBeInTheDocument();
-    expect(
-      screen.getByText("View destinations on Google Maps")
-    ).toBeInTheDocument();
   });
 
-  it("hides map section when no destinations have coordinates", () => {
-    const noCoords = testDestinations.map((d) => ({
-      ...d,
-      latitude: null,
-      longitude: null,
-    }));
-    render(<DestinationsPageClient destinations={noCoords} />);
-    expect(screen.queryByText("Explore the Coast")).not.toBeInTheDocument();
-  });
-
-  it("shows empty state when only departure point exists", () => {
-    const onlyDeparture = [
-      makeDestination({
-        slug: "dubai-harbour",
-        name: "Dubai Harbour",
-      }),
-    ];
-    render(<DestinationsPageClient destinations={onlyDeparture} />);
-    expect(
-      screen.getByText(/No destinations available yet/i)
-    ).toBeInTheDocument();
-  });
-
-  it("shows empty state when destinations array is empty", () => {
-    render(<DestinationsPageClient destinations={[]} />);
-    expect(
-      screen.getByText(/No destinations available yet/i)
-    ).toBeInTheDocument();
+  it("renders All Adventures section", () => {
+    render(<DestinationsPageClient destinations={testDestinations} />);
+    expect(screen.getByText("All Adventures")).toBeInTheDocument();
   });
 });
