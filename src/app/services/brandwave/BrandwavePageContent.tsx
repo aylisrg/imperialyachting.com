@@ -11,6 +11,7 @@ import {
   Lightbulb,
   Target,
   Rocket,
+  ExternalLink,
 } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -142,6 +143,18 @@ export function BrandwavePageContent() {
             elevating yacht brands through identity design, digital marketing,
             and luxury positioning.
           </p>
+
+          <div className="mt-8 animate-hero-3">
+            <a
+              href={SITE_CONFIG.brandwave}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-navy-950 font-heading font-semibold hover:from-gold-400 hover:to-gold-500 transition-all shadow-lg shadow-gold-500/20"
+            >
+              Visit Brandwave
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
         </Container>
       </section>
 
@@ -280,11 +293,17 @@ export function BrandwavePageContent() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Button variant="primary" size="lg" href="/contact">
+            <a
+              href={SITE_CONFIG.brandwave}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-navy-950 font-heading font-semibold hover:from-gold-400 hover:to-gold-500 transition-all shadow-lg shadow-gold-500/20"
+            >
+              Visit Brandwave
+              <ExternalLink className="w-4 h-4" />
+            </a>
+            <Button variant="secondary" size="lg" href="/contact">
               Request a Consultation
-            </Button>
-            <Button variant="secondary" size="lg" href={SITE_CONFIG.whatsapp}>
-              WhatsApp Us
             </Button>
           </div>
         </Container>

@@ -3,13 +3,13 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { BlogPageClient } from "@/components/pages/BlogPageClient";
 
 export const metadata: Metadata = {
-  title: "Insights & Journal",
+  title: "Insights & Media",
   description:
-    "Expert guides, destination insights, and the latest from the world of luxury yachting in Dubai. Stay informed with Imperial Yachting's journal.",
+    "Videos, guides, and behind-the-scenes from Dubai's coastline. Follow Imperial Yachting on YouTube and Instagram for the latest charter content.",
   openGraph: {
-    title: `Insights & Journal | ${SITE_CONFIG.name}`,
+    title: `Insights & Media | ${SITE_CONFIG.name}`,
     description:
-      "Expert guides, destination insights, and the latest from the world of luxury yachting in Dubai.",
+      "Videos, guides, and behind-the-scenes from Dubai's coastline. Follow Imperial Yachting on YouTube and Instagram.",
     url: `${SITE_CONFIG.url}/blog`,
   },
 };

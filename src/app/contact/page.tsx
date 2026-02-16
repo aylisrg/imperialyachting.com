@@ -189,27 +189,34 @@ export default function ContactPage() {
         </Container>
       </section>
 
-      {/* Map Placeholder */}
+      {/* Google Maps */}
       <section className="bg-navy-950">
         <Container>
           <div className="rounded-2xl bg-navy-800 border border-white/5 overflow-hidden">
-            <div className="aspect-[21/9] sm:aspect-[3/1] flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-navy-800 via-navy-900 to-navy-800 relative">
-              <div className="absolute inset-0 opacity-[0.015]" style={{
-                backgroundImage:
-                  "radial-gradient(circle at 1px 1px, rgba(201,168,76,0.8) 1px, transparent 0)",
-                backgroundSize: "32px 32px",
-              }} />
-              <div className="relative z-10 text-center">
-                <MapPin className="w-8 h-8 text-gold-500 mx-auto mb-3" />
-                <h3 className="font-heading text-xl font-bold text-white">
-                  Dubai Harbour Yacht Club
-                </h3>
-                <p className="mt-2 text-sm text-white/40">
-                  25.0805&deg; N, 55.1403&deg; E
-                </p>
-                <p className="mt-1 text-xs text-white/30">
-                  Between Palm Jumeirah &amp; Bluewaters Island
-                </p>
+            <div className="relative">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.5!2d55.1386934!3d25.0917604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f6b0057a49cf9%3A0xbce4e8f21687dc38!2sImperial%20Yachting!5e0!3m2!1sen!2sae!4v1"
+                width="100%"
+                height="400"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Imperial Yachting location on Google Maps"
+                className="w-full"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-navy-950/80 to-transparent px-6 py-4 pointer-events-none">
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-gold-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-heading font-bold text-white">
+                      Dubai Harbour Yacht Club
+                    </p>
+                    <p className="text-xs text-white/50">
+                      Between Palm Jumeirah &amp; Bluewaters Island
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

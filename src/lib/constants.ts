@@ -11,6 +11,7 @@ export const SITE_CONFIG = {
   instagram: "https://instagram.com/dubai.yachts.rental",
   youtube: "https://youtube.com/@imperial_wave",
   linkedinCeo: "https://www.linkedin.com/in/aylis",
+  brandwave: "https://brandwave.imperialyachting.com/",
   address: {
     street: "The Binary by Omniyat, Office 1914-261",
     area: "Business Bay",
@@ -25,7 +26,7 @@ export const SITE_CONFIG = {
   },
   license: "960574",
   companyRegistration: "2236727",
-  taxId: "104295106900001",
+  taxId: "100601445800003",
   googleAnalyticsId: "G-BQPZ2WJWWL",
   bankDetails: {
     bank: "Sharjah Islamic Bank",

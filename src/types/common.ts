@@ -65,4 +65,5 @@ export interface ServiceItem {
   description: string;
   icon: string;
   href: string;
+  externalUrl?: string;
 }
