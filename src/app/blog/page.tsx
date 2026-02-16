@@ -3,14 +3,22 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { BlogPageClient } from "@/components/pages/BlogPageClient";
 
 export const metadata: Metadata = {
-  title: "Social Media & Videos",
+  title: "Social Media & Videos — Yacht Tours & Highlights",
   description:
-    "Follow Imperial Yachting on YouTube and Instagram. Watch yacht tours, charter highlights, and behind-the-scenes from Dubai's coastline.",
+    "Watch yacht tours, Dubai charter highlights, and behind-the-scenes content from Imperial Yachting. Follow us on YouTube and Instagram.",
+  alternates: { canonical: `${SITE_CONFIG.url}/blog` },
   openGraph: {
     title: `Social Media & Videos | ${SITE_CONFIG.name}`,
     description:
-      "Watch yacht tours, charter highlights, and behind-the-scenes content. Follow us on YouTube and Instagram.",
+      "Watch yacht tours, charter highlights, and behind-the-scenes content from Dubai.",
     url: `${SITE_CONFIG.url}/blog`,
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Imperial Yachting Videos" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Social Media & Videos | ${SITE_CONFIG.name}`,
+    description: "Yacht tours, charter highlights & behind-the-scenes from Dubai.",
+    images: ["/og-image.jpg"],
   },
 };
 

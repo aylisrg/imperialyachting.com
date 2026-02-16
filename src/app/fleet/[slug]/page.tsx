@@ -63,17 +63,45 @@ export async function generateMetadata({
     };
   }
 
+  const description = `Charter the ${yacht.name} in Dubai — ${yacht.tagline}. ${yacht.length.feet}ft ${yacht.builder}, up to ${yacht.capacity} guests. Book with Imperial Yachting at Dubai Harbour.`;
+  const pageUrl = `${SITE_CONFIG.url}/fleet/${yacht.slug}`;
+  const heroImage = yacht.heroImage || yacht.images[0];
+
   return {
     title: `${yacht.name} — ${yacht.tagline}`,
-    description: yacht.description.slice(0, 160),
+    description,
+    alternates: {
+      canonical: pageUrl,
+    },
     openGraph: {
       title: `${yacht.name} — ${yacht.tagline} | Imperial Yachting`,
-      description: yacht.description.slice(0, 160),
-      url: `${SITE_CONFIG.url}/fleet/${yacht.slug}`,
-      images: yacht.images.map((img) => ({
-        url: img,
-        alt: `${yacht.name} — Imperial Yachting`,
-      })),
+      description,
+      url: pageUrl,
+      type: "website",
+      siteName: SITE_CONFIG.name,
+      images: [
+        {
+          url: heroImage,
+          width: 1200,
+          height: 630,
+          alt: `${yacht.name} — Luxury Yacht Charter Dubai | Imperial Yachting`,
+        },
+        ...yacht.images.slice(0, 3).map((img) => ({
+          url: img,
+          alt: `${yacht.name} — Imperial Yachting`,
+        })),
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${yacht.name} — ${yacht.tagline}`,
+      description,
+      images: [
+        {
+          url: heroImage,
+          alt: `${yacht.name} — Luxury Yacht Charter Dubai`,
+        },
+      ],
     },
   };
 }

@@ -13,14 +13,22 @@ import { fetchAllYachts } from "@/lib/yachts-db";
 import { FleetGrid } from "./FleetGrid";
 
 export const metadata: Metadata = {
-  title: "Our Fleet",
+  title: "Our Fleet — Luxury Yachts for Charter in Dubai",
   description:
-    "Explore Imperial Yachting's premium fleet of luxury motor yachts available for charter in Dubai. Find your perfect vessel at Dubai Harbour.",
+    "Browse Imperial Yachting's premium fleet of motor yachts for charter in Dubai. Van Dutch, Monte Carlo, Evo — all-inclusive from AED 2,500/hr at Dubai Harbour.",
+  alternates: { canonical: `${SITE_CONFIG.url}/fleet` },
   openGraph: {
     title: "Our Fleet | Imperial Yachting",
     description:
-      "Explore Imperial Yachting's premium fleet of luxury motor yachts available for charter in Dubai.",
+      "Browse our premium fleet of luxury motor yachts for charter in Dubai. All-inclusive crew, fuel & amenities from Dubai Harbour.",
     url: `${SITE_CONFIG.url}/fleet`,
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Imperial Yachting Fleet" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Our Fleet | Imperial Yachting",
+    description: "Premium motor yachts for charter in Dubai — all-inclusive from Dubai Harbour.",
+    images: ["/og-image.jpg"],
   },
 };
 
