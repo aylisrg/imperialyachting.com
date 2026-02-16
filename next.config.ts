@@ -58,7 +58,7 @@ const nextConfig: NextConfig = {
       ],
     },
     {
-      source: "/android-chrome-:size*.png",
+      source: "/logo.png",
       headers: [
         {
           key: "Cache-Control",
