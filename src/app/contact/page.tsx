@@ -18,14 +18,22 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { ContactForm } from "@/components/forms/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
+  title: "Contact Us — Book a Yacht Charter in Dubai",
   description:
-    "Get in touch with Imperial Yachting for yacht charter inquiries, management services, and custom event bookings. Reach us by phone, email, or WhatsApp.",
+    "Contact Imperial Yachting for yacht charter bookings, management services, or custom events. Call +971-52-8355939, WhatsApp, or fill out our inquiry form.",
+  alternates: { canonical: `${SITE_CONFIG.url}/contact` },
   openGraph: {
     title: "Contact Us | Imperial Yachting",
     description:
-      "Get in touch with Imperial Yachting for yacht charter inquiries, management services, and custom event bookings.",
+      "Book a yacht charter in Dubai. Call, WhatsApp, or send an inquiry to Imperial Yachting.",
     url: `${SITE_CONFIG.url}/contact`,
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Contact Imperial Yachting" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Us | Imperial Yachting",
+    description: "Book a yacht charter in Dubai — call, WhatsApp, or send an inquiry.",
+    images: ["/og-image.jpg"],
   },
 };
 

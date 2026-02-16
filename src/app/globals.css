@@ -39,11 +39,23 @@ body {
   color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Mobile touch optimizations */
+a, button {
+  touch-action: manipulation;
+}
+
+/* Optimise images for mobile rendering */
+img {
+  content-visibility: auto;
 }
 
 /* Gold gradient text utility */

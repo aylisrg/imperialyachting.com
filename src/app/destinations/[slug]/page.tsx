@@ -25,17 +25,38 @@ export async function generateMetadata({
 
   const description =
     destination.shortDescription || destination.description.slice(0, 160);
+  const pageUrl = `${SITE_CONFIG.url}/destinations/${destination.slug}`;
 
   return {
     title: `${destination.name} — Dubai Yacht Experience`,
     description,
+    alternates: {
+      canonical: pageUrl,
+    },
     openGraph: {
-      title: `${destination.name} | ${SITE_CONFIG.name}`,
+      title: `${destination.name} — Yacht Cruise Destination | ${SITE_CONFIG.name}`,
       description,
-      url: `${SITE_CONFIG.url}/destinations/${destination.slug}`,
+      url: pageUrl,
+      type: "website",
+      siteName: SITE_CONFIG.name,
+      images: destination.coverImage
+        ? [
+            {
+              url: destination.coverImage,
+              width: 1200,
+              height: 630,
+              alt: `${destination.name} — Yacht Cruise from Dubai Harbour`,
+            },
+          ]
+        : [{ url: "/og-image.jpg", width: 1200, height: 630, alt: SITE_CONFIG.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${destination.name} — Dubai Yacht Experience`,
+      description,
       images: destination.coverImage
         ? [{ url: destination.coverImage, alt: destination.name }]
-        : [],
+        : ["/og-image.jpg"],
     },
   };
 }
