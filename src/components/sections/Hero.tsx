@@ -1,22 +1,27 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
+import Image from "next/image";
 import { Anchor, MapPin } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
+const subscribe = () => () => {};
+function useIsMobile() {
+  return useSyncExternalStore(
+    subscribe,
+    () => window.innerWidth < 768,
+    () => true, // SSR: assume mobile
+  );
+}
+
 export function Hero() {
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(true);
+  const isMobile = useIsMobile();
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Detect mobile on mount
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-
-  // Load video only on desktop — after isMobile is determined and video element is in DOM
+  // Load video only on desktop
   useEffect(() => {
     if (isMobile) return;
     const video = videoRef.current;
@@ -38,11 +43,16 @@ export function Hero() {
         {/* Fallback gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950" />
 
-        {/* Poster image on mobile, video on desktop */}
+        {/* Poster image on mobile (Next.js Image with priority), video on desktop */}
         {isMobile ? (
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: "url(/media/hero/hero-poster.jpg)" }}
+          <Image
+            src="/media/hero/hero-poster.jpg"
+            alt="Dubai luxury yacht charter"
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+            quality={75}
           />
         ) : (
           <video
@@ -64,14 +74,14 @@ export function Hero() {
         {/* Dark overlay */}
         <div
           className={cn(
-            "absolute inset-0 transition-colors duration-1000",
+            "absolute inset-0",
             !isMobile && videoLoaded ? "bg-navy-950/60" : "bg-navy-950/50"
           )}
         />
 
-        {/* Decorative accents — smaller blurs on mobile to reduce GPU load */}
-        <div className="absolute top-[-20%] right-[-10%] w-[300px] h-[300px] md:w-[900px] md:h-[900px] bg-gold-500/[0.06] rounded-full blur-[60px] md:blur-[150px]" />
-        <div className="absolute bottom-[-10%] left-[-15%] w-[250px] h-[250px] md:w-[700px] md:h-[700px] bg-sea-500/[0.07] rounded-full blur-[50px] md:blur-[130px]" />
+        {/* Decorative accents — hidden on mobile to reduce GPU compositing */}
+        <div className="hidden md:block absolute top-[-20%] right-[-10%] w-[900px] h-[900px] bg-gold-500/[0.06] rounded-full blur-[150px]" />
+        <div className="hidden md:block absolute bottom-[-10%] left-[-15%] w-[700px] h-[700px] bg-sea-500/[0.07] rounded-full blur-[130px]" />
 
         {/* Bottom fade */}
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-navy-950 to-transparent" />

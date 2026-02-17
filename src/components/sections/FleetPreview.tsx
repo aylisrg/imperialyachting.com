@@ -25,7 +25,7 @@ interface FleetPreviewProps {
   yachts: FleetYacht[];
 }
 
-function YachtCard({ yacht, index }: { yacht: FleetYacht; index: number }) {
+function YachtCard({ yacht, index, priority }: { yacht: FleetYacht; index: number; priority?: boolean }) {
   const [imageError, setImageError] = useState(false);
 
   const whatsappUrl = `https://wa.me/971528355939?text=${encodeURIComponent(`Hello, I found your yacht ${yacht.name} at imperialyachting.com`)}`;
@@ -41,7 +41,8 @@ function YachtCard({ yacht, index }: { yacht: FleetYacht; index: number }) {
               alt={`${yacht.name} — Imperial Yachting`}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 1200px) calc(50vw - 24px), 33vw"
+              priority={priority}
               onError={() => setImageError(true)}
             />
           ) : (
@@ -129,7 +130,7 @@ export function FleetPreview({ yachts }: FleetPreviewProps) {
         {yachts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {yachts.map((yacht, i) => (
-              <YachtCard key={yacht.slug} yacht={yacht} index={i} />
+              <YachtCard key={yacht.slug} yacht={yacht} index={i} priority={i < 2} />
             ))}
           </div>
         ) : (

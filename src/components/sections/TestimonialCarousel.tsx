@@ -1,11 +1,29 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Star, Quote } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/utils";
 import { testimonials } from "@/data/testimonials";
+
+function Stars({ rating }: { rating: number }) {
+  return (
+    <div className="flex items-center justify-center gap-1 mb-6">
+      {Array.from({ length: 5 }).map((_, j) => (
+        <Star
+          key={j}
+          className={cn(
+            "w-5 h-5",
+            j < rating
+              ? "fill-gold-500 text-gold-500"
+              : "fill-sand-200 text-sand-200"
+          )}
+        />
+      ))}
+    </div>
+  );
+}
 
 export function TestimonialCarousel() {
   const [current, setCurrent] = useState(0);
@@ -18,6 +36,13 @@ export function TestimonialCarousel() {
     const timer = setInterval(next, 6000);
     return () => clearInterval(timer);
   }, [next]);
+
+  // Only render current and adjacent testimonials (3 max instead of all)
+  const visibleIndices = useMemo(() => {
+    const prev = (current - 1 + testimonials.length) % testimonials.length;
+    const nxt = (current + 1) % testimonials.length;
+    return [prev, current, nxt];
+  }, [current]);
 
   return (
     <section className="py-24 sm:py-32 bg-sand-50">
@@ -32,51 +57,42 @@ export function TestimonialCarousel() {
         <div className="relative max-w-3xl mx-auto">
           <Quote className="mx-auto mb-6 w-10 h-10 text-gold-500/30" />
 
-          {/* Crossfade testimonials — all in DOM, only current visible */}
+          {/* Crossfade testimonials — only render current and neighbours */}
           <div className="relative min-h-[200px] flex items-center justify-center">
-            {testimonials.map((testimonial, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "testimonial-slide absolute inset-0 flex items-center justify-center",
-                  i === current
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-4 pointer-events-none"
-                )}
-                aria-hidden={i !== current}
-              >
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-6">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <Star
-                        key={j}
-                        className={cn(
-                          "w-5 h-5",
-                          j < testimonial.rating
-                            ? "fill-gold-500 text-gold-500"
-                            : "fill-sand-200 text-sand-200"
-                        )}
-                      />
-                    ))}
-                  </div>
+            {visibleIndices.map((i) => {
+              const testimonial = testimonials[i];
+              return (
+                <div
+                  key={i}
+                  className={cn(
+                    "testimonial-slide absolute inset-0 flex items-center justify-center",
+                    i === current
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-4 pointer-events-none"
+                  )}
+                  aria-hidden={i !== current}
+                >
+                  <div className="text-center">
+                    <Stars rating={testimonial.rating} />
 
-                  <blockquote className="font-accent text-xl sm:text-2xl italic text-navy-900 leading-relaxed">
-                    &ldquo;{testimonial.text}&rdquo;
-                  </blockquote>
+                    <blockquote className="font-accent text-xl sm:text-2xl italic text-navy-900 leading-relaxed">
+                      &ldquo;{testimonial.text}&rdquo;
+                    </blockquote>
 
-                  <div className="mt-8">
-                    <p className="font-heading font-semibold text-navy-950">
-                      {testimonial.name}
-                    </p>
-                    {testimonial.role && (
-                      <p className="mt-1 text-sm text-navy-800/60">
-                        {testimonial.role}
+                    <div className="mt-8">
+                      <p className="font-heading font-semibold text-navy-950">
+                        {testimonial.name}
                       </p>
-                    )}
+                      {testimonial.role && (
+                        <p className="mt-1 text-sm text-navy-800/60">
+                          {testimonial.role}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Navigation dots */}

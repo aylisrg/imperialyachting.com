@@ -57,7 +57,7 @@ export function FleetCard({
               alt={`${name} — Imperial Yachting`}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 640px) calc(100vw - 32px), (max-width: 1200px) calc(50vw - 24px), 33vw"
               onError={() => setHeroError(true)}
             />
           ) : (
