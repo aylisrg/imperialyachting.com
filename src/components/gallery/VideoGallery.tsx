@@ -72,14 +72,18 @@ export function VideoGallery({
     return () => window.removeEventListener("keydown", handler);
   }, [activeShortsIndex, closeShortsPlayer, goNextShort, goPrevShort]);
 
-  // Lock body scroll when fullscreen player open
+  // Lock body scroll when fullscreen player open — compensate for scrollbar
   useEffect(() => {
     if (activeShortsIndex !== null) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
       document.body.style.overflow = "hidden";
     } else {
+      document.body.style.paddingRight = "";
       document.body.style.overflow = "";
     }
     return () => {
+      document.body.style.paddingRight = "";
       document.body.style.overflow = "";
     };
   }, [activeShortsIndex]);
@@ -124,6 +128,7 @@ export function VideoGallery({
                   title={`${yachtName} — Video`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  loading="lazy"
                   className="absolute inset-0 w-full h-full"
                 />
               </div>
@@ -280,6 +285,7 @@ export function VideoGallery({
               title={`${yachtName} — Short ${activeShortsIndex + 1}`}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              loading="lazy"
               className="absolute inset-0 w-full h-full"
             />
           </div>

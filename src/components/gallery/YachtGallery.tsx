@@ -46,14 +46,18 @@ export function YachtGallery({ images, yachtName }: YachtGalleryProps) {
     return () => window.removeEventListener("keydown", handler);
   }, [lightboxOpen, goNext, goPrev]);
 
-  // Lock body scroll when lightbox open
+  // Lock body scroll when lightbox open — compensate for scrollbar to prevent layout shift
   useEffect(() => {
     if (lightboxOpen) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
       document.body.style.overflow = "hidden";
     } else {
+      document.body.style.paddingRight = "";
       document.body.style.overflow = "";
     }
     return () => {
+      document.body.style.paddingRight = "";
       document.body.style.overflow = "";
     };
   }, [lightboxOpen]);

@@ -38,7 +38,7 @@ export function FleetGrid({ yachts }: FleetGridProps) {
         <FleetCard
           key={yacht.slug}
           {...yacht}
-          delay={i * 200}
+          delay={Math.min(i * 150, 600)}
         />
       ))}
     </div>
