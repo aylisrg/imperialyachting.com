@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { X, Gift, Clock } from "lucide-react";
 
 const WHATSAPP_NUMBER = "971528355939";
@@ -10,17 +9,17 @@ function getWhatsAppUrl(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}&${UTM_PARAMS}`;
 }
 
-export function PromoBanner() {
-  const [dismissed, setDismissed] = useState(false);
+interface PromoBannerProps {
+  onDismiss?: () => void;
+}
 
-  if (dismissed) return null;
-
+export function PromoBanner({ onDismiss }: PromoBannerProps) {
   const whatsappUrl = getWhatsAppUrl(
     "Hi! I saw your 4+1 offer (buy 4 hours, get 1 FREE). I'd like to learn more!"
   );
 
   return (
-    <div className="relative bg-gradient-to-r from-gold-600/20 via-gold-500/15 to-gold-600/20 border-b border-gold-500/20">
+    <div className="relative bg-navy-950/95 backdrop-blur-xl border-b border-gold-500/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-center gap-3 sm:gap-4">
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gold-500/20 flex items-center justify-center">
@@ -50,7 +49,7 @@ export function PromoBanner() {
         </a>
 
         <button
-          onClick={() => setDismissed(true)}
+          onClick={onDismiss}
           className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-white/30 hover:text-white/60 hover:bg-white/5 transition-colors"
           aria-label="Dismiss banner"
         >

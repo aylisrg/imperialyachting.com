@@ -6,7 +6,7 @@ import { X, Gift, Clock, ArrowRight } from "lucide-react";
 const WHATSAPP_NUMBER = "971528355939";
 const UTM_PARAMS = "utm_source=website&utm_medium=promo_popup&utm_campaign=4plus1_hours";
 const POPUP_STORAGE_KEY = "iy_promo_popup_dismissed";
-const POPUP_DELAY_MS = 8000; // Show after 8 seconds
+const POPUP_DELAY_MS = 35000; // Show after 35 seconds
 
 function getWhatsAppUrl(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}&${UTM_PARAMS}`;
