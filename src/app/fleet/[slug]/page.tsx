@@ -33,8 +33,10 @@ import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
 import { YachtGallery } from "@/components/gallery/YachtGallery";
 import { VideoGallery } from "@/components/gallery/VideoGallery";
 import { fetchYachtBySlug } from "@/lib/yachts-db";
+import { getLowestPrice, getHourlyRate } from "@/lib/pricing";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
+import { PriceConstructor } from "@/components/pricing/PriceConstructor";
 import type { Yacht, YachtAmenity } from "@/types/yacht";
 
 const amenityIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -111,24 +113,6 @@ function formatPrice(value: number | null): string {
   return `AED ${value.toLocaleString("en-US")}`;
 }
 
-function getLowestPrice(yacht: Yacht): { amount: number; unit: string } | null {
-  let result: { amount: number; unit: string } | null = null;
-  for (const season of yacht.pricing) {
-    const tiers: [number | null, string][] = [
-      [season.hourly, "/hr"],
-      [season.daily, "/day"],
-      [season.weekly, "/week"],
-      [season.monthly, "/month"],
-    ];
-    for (const [price, unit] of tiers) {
-      if (price !== null && (result === null || price < result.amount)) {
-        result = { amount: price, unit };
-      }
-    }
-  }
-  return result;
-}
-
 function hasAnyB2B(yacht: Yacht): boolean {
   return yacht.pricing.some(
     (s) => s.hourlyB2B != null || s.dailyB2B != null || s.weeklyB2B != null || s.monthlyB2B != null
@@ -153,7 +137,8 @@ export default async function YachtDetailPage({
     notFound();
   }
 
-  const lowestPrice = getLowestPrice(yacht);
+  const lowestPrice = getLowestPrice(yacht.pricing);
+  const hourlyRate = getHourlyRate(yacht.pricing);
   const showB2B = hasAnyB2B(yacht);
   const showHourly = hasAnyHourly(yacht);
 
@@ -439,9 +424,20 @@ export default async function YachtDetailPage({
         </section>
       )}
 
+      {/* Price Constructor — shown when hourly pricing exists */}
+      {hourlyRate !== null && (
+        <section className="py-16 sm:py-24 bg-navy-950">
+          <Container>
+            <div className="max-w-2xl mx-auto">
+              <PriceConstructor yachtName={yacht.name} hourlyRate={hourlyRate} />
+            </div>
+          </Container>
+        </section>
+      )}
+
       {/* What's Included */}
       {yacht.included.length > 0 && (
-        <section className="py-16 sm:py-24 bg-navy-950">
+        <section className="py-16 sm:py-24 bg-navy-900">
           <Container>
             <SectionHeading
               title="What's Included"

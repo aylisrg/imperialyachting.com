@@ -7,8 +7,14 @@ import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS, SERVICE_NAV, SITE_CONFIG } from "@/lib/constants";
 import { Container } from "./Container";
+import { PromoBanner } from "@/components/promo/PromoBanner";
 
-export function Header() {
+interface HeaderProps {
+  bannerVisible?: boolean;
+  onBannerDismiss?: () => void;
+}
+
+export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
@@ -30,14 +36,16 @@ export function Header() {
 
   return (
     <>
-      <header
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          isScrolled
-            ? "bg-navy-950/95 backdrop-blur-xl border-b border-gold-500/10 py-3"
-            : "bg-transparent py-5"
-        )}
-      >
+      <div className="fixed top-0 left-0 right-0 z-50">
+        {bannerVisible && <PromoBanner onDismiss={onBannerDismiss} />}
+        <header
+          className={cn(
+            "transition-all duration-500",
+            isScrolled
+              ? "bg-navy-950/95 backdrop-blur-xl border-b border-gold-500/10 py-3"
+              : "bg-transparent py-5"
+          )}
+        >
         <Container>
           <nav className="flex items-center justify-between">
             {/* Logo */}
@@ -142,7 +150,8 @@ export function Header() {
             </div>
           </nav>
         </Container>
-      </header>
+        </header>
+      </div>
 
       {/* Mobile Menu — CSS slide transition, always in DOM */}
       <div

@@ -95,6 +95,70 @@ img {
   color: #ffffff;
 }
 
+/* Promo popup animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popup-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Price constructor slider thumb */
+input[type="range"].price-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+
+input[type="range"].price-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-navy-700);
+}
+
+input[type="range"].price-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-gold-500), var(--color-gold-400));
+  border: 3px solid var(--color-navy-800);
+  margin-top: -10px;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.3);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+input[type="range"].price-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 12px rgba(201, 168, 76, 0.5);
+}
+
+input[type="range"].price-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-navy-700);
+}
+
+input[type="range"].price-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-gold-500), var(--color-gold-400));
+  border: 3px solid var(--color-navy-800);
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.3);
+}
+
 /* ===== Performance: CSS animations replacing framer-motion ===== */
 
 /* Hero entrance animations */

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Ruler, Users, MapPin, ImageIcon } from "lucide-react";
+import { Ruler, Users, MapPin, ImageIcon, Gift } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
@@ -56,6 +56,14 @@ function YachtCard({ yacht, index, priority }: { yacht: FleetYacht; index: numbe
             </div>
           )}
           <div className="absolute inset-0 bg-navy-950/0 group-hover:bg-navy-950/20 transition-colors duration-500" />
+
+          {/* 4+1 promo badge */}
+          {yacht.lowestPrice?.unit === "/hr" && (
+            <div className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-500/90 text-navy-950 text-xs font-bold backdrop-blur-sm">
+              <Gift className="w-3 h-3" />
+              4+1 FREE
+            </div>
+          )}
         </Link>
 
         {/* Content */}
