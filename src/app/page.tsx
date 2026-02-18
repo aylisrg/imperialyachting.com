@@ -11,6 +11,7 @@ import {
 } from "@/components/seo/schemas";
 import { fetchAllYachts } from "@/lib/yachts-db";
 import { fetchAllDestinations } from "@/lib/destinations-db";
+import { getLowestPrice } from "@/lib/pricing";
 
 // Below-fold sections — lazy loaded to reduce initial JS bundle
 const FleetPreview = dynamicImport(
@@ -34,26 +35,6 @@ const CTASection = dynamicImport(
 const FAQSection = dynamicImport(
   () => import("@/components/sections/FAQSection").then((m) => m.FAQSection),
 );
-
-function getLowestPrice(
-  pricing: { hourly: number | null; daily: number | null; weekly: number | null; monthly: number | null }[]
-): { amount: number; unit: string } | null {
-  let result: { amount: number; unit: string } | null = null;
-  for (const season of pricing) {
-    const tiers: [number | null, string][] = [
-      [season.hourly, "/hr"],
-      [season.daily, "/day"],
-      [season.weekly, "/week"],
-      [season.monthly, "/month"],
-    ];
-    for (const [price, unit] of tiers) {
-      if (price !== null && (result === null || price < result.amount)) {
-        result = { amount: price, unit };
-      }
-    }
-  }
-  return result;
-}
 
 export default async function HomePage() {
   const [yachts, destinations] = await Promise.all([

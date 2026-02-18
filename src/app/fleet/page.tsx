@@ -10,6 +10,7 @@ import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import { fetchAllYachts } from "@/lib/yachts-db";
+import { getLowestPrice } from "@/lib/pricing";
 import { FleetGrid } from "./FleetGrid";
 
 export const metadata: Metadata = {
@@ -31,26 +32,6 @@ export const metadata: Metadata = {
     images: ["/og-image.jpg"],
   },
 };
-
-function getLowestPrice(
-  pricing: { hourly: number | null; daily: number | null; weekly: number | null; monthly: number | null }[]
-): { amount: number; unit: string } | null {
-  let result: { amount: number; unit: string } | null = null;
-  for (const season of pricing) {
-    const tiers: [number | null, string][] = [
-      [season.hourly, "/hr"],
-      [season.daily, "/day"],
-      [season.weekly, "/week"],
-      [season.monthly, "/month"],
-    ];
-    for (const [price, unit] of tiers) {
-      if (price !== null && (result === null || price < result.amount)) {
-        result = { amount: price, unit };
-      }
-    }
-  }
-  return result;
-}
 
 export default async function FleetPage() {
   const yachts = await fetchAllYachts();

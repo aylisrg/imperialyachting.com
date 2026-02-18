@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Ruler, Users, Calendar, Wrench, ImageIcon } from "lucide-react";
+import { Ruler, Users, Calendar, Wrench, ImageIcon, Gift } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 
 interface FleetCardProps {
@@ -103,6 +103,14 @@ export function FleetCard({
             <ImageIcon className="w-3 h-3" />
             {images.length}
           </div>
+
+          {/* 4+1 promo badge */}
+          {lowestPrice?.unit === "/hr" && (
+            <div className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold-500/90 text-navy-950 text-xs font-bold backdrop-blur-sm">
+              <Gift className="w-3 h-3" />
+              4+1 FREE
+            </div>
+          )}
         </Link>
 
         {/* Content */}
