@@ -43,6 +43,8 @@ const defaultYacht: FormYacht = {
   youtube_shorts: [],
   youtube_video: "",
   show_videos: false,
+  daily_rules: "",
+  weekly_rules: "",
 };
 
 export default function YachtEditPage() {
@@ -289,7 +291,12 @@ export default function YachtEditPage() {
           />
         )}
         {activeTab === "pricing" && (
-          <PricingTab pricing={pricing} setPricing={setPricing} />
+          <PricingTab
+            pricing={pricing}
+            setPricing={setPricing}
+            yacht={yacht}
+            setYacht={setYacht}
+          />
         )}
       </div>
     </>
@@ -640,9 +647,13 @@ function SpecsTab({
 function PricingTab({
   pricing,
   setPricing,
+  yacht,
+  setYacht,
 }: {
   pricing: Omit<YachtPricing, "id">[];
   setPricing: (p: Omit<YachtPricing, "id">[]) => void;
+  yacht: FormYacht;
+  setYacht: (y: FormYacht) => void;
 }) {
   function updatePricing(index: number, field: string, value: unknown) {
     const updated = [...pricing];
@@ -651,7 +662,8 @@ function PricingTab({
   }
 
   return (
-    <div>
+    <div className="space-y-10">
+      <div>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-heading text-lg font-bold text-white">
           Season Pricing (AED)
@@ -840,6 +852,37 @@ function PricingTab({
             </div>
           </div>
         ))}
+      </div>
+      </div>
+
+      {/* Daily & Weekly Charter Rules */}
+      <div>
+        <h3 className="font-heading text-lg font-bold text-white mb-2">
+          Charter Rules
+        </h3>
+        <p className="text-xs text-white/40 mb-4">
+          Enter each rule on a new line. These are shown below the rates table on the yacht page.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <Field label="Daily Charter Rules">
+            <textarea
+              value={yacht.daily_rules}
+              onChange={(e) => setYacht({ ...yacht, daily_rules: e.target.value })}
+              rows={6}
+              className="admin-input"
+              placeholder={"e.g.\nFuel included for standard routes\nCaptain and crew included\nDeparts from Dubai Harbour"}
+            />
+          </Field>
+          <Field label="Weekly Charter Rules">
+            <textarea
+              value={yacht.weekly_rules}
+              onChange={(e) => setYacht({ ...yacht, weekly_rules: e.target.value })}
+              rows={6}
+              className="admin-input"
+              placeholder={"e.g.\nAll meals and beverages included\nUnlimited fuel\nFull crew of 4\nArrival provisioning included"}
+            />
+          </Field>
+        </div>
       </div>
     </div>
   );

@@ -424,6 +424,22 @@ export default async function YachtDetailPage({
         </section>
       )}
 
+      {/* Charter Rules — shown when daily or weekly rules are defined */}
+      {(yacht.dailyRules || yacht.weeklyRules) && (
+        <section className="py-10 sm:py-14 bg-navy-900 border-t border-white/5">
+          <Container>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl">
+              {yacht.dailyRules && (
+                <CharterRulesCard title="Daily Charter" rules={yacht.dailyRules} />
+              )}
+              {yacht.weeklyRules && (
+                <CharterRulesCard title="Weekly Charter" rules={yacht.weeklyRules} />
+              )}
+            </div>
+          </Container>
+        </section>
+      )}
+
       {/* Price Constructor — shown when hourly pricing exists */}
       {hourlyRate !== null && (
         <section className="py-16 sm:py-24 bg-navy-950">
@@ -501,6 +517,29 @@ export default async function YachtDetailPage({
         </Container>
       </section>
     </>
+  );
+}
+
+function CharterRulesCard({ title, rules }: { title: string; rules: string }) {
+  const lines = rules
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  return (
+    <div className="p-5 rounded-xl bg-navy-800/60 border border-white/5">
+      <h4 className="font-heading text-sm font-semibold text-gold-400 uppercase tracking-wider mb-3">
+        {title}
+      </h4>
+      <ul className="space-y-2">
+        {lines.map((line, i) => (
+          <li key={i} className="flex items-start gap-2 text-sm text-white/65">
+            <span className="mt-1.5 w-1 h-1 rounded-full bg-gold-500/60 flex-shrink-0" />
+            {line}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

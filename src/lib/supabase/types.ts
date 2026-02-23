@@ -20,6 +20,8 @@ export interface Database {
           youtube_shorts: string[];
           youtube_video: string;
           show_videos: boolean;
+          daily_rules: string;
+          weekly_rules: string;
           created_at: string;
           updated_at: string;
         };
@@ -41,6 +43,8 @@ export interface Database {
           youtube_shorts?: string[];
           youtube_video?: string;
           show_videos?: boolean;
+          daily_rules?: string;
+          weekly_rules?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -62,6 +66,8 @@ export interface Database {
           youtube_shorts?: string[];
           youtube_video?: string;
           show_videos?: boolean;
+          daily_rules?: string;
+          weekly_rules?: string;
           created_at?: string;
           updated_at?: string;
         };

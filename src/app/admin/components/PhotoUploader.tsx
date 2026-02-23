@@ -210,6 +210,11 @@ export function PhotoUploader({ yachtId, images, onRefresh }: PhotoUploaderProps
   }
 
   async function updateCategory(imageId: string, category: string) {
+    // When setting to hero, use the full hero-promotion logic
+    if (category === "hero") {
+      await setAsHero(imageId);
+      return;
+    }
     const supabase = createClient();
     await supabase
       .from("yacht_images")
@@ -220,13 +225,18 @@ export function PhotoUploader({ yachtId, images, onRefresh }: PhotoUploaderProps
 
   async function setAsHero(imageId: string) {
     const supabase = createClient();
-    // Remove hero from all images for this yacht
-    await supabase
-      .from("yacht_images")
-      .update({ category: "exterior" })
-      .eq("yacht_id", yachtId)
-      .eq("category", "hero");
-    // Set selected as hero
+    // Demote all existing hero images to exterior and shift their sort_order
+    // so they don't conflict with the new hero at sort_order 0
+    const existingHeroes = images.filter(
+      (img) => img.category === "hero" && img.id !== imageId
+    );
+    for (const hero of existingHeroes) {
+      await supabase
+        .from("yacht_images")
+        .update({ category: "exterior", sort_order: images.length })
+        .eq("id", hero.id);
+    }
+    // Set selected image as hero at position 0
     await supabase
       .from("yacht_images")
       .update({ category: "hero", sort_order: 0 })
