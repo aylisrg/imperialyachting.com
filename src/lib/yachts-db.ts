@@ -127,12 +127,13 @@ async function mapYachtFromDB(supabase: any, dbYacht: any, full: boolean): Promi
   const amenities = full ? (results[3].data ?? []) : [];
   const included = full ? (results[4].data ?? []) : [];
 
-  const heroImage =
-    images.find((img: any) => img.category === "hero")?.url ??
-    images[0]?.url ??
-    "";
+  const heroImg = images.find((img: any) => img.category === "hero");
+  const heroImage = heroImg?.url ?? images[0]?.url ?? "";
 
-  const imageUrls: string[] = images.map((img: any) => img.url);
+  // Always place the hero image first so the gallery opens on it
+  const imageUrls: string[] = heroImg
+    ? [heroImg.url, ...images.filter((img: any) => img.id !== heroImg.id).map((img: any) => img.url)]
+    : images.map((img: any) => img.url);
 
   return {
     slug: dbYacht.slug,
@@ -173,5 +174,7 @@ async function mapYachtFromDB(supabase: any, dbYacht: any, full: boolean): Promi
     youtubeShorts: dbYacht.youtube_shorts || [],
     youtubeVideo: dbYacht.youtube_video || "",
     showVideos: dbYacht.show_videos ?? false,
+    dailyRules: dbYacht.daily_rules || "",
+    weeklyRules: dbYacht.weekly_rules || "",
   };
 }

@@ -44,4 +44,6 @@ export interface Yacht {
   youtubeShorts: string[];
   youtubeVideo: string;
   showVideos: boolean;
+  dailyRules: string;
+  weeklyRules: string;
 }
