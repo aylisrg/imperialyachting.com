@@ -1,63 +1,131 @@
-import { BetaAnalyticsDataClient } from "@google-analytics/data";
 import type { GACollectedData, GAMetricsResponse, GAPageData, GAEventData, GATrafficData } from "./types";
 
-function getClient() {
-  const keyJson = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
-  if (!keyJson) throw new Error("GOOGLE_SERVICE_ACCOUNT_KEY is not set");
+const TOKEN_URL = "https://oauth2.googleapis.com/token";
+const GA_API_BASE = "https://analyticsdata.googleapis.com/v1beta";
 
-  const credentials = JSON.parse(
-    Buffer.from(keyJson, "base64").toString("utf-8"),
-  );
+/**
+ * Exchanges a refresh token for a short-lived access token.
+ */
+async function getAccessToken(): Promise<string> {
+  const clientId = process.env.GA_CLIENT_ID;
+  const clientSecret = process.env.GA_CLIENT_SECRET;
+  const refreshToken = process.env.GA_REFRESH_TOKEN;
 
-  return new BetaAnalyticsDataClient({ credentials });
+  if (!clientId || !clientSecret || !refreshToken) {
+    throw new Error(
+      "GA OAuth2 credentials not configured. Set GA_CLIENT_ID, GA_CLIENT_SECRET, and GA_REFRESH_TOKEN.",
+    );
+  }
+
+  const response = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      refresh_token: refreshToken,
+      grant_type: "refresh_token",
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Failed to refresh GA access token: ${response.status} — ${body}`);
+  }
+
+  const data = await response.json();
+  return data.access_token;
 }
 
-function getPropertyId() {
+function getPropertyId(): string {
   const id = process.env.GOOGLE_ANALYTICS_PROPERTY_ID;
   if (!id) throw new Error("GOOGLE_ANALYTICS_PROPERTY_ID is not set");
   return id;
 }
 
+/* ── GA Data API v1 REST caller ───────────────────────────────── */
+
+interface GARunReportRequest {
+  dateRanges: { startDate: string; endDate: string }[];
+  metrics: { name: string }[];
+  dimensions?: { name: string }[];
+  orderBys?: { metric: { metricName: string }; desc: boolean }[];
+  limit?: number;
+}
+
+interface GAMetricValue {
+  value?: string;
+}
+
+interface GADimensionValue {
+  value?: string;
+}
+
+interface GARow {
+  metricValues?: GAMetricValue[];
+  dimensionValues?: GADimensionValue[];
+}
+
+interface GARunReportResponse {
+  rows?: GARow[];
+}
+
+async function runReport(
+  accessToken: string,
+  property: string,
+  request: GARunReportRequest,
+): Promise<GARunReportResponse> {
+  const url = `${GA_API_BASE}/${property}:runReport`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`GA Data API error: ${response.status} — ${body}`);
+  }
+
+  return response.json();
+}
+
 /**
- * Fetches a full weekly snapshot from GA4 Data API.
+ * Fetches a full weekly snapshot from GA4 Data API via OAuth2.
  */
 export async function fetchWeeklyData(
   startDate: string,
   endDate: string,
 ): Promise<GACollectedData> {
-  const client = getClient();
+  const accessToken = await getAccessToken();
   const property = `properties/${getPropertyId()}`;
 
   const [overview, pages, events, traffic, devices, countries] =
     await Promise.all([
-      fetchOverview(client, property, startDate, endDate),
-      fetchPageData(client, property, startDate, endDate),
-      fetchEventData(client, property, startDate, endDate),
-      fetchTrafficData(client, property, startDate, endDate),
-      fetchDeviceSplit(client, property, startDate, endDate),
-      fetchCountrySplit(client, property, startDate, endDate),
+      fetchOverview(accessToken, property, startDate, endDate),
+      fetchPageData(accessToken, property, startDate, endDate),
+      fetchEventData(accessToken, property, startDate, endDate),
+      fetchTrafficData(accessToken, property, startDate, endDate),
+      fetchDeviceSplit(accessToken, property, startDate, endDate),
+      fetchCountrySplit(accessToken, property, startDate, endDate),
     ]);
 
-  return {
-    overview,
-    pages,
-    events,
-    traffic,
-    device_split: devices,
-    country_split: countries,
-  };
+  return { overview, pages, events, traffic, device_split: devices, country_split: countries };
 }
 
 /* ── Individual queries ───────────────────────────────────────── */
 
 async function fetchOverview(
-  client: BetaAnalyticsDataClient,
+  token: string,
   property: string,
   startDate: string,
   endDate: string,
 ): Promise<GAMetricsResponse> {
-  const [response] = await client.runReport({
-    property,
+  const response = await runReport(token, property, {
     dateRanges: [{ startDate, endDate }],
     metrics: [
       { name: "sessions" },
@@ -81,13 +149,12 @@ async function fetchOverview(
 }
 
 async function fetchPageData(
-  client: BetaAnalyticsDataClient,
+  token: string,
   property: string,
   startDate: string,
   endDate: string,
 ): Promise<GAPageData[]> {
-  const [response] = await client.runReport({
-    property,
+  const response = await runReport(token, property, {
     dateRanges: [{ startDate, endDate }],
     dimensions: [{ name: "pagePath" }],
     metrics: [
@@ -108,13 +175,12 @@ async function fetchPageData(
 }
 
 async function fetchEventData(
-  client: BetaAnalyticsDataClient,
+  token: string,
   property: string,
   startDate: string,
   endDate: string,
 ): Promise<GAEventData[]> {
-  const [response] = await client.runReport({
-    property,
+  const response = await runReport(token, property, {
     dateRanges: [{ startDate, endDate }],
     dimensions: [{ name: "eventName" }],
     metrics: [{ name: "eventCount" }],
@@ -129,13 +195,12 @@ async function fetchEventData(
 }
 
 async function fetchTrafficData(
-  client: BetaAnalyticsDataClient,
+  token: string,
   property: string,
   startDate: string,
   endDate: string,
 ): Promise<GATrafficData[]> {
-  const [response] = await client.runReport({
-    property,
+  const response = await runReport(token, property, {
     dateRanges: [{ startDate, endDate }],
     dimensions: [{ name: "sessionSource" }, { name: "sessionMedium" }],
     metrics: [{ name: "sessions" }],
@@ -151,13 +216,12 @@ async function fetchTrafficData(
 }
 
 async function fetchDeviceSplit(
-  client: BetaAnalyticsDataClient,
+  token: string,
   property: string,
   startDate: string,
   endDate: string,
 ): Promise<{ category: string; sessions: number }[]> {
-  const [response] = await client.runReport({
-    property,
+  const response = await runReport(token, property, {
     dateRanges: [{ startDate, endDate }],
     dimensions: [{ name: "deviceCategory" }],
     metrics: [{ name: "sessions" }],
@@ -171,13 +235,12 @@ async function fetchDeviceSplit(
 }
 
 async function fetchCountrySplit(
-  client: BetaAnalyticsDataClient,
+  token: string,
   property: string,
   startDate: string,
   endDate: string,
 ): Promise<{ country: string; sessions: number }[]> {
-  const [response] = await client.runReport({
-    property,
+  const response = await runReport(token, property, {
     dateRanges: [{ startDate, endDate }],
     dimensions: [{ name: "country" }],
     metrics: [{ name: "sessions" }],
