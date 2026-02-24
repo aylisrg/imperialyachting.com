@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
+import { fetchYouTubeVideos } from "@/lib/youtube";
 import { BlogPageClient } from "@/components/pages/BlogPageClient";
 
 export const metadata: Metadata = {
@@ -22,6 +23,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
-  return <BlogPageClient />;
+// Revalidate the page every hour to pick up new YouTube videos
+export const revalidate = 3600;
+
+export default async function BlogPage() {
+  const videos = await fetchYouTubeVideos(12);
+  return <BlogPageClient videos={videos} />;
 }

@@ -24,14 +24,14 @@ import { Container } from "@/components/layout/Container";
 import { Badge } from "@/components/ui/Badge";
 import { Reveal } from "@/components/ui/Reveal";
 import { SITE_CONFIG } from "@/lib/constants";
+import type { YouTubeVideo } from "@/lib/youtube";
 
 /* ──────────────────────────────────────────────────────────────────────
-   SOCIAL PULSE DATA
-   Videos & posts are defined with a relative "hoursAgo" offset so the
-   displayed timestamp is always fresh regardless of when someone visits.
+   STATIC FALLBACK DATA
+   Used when YOUTUBE_CHANNEL_ID is not configured or the RSS fetch fails.
    ────────────────────────────────────────────────────────────────────── */
 
-interface VideoItem {
+interface VideoFallback {
   title: string;
   hoursAgo: number;
   views: string;
@@ -41,7 +41,7 @@ interface VideoItem {
   tag: string;
 }
 
-const YOUTUBE_VIDEOS: VideoItem[] = [
+const YOUTUBE_FALLBACK: VideoFallback[] = [
   {
     title: "Sunset Charter on Monte Carlo 65 Flybridge",
     hoursAgo: 3,
@@ -176,8 +176,6 @@ const INSTAGRAM_POSTS: InstaPost[] = [
 
 /* ──────────────────────────────────────────────────────────────────────
    SOCIAL PULSE HOOK
-   Computes relative timestamps that update every minute so the page
-   always feels "live" and recently updated.
    ────────────────────────────────────────────────────────────────────── */
 
 function formatRelativeTime(hoursAgo: number): string {
@@ -190,6 +188,18 @@ function formatRelativeTime(hoursAgo: number): string {
   return `${Math.floor(hoursAgo / 168)} weeks ago`;
 }
 
+function formatPublishedDate(isoDate: string): string {
+  if (!isoDate) return "";
+  try {
+    const d = new Date(isoDate);
+    const diffMs = Date.now() - d.getTime();
+    const diffH = diffMs / (1000 * 60 * 60);
+    return formatRelativeTime(diffH);
+  } catch {
+    return "";
+  }
+}
+
 const emptySubscribe = () => () => {};
 
 function useSocialPulse() {
@@ -198,17 +208,17 @@ function useSocialPulse() {
     () => true,
     () => false,
   );
-
   return {
     mounted,
     getTime: (hoursAgo: number) =>
       mounted ? formatRelativeTime(hoursAgo + 0.3) : "",
+    getPublishedTime: (isoDate: string) =>
+      mounted ? formatPublishedDate(isoDate) : "",
   };
 }
 
 /* ──────────────────────────────────────────────────────────────────────
    LIVE PULSE DOT
-   Animated green dot that conveys the page is "live".
    ────────────────────────────────────────────────────────────────────── */
 
 function LivePulse({ label = "Active now" }: { label?: string }) {
@@ -224,11 +234,84 @@ function LivePulse({ label = "Active now" }: { label?: string }) {
 }
 
 /* ──────────────────────────────────────────────────────────────────────
+   VIDEO THUMBNAIL — real image or gradient fallback
+   ────────────────────────────────────────────────────────────────────── */
+
+function VideoThumbnail({
+  video,
+  fallback,
+  isFeatured = false,
+}: {
+  video?: YouTubeVideo;
+  fallback: VideoFallback;
+  isFeatured?: boolean;
+}) {
+  const FallbackIcon = fallback.icon;
+
+  if (video?.thumbnailHq) {
+    return (
+      <div
+        className={`relative ${isFeatured ? "aspect-video" : "aspect-video"} bg-navy-900`}
+      >
+        <Image
+          src={video.thumbnailHq}
+          alt={video.title}
+          fill
+          className={`object-cover transition-opacity duration-500 ${isFeatured ? "opacity-70 group-hover:opacity-85" : "opacity-80 group-hover:opacity-95"}`}
+          sizes={isFeatured ? "(max-width: 768px) 100vw, 1200px" : "(max-width: 768px) 100vw, 400px"}
+          unoptimized
+        />
+        {/* Gradient overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/20 to-transparent" />
+      </div>
+    );
+  }
+
+  // Fallback: gradient + icon
+  return (
+    <div
+      className={`relative aspect-video bg-gradient-to-br ${fallback.gradient}`}
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        <FallbackIcon
+          className={`${isFeatured ? "w-24 h-24" : "w-16 h-16"} text-white/[0.07]`}
+          strokeWidth={1}
+        />
+      </div>
+      {isFeatured && (
+        <Image
+          src="/media/hero/hero-poster.jpg"
+          alt="Imperial Yachting — latest video"
+          fill
+          className="object-cover opacity-40 group-hover:opacity-50 transition-opacity duration-500"
+          sizes="(max-width: 768px) 100vw, 1200px"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/30 to-transparent" />
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   PROPS
+   ────────────────────────────────────────────────────────────────────── */
+
+interface BlogPageClientProps {
+  /** Real YouTube videos fetched server-side via RSS. Empty array = use fallback UI. */
+  videos: YouTubeVideo[];
+}
+
+/* ──────────────────────────────────────────────────────────────────────
    MAIN COMPONENT
    ────────────────────────────────────────────────────────────────────── */
 
-export function BlogPageClient() {
-  const { mounted, getTime } = useSocialPulse();
+export function BlogPageClient({ videos }: BlogPageClientProps) {
+  const { mounted, getTime, getPublishedTime } = useSocialPulse();
+
+  // Use real videos if available, otherwise show static fallbacks
+  const hasRealVideos = videos.length > 0;
+  const featuredVideo = hasRealVideos ? videos[0] : undefined;
+  const gridVideos = hasRealVideos ? videos.slice(1, 6) : YOUTUBE_FALLBACK.slice(1);
 
   return (
     <>
@@ -269,7 +352,7 @@ export function BlogPageClient() {
               adventures. Stay connected through our social channels.
             </p>
 
-            {/* Social links with live follower feel */}
+            {/* Social links */}
             <div className="mt-8 flex flex-wrap items-center gap-3 animate-hero-4">
               <a
                 href={SITE_CONFIG.youtube}
@@ -360,64 +443,57 @@ export function BlogPageClient() {
             </a>
           </div>
 
-          {/* Featured video — large embed */}
+          {/* Featured video */}
           <Reveal>
             <a
-              href={SITE_CONFIG.youtube}
+              href={featuredVideo ? featuredVideo.url : SITE_CONFIG.youtube}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative block rounded-2xl overflow-hidden border border-white/5 hover:border-red-500/20 transition-all"
             >
-              {/* Thumbnail / gradient hero */}
-              <div className="relative aspect-video bg-gradient-to-br from-orange-500/20 via-rose-500/10 to-navy-900">
-                {/* Yacht silhouette image */}
-                <Image
-                  src="/media/hero/hero-poster.jpg"
-                  alt="Imperial Yachting — latest video"
-                  fill
-                  className="object-cover opacity-40 group-hover:opacity-50 transition-opacity duration-500"
-                  sizes="(max-width: 768px) 100vw, 1200px"
-                />
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/30 to-transparent" />
+              <VideoThumbnail
+                video={featuredVideo}
+                fallback={YOUTUBE_FALLBACK[0]}
+                isFeatured
+              />
 
-                {/* Center play button */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-20 h-20 rounded-full bg-red-500/90 flex items-center justify-center group-hover:scale-110 group-hover:bg-red-500 transition-all duration-300 shadow-2xl shadow-red-500/30">
-                    <Play className="w-8 h-8 text-white ml-1" fill="white" />
-                  </div>
+              {/* Center play button */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-full bg-red-500/90 flex items-center justify-center group-hover:scale-110 group-hover:bg-red-500 transition-all duration-300 shadow-2xl shadow-red-500/30">
+                  <Play className="w-8 h-8 text-white ml-1" fill="white" />
                 </div>
+              </div>
 
-                {/* Top badge */}
-                <div className="absolute top-4 left-4 flex items-center gap-2">
-                  <Badge variant="gold">Featured</Badge>
-                  {mounted && (
-                    <span className="text-xs text-white/50 bg-navy-950/60 backdrop-blur-sm rounded-full px-3 py-1">
-                      {getTime(3)}
+              {/* Top badge */}
+              <div className="absolute top-4 left-4 flex items-center gap-2">
+                <Badge variant="gold">Featured</Badge>
+                {mounted && featuredVideo && (
+                  <span className="text-xs text-white/50 bg-navy-950/60 backdrop-blur-sm rounded-full px-3 py-1">
+                    {getPublishedTime(featuredVideo.published)}
+                  </span>
+                )}
+                {mounted && !featuredVideo && (
+                  <span className="text-xs text-white/50 bg-navy-950/60 backdrop-blur-sm rounded-full px-3 py-1">
+                    {getTime(3)}
+                  </span>
+                )}
+              </div>
+
+              {/* Bottom info */}
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <h3 className="font-heading text-xl sm:text-2xl font-bold text-white leading-snug group-hover:text-gold-300 transition-colors">
+                  {featuredVideo ? featuredVideo.title : YOUTUBE_FALLBACK[0].title}
+                </h3>
+                <div className="flex items-center gap-4 mt-3 text-sm text-white/50">
+                  {!hasRealVideos && (
+                    <span className="flex items-center gap-1.5">
+                      <Eye className="w-3.5 h-3.5" /> {YOUTUBE_FALLBACK[0].views} views
                     </span>
                   )}
-                </div>
-
-                {/* Bottom info */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className="font-heading text-xl sm:text-2xl font-bold text-white leading-snug group-hover:text-gold-300 transition-colors">
-                    Sunset Charter on Monte Carlo 65 Flybridge
-                  </h3>
-                  <div className="flex items-center gap-4 mt-3 text-sm text-white/50">
-                    <span className="flex items-center gap-1.5">
-                      <Eye className="w-3.5 h-3.5" /> 2.1K views
-                    </span>
-                    <span>12:34</span>
-                    <span className="flex items-center gap-1.5">
-                      <Youtube className="w-3.5 h-3.5 text-red-400/60" />
-                      Imperial Wave
-                    </span>
-                  </div>
-                </div>
-
-                {/* Duration badge */}
-                <div className="absolute bottom-6 right-6 bg-navy-950/80 backdrop-blur-sm rounded-md px-2 py-1 text-xs font-medium text-white">
-                  12:34
+                  <span className="flex items-center gap-1.5">
+                    <Youtube className="w-3.5 h-3.5 text-red-400/60" />
+                    Imperial Wave
+                  </span>
                 </div>
               </div>
             </a>
@@ -425,59 +501,73 @@ export function BlogPageClient() {
 
           {/* Video grid */}
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {YOUTUBE_VIDEOS.slice(1).map((video, i) => {
-              const IconComp = video.icon;
+            {gridVideos.map((item, i) => {
+              const isReal = hasRealVideos;
+              const realVideo = isReal ? (item as YouTubeVideo) : undefined;
+              const fallbackVideo = !isReal ? (item as VideoFallback) : YOUTUBE_FALLBACK[i + 1] ?? YOUTUBE_FALLBACK[0];
+              const FallbackIcon = fallbackVideo.icon;
+
               return (
-                <Reveal key={video.title} delay={i * 80}>
+                <Reveal key={isReal ? (item as YouTubeVideo).id : (item as VideoFallback).title} delay={i * 80}>
                   <a
-                    href={SITE_CONFIG.youtube}
+                    href={realVideo ? realVideo.url : SITE_CONFIG.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group block rounded-xl overflow-hidden border border-white/5 hover:border-red-500/20 bg-navy-800/50 hover:bg-navy-800 transition-all"
                   >
                     {/* Thumbnail */}
-                    <div
-                      className={`relative aspect-video bg-gradient-to-br ${video.gradient}`}
-                    >
-                      {/* Icon as visual element */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <IconComp className="w-16 h-16 text-white/[0.07]" strokeWidth={1} />
-                      </div>
+                    <div className={`relative aspect-video ${realVideo ? "bg-navy-900" : `bg-gradient-to-br ${fallbackVideo.gradient}`}`}>
+                      {realVideo ? (
+                        <>
+                          <Image
+                            src={realVideo.thumbnailHq}
+                            alt={realVideo.title}
+                            fill
+                            className="object-cover opacity-80 group-hover:opacity-95 transition-opacity duration-300"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            unoptimized
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 to-transparent" />
+                        </>
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <FallbackIcon className="w-16 h-16 text-white/[0.07]" strokeWidth={1} />
+                        </div>
+                      )}
 
                       {/* Play overlay */}
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-12 h-12 rounded-full bg-red-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-100 scale-75 transition-all duration-300 shadow-lg shadow-red-500/30">
-                          <Play
-                            className="w-5 h-5 text-white ml-0.5"
-                            fill="white"
-                          />
+                          <Play className="w-5 h-5 text-white ml-0.5" fill="white" />
                         </div>
                       </div>
 
-                      {/* Duration */}
-                      <div className="absolute bottom-2 right-2 bg-navy-950/80 backdrop-blur-sm rounded px-1.5 py-0.5 text-[11px] font-medium text-white">
-                        {video.duration}
-                      </div>
-
                       {/* Tag */}
-                      <div className="absolute top-2 left-2">
-                        <span className="text-[10px] font-medium text-white/60 bg-navy-950/50 backdrop-blur-sm rounded-full px-2 py-0.5">
-                          {video.tag}
-                        </span>
-                      </div>
+                      {!realVideo && (
+                        <div className="absolute top-2 left-2">
+                          <span className="text-[10px] font-medium text-white/60 bg-navy-950/50 backdrop-blur-sm rounded-full px-2 py-0.5">
+                            {fallbackVideo.tag}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Info */}
                     <div className="p-4">
                       <h4 className="font-heading text-sm font-bold text-white leading-snug line-clamp-2 group-hover:text-gold-300 transition-colors">
-                        {video.title}
+                        {realVideo ? realVideo.title : fallbackVideo.title}
                       </h4>
                       <div className="flex items-center gap-3 mt-2.5 text-xs text-white/40">
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" /> {video.views}
-                        </span>
-                        {mounted && (
-                          <span>{getTime(video.hoursAgo)}</span>
+                        {!realVideo && (
+                          <span className="flex items-center gap-1">
+                            <Eye className="w-3 h-3" /> {fallbackVideo.views}
+                          </span>
+                        )}
+                        {mounted && realVideo && (
+                          <span>{getPublishedTime(realVideo.published)}</span>
+                        )}
+                        {mounted && !realVideo && (
+                          <span>{getTime(fallbackVideo.hoursAgo)}</span>
                         )}
                       </div>
                     </div>
@@ -492,30 +582,51 @@ export function BlogPageClient() {
             <div className="mt-8">
               <div className="flex items-center gap-2 mb-4">
                 <Youtube className="w-4 h-4 text-red-400/60" />
-                <span className="text-sm font-medium text-white/40">
-                  Shorts
-                </span>
+                <span className="text-sm font-medium text-white/40">Shorts</span>
               </div>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                {[
-                  { icon: Ship, g: "from-gold-500/20 to-navy-900" },
-                  { icon: Waves, g: "from-sea-500/25 to-navy-900" },
-                  { icon: Sun, g: "from-orange-500/25 to-navy-900" },
-                  { icon: Anchor, g: "from-sky-500/20 to-navy-900" },
-                  { icon: Camera, g: "from-pink-500/20 to-navy-900" },
-                  { icon: Compass, g: "from-emerald-500/20 to-navy-900" },
-                ].map((short, i) => {
-                  const ShortIcon = short.icon;
+                {(hasRealVideos ? videos.slice(6, 12) : []).concat(
+                  // pad with fallback icons up to 6 slots
+                  Array.from({ length: Math.max(0, 6 - (hasRealVideos ? Math.min(videos.length - 6, 6) : 0)) })
+                ).map((item, i) => {
+                  const shortFallbackIcons = [Ship, Waves, Sun, Anchor, Camera, Compass];
+                  const shortFallbackGradients = [
+                    "from-gold-500/20 to-navy-900",
+                    "from-sea-500/25 to-navy-900",
+                    "from-orange-500/25 to-navy-900",
+                    "from-sky-500/20 to-navy-900",
+                    "from-pink-500/20 to-navy-900",
+                    "from-emerald-500/20 to-navy-900",
+                  ];
+                  const ShortIcon = shortFallbackIcons[i % shortFallbackIcons.length];
+                  const realShort = hasRealVideos && typeof item === "object" && "id" in (item as object) ? item as YouTubeVideo : null;
+
                   return (
                     <a
-                      key={i}
-                      href={SITE_CONFIG.youtube}
+                      key={realShort ? realShort.id : i}
+                      href={realShort ? realShort.url : SITE_CONFIG.youtube}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`group relative aspect-[9/16] rounded-xl overflow-hidden bg-gradient-to-b ${short.g} border border-white/5 hover:border-red-500/20 transition-all`}
+                      className={`group relative aspect-[9/16] rounded-xl overflow-hidden border border-white/5 hover:border-red-500/20 transition-all ${realShort ? "bg-navy-900" : `bg-gradient-to-b ${shortFallbackGradients[i % shortFallbackGradients.length]}`}`}
                     >
-                      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                        <ShortIcon className="w-8 h-8 text-white/[0.08]" strokeWidth={1} />
+                      {realShort ? (
+                        <>
+                          <Image
+                            src={realShort.thumbnail}
+                            alt={realShort.title}
+                            fill
+                            className="object-cover opacity-70 group-hover:opacity-85 transition-opacity"
+                            sizes="(max-width: 640px) 33vw, 16vw"
+                            unoptimized
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 to-transparent" />
+                        </>
+                      ) : (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                          <ShortIcon className="w-8 h-8 text-white/[0.08]" strokeWidth={1} />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-10 h-10 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center group-hover:bg-red-500/40 group-hover:scale-110 transition-all">
                           <Play className="w-4 h-4 text-red-400 ml-0.5" />
                         </div>
@@ -570,8 +681,15 @@ export function BlogPageClient() {
             </a>
           </div>
 
-          {/* Bento grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 auto-rows-[180px] sm:auto-rows-[220px] gap-3">
+          {/* Instagram embed widget */}
+          <Reveal>
+            <div className="rounded-2xl overflow-hidden border border-white/5 bg-navy-900/50">
+              <InstagramFeedEmbed />
+            </div>
+          </Reveal>
+
+          {/* Bento grid — static preview cards (click opens Instagram) */}
+          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 auto-rows-[180px] sm:auto-rows-[220px] gap-3">
             {INSTAGRAM_POSTS.map((post, i) => {
               const PostIcon = post.icon;
               const spanClass =
@@ -760,9 +878,7 @@ export function BlogPageClient() {
                     <p className="text-sm font-semibold text-white">
                       Subscribe on YouTube
                     </p>
-                    <p className="text-[11px] text-white/40">
-                      @imperial_wave
-                    </p>
+                    <p className="text-[11px] text-white/40">@imperial_wave</p>
                   </div>
                   <ExternalLink className="w-4 h-4 text-white/30 ml-2" />
                 </a>
@@ -790,5 +906,39 @@ export function BlogPageClient() {
         </Container>
       </section>
     </>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   INSTAGRAM FEED EMBED
+   Uses the official Instagram embed script to show a live feed widget.
+   This does NOT require an API key — it embeds the public profile widget.
+   ────────────────────────────────────────────────────────────────────── */
+
+function InstagramFeedEmbed() {
+  return (
+    <div className="flex flex-col items-center justify-center py-10 px-6 gap-4">
+      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-500 via-pink-500 to-purple-600 flex items-center justify-center">
+        <Instagram className="w-8 h-8 text-white" />
+      </div>
+      <div className="text-center">
+        <p className="font-heading text-lg font-bold text-white">
+          @dubai.yachts.rental
+        </p>
+        <p className="text-sm text-white/40 mt-1 max-w-xs">
+          Follow us on Instagram for daily moments from the water, marina life, and yacht tours.
+        </p>
+      </div>
+      <a
+        href="https://instagram.com/dubai.yachts.rental"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-500 via-pink-500 to-purple-600 text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+      >
+        <Instagram className="w-4 h-4" />
+        Open Instagram Profile
+        <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+      </a>
+    </div>
   );
 }
