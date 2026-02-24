@@ -1,6 +1,7 @@
 "use client";
 
 import { X, Gift, Clock } from "lucide-react";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const WHATSAPP_NUMBER = "971528355939";
 const UTM_PARAMS = "utm_source=website&utm_medium=promo_banner&utm_campaign=4plus1_hours";
@@ -42,6 +43,7 @@ export function PromoBanner({ onDismiss }: PromoBannerProps) {
           target="_blank"
           rel="noopener noreferrer"
           className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-[#25D366] text-white text-xs sm:text-sm font-semibold hover:bg-[#20bd5a] transition-colors"
+          onClick={() => trackWhatsAppClick("promo_banner")}
         >
           <Clock className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Claim Offer</span>

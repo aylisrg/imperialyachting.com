@@ -1,11 +1,33 @@
+"use client";
+
+import { useRef, useEffect } from "react";
 import { Phone, Mail } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { SITE_CONFIG } from "@/lib/constants";
+import { trackWhatsAppClick, trackContactClick, trackPhoneClick, trackEmailClick, trackCtaSectionView } from "@/lib/analytics";
 
 export function CTASection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          trackCtaSectionView();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative py-24 sm:py-32 overflow-hidden">
+    <section ref={sectionRef} className="relative py-24 sm:py-32 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-navy-800">
         <div className="absolute inset-0 bg-gradient-to-br from-gold-500/[0.06] via-transparent to-gold-400/[0.03]" />
@@ -28,10 +50,10 @@ export function CTASection() {
 
         {/* Buttons */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Button variant="primary" size="lg" href={SITE_CONFIG.whatsapp}>
+          <Button variant="primary" size="lg" href={SITE_CONFIG.whatsapp} onClick={() => trackWhatsAppClick("cta_section")}>
             WhatsApp Us
           </Button>
-          <Button variant="secondary" size="lg" href="/contact">
+          <Button variant="secondary" size="lg" href="/contact" onClick={() => trackContactClick("cta_section")}>
             Send Inquiry
           </Button>
         </div>
@@ -41,6 +63,7 @@ export function CTASection() {
           <a
             href={`tel:${SITE_CONFIG.phone}`}
             className="flex items-center gap-2 hover:text-gold-400 transition-colors"
+            onClick={() => trackPhoneClick("cta_section")}
           >
             <Phone className="w-4 h-4" />
             {SITE_CONFIG.phone}
@@ -48,6 +71,7 @@ export function CTASection() {
           <a
             href={`mailto:${SITE_CONFIG.email}`}
             className="flex items-center gap-2 hover:text-gold-400 transition-colors"
+            onClick={() => trackEmailClick("cta_section")}
           >
             <Mail className="w-4 h-4" />
             {SITE_CONFIG.email}

@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { trackInquirySubmit } from "@/lib/analytics";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -63,6 +64,7 @@ export function ContactForm() {
   async function onSubmit() {
     // Simulate network delay for UX feedback
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    trackInquirySubmit();
     setSubmitted(true);
     reset();
   }

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { NAV_LINKS, SERVICE_NAV, SITE_CONFIG } from "@/lib/constants";
 import { Container } from "./Container";
 import { PromoBanner } from "@/components/promo/PromoBanner";
+import { trackPhoneClick, trackWhatsAppClick } from "@/lib/analytics";
 
 interface HeaderProps {
   bannerVisible?: boolean;
@@ -124,6 +125,7 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
               <a
                 href={`tel:${SITE_CONFIG.phone}`}
                 className="hidden sm:flex items-center gap-2 text-sm text-white/70 hover:text-gold-400 transition-colors"
+                onClick={() => trackPhoneClick("header")}
               >
                 <Phone className="w-4 h-4" />
                 <span className="hidden md:inline">{SITE_CONFIG.phone}</span>
@@ -133,6 +135,7 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden sm:inline-flex items-center px-5 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 text-sm font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-gold-500/20"
+                onClick={() => trackWhatsAppClick("header")}
               >
                 Book Now
               </a>
@@ -184,6 +187,7 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
               rel="noopener noreferrer"
               className="px-8 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold rounded-lg transition-all text-lg"
               tabIndex={isMobileOpen ? 0 : -1}
+              onClick={() => trackWhatsAppClick("header_mobile")}
             >
               Book Now
             </a>

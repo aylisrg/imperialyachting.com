@@ -307,6 +307,96 @@ export interface Database {
         };
         Relationships: [];
       };
+      analytics_reports: {
+        Row: {
+          id: string;
+          period_start: string;
+          period_end: string;
+          raw_metrics: Record<string, unknown>;
+          trends: Record<string, unknown> | null;
+          summary: string | null;
+          page_insights: Record<string, unknown>[] | null;
+          traffic_analysis: Record<string, unknown> | null;
+          quick_wins: Record<string, unknown>[] | null;
+          status: string;
+          error_message: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          period_start: string;
+          period_end: string;
+          raw_metrics: Record<string, unknown>;
+          trends?: Record<string, unknown> | null;
+          summary?: string | null;
+          page_insights?: Record<string, unknown>[] | null;
+          traffic_analysis?: Record<string, unknown> | null;
+          quick_wins?: Record<string, unknown>[] | null;
+          status?: string;
+          error_message?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          period_start?: string;
+          period_end?: string;
+          raw_metrics?: Record<string, unknown>;
+          trends?: Record<string, unknown> | null;
+          summary?: string | null;
+          page_insights?: Record<string, unknown>[] | null;
+          traffic_analysis?: Record<string, unknown> | null;
+          quick_wins?: Record<string, unknown>[] | null;
+          status?: string;
+          error_message?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      analytics_hypotheses: {
+        Row: {
+          id: string;
+          report_id: string;
+          title: string;
+          problem: string;
+          solution: string;
+          expected_impact: string | null;
+          priority: string;
+          category: string;
+          status: string;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          report_id: string;
+          title: string;
+          problem: string;
+          solution: string;
+          expected_impact?: string | null;
+          priority: string;
+          category: string;
+          status?: string;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          report_id?: string;
+          title?: string;
+          problem?: string;
+          solution?: string;
+          expected_impact?: string | null;
+          priority?: string;
+          category?: string;
+          status?: string;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

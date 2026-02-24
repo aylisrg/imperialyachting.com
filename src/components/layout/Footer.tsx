@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Phone,
@@ -10,6 +12,7 @@ import {
 } from "lucide-react";
 import { Container } from "./Container";
 import { SITE_CONFIG, NAV_LINKS, SERVICE_NAV } from "@/lib/constants";
+import { trackPhoneClick, trackEmailClick, trackWhatsAppClick } from "@/lib/analytics";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -119,6 +122,7 @@ export function Footer() {
                 <a
                   href={`tel:${SITE_CONFIG.phone}`}
                   className="flex items-start gap-3 text-sm text-white/50 hover:text-gold-400 transition-colors"
+                  onClick={() => trackPhoneClick("footer")}
                 >
                   <Phone className="w-4 h-4 mt-0.5 shrink-0" />
                   {SITE_CONFIG.phone}
@@ -128,6 +132,7 @@ export function Footer() {
                 <a
                   href={`mailto:${SITE_CONFIG.email}`}
                   className="flex items-start gap-3 text-sm text-white/50 hover:text-gold-400 transition-colors"
+                  onClick={() => trackEmailClick("footer")}
                 >
                   <Mail className="w-4 h-4 mt-0.5 shrink-0" />
                   {SITE_CONFIG.email}
@@ -150,6 +155,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-5 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 text-sm font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-gold-500/20"
+                onClick={() => trackWhatsAppClick("footer")}
               >
                 WhatsApp Us
               </a>
