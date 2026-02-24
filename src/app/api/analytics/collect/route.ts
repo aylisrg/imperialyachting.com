@@ -2,13 +2,12 @@ import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { fetchWeeklyData } from "@/lib/analytics/ga-client";
 import { analyzeWithClaude } from "@/lib/analytics/claude-analyzer";
-import { sendTelegramNotification } from "@/lib/analytics/telegram-notifier";
-import type { RawMetrics, AnalysisInput, AnalyticsReport, Hypothesis } from "@/lib/analytics/types";
+import type { RawMetrics, AnalysisInput } from "@/lib/analytics/types";
 
 /**
  * POST /api/analytics/collect
  *
- * Main pipeline: Collect GA data → Analyze with Claude → Store in Supabase → Notify via Telegram.
+ * Main pipeline: Collect GA data → Analyze with Claude → Store in Supabase.
  * Protected by ANALYTICS_CRON_SECRET bearer token.
  */
 export async function POST(request: Request) {
@@ -156,36 +155,10 @@ export async function POST(request: Request) {
       status: "new" as const,
     }));
 
-    const { data: insertedHypotheses } = await supabase
+    await supabase
       .from("analytics_hypotheses")
       .insert(hypothesesToInsert)
       .select();
-
-    // Step 6: Send Telegram notification (optional, don't fail on error)
-    try {
-      if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
-        const fullReport: AnalyticsReport = {
-          id: reportId,
-          period_start: periodStart,
-          period_end: periodEnd,
-          raw_metrics: rawMetrics,
-          trends: analysis.trends,
-          summary: analysis.summary,
-          page_insights: analysis.page_insights,
-          traffic_analysis: analysis.traffic_analysis,
-          quick_wins: analysis.quick_wins,
-          status: "complete",
-          error_message: null,
-          created_at: new Date().toISOString(),
-        };
-        await sendTelegramNotification(
-          fullReport,
-          (insertedHypotheses ?? []) as unknown as Hypothesis[],
-        );
-      }
-    } catch (telegramError) {
-      console.error("Telegram notification failed:", telegramError);
-    }
 
     return NextResponse.json({
       success: true,
