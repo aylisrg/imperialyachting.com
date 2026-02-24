@@ -6,6 +6,7 @@ import { Anchor, MapPin } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { trackExploreFleetClick, trackContactClick } from "@/lib/analytics";
 
 const subscribe = () => () => {};
 function useIsMobile() {
@@ -115,10 +116,10 @@ export function Hero() {
           </p>
 
           <div className="animate-hero-5 mt-10 flex flex-wrap gap-4">
-            <Button variant="primary" size="lg" href="/fleet">
+            <Button variant="primary" size="lg" href="/fleet" onClick={() => trackExploreFleetClick()}>
               Explore Our Fleet
             </Button>
-            <Button variant="secondary" size="lg" href="/contact">
+            <Button variant="secondary" size="lg" href="/contact" onClick={() => trackContactClick("hero")}>
               Contact Us
             </Button>
           </div>
