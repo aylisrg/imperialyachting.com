@@ -31,7 +31,7 @@ export const SITE_CONFIG = {
   // Google Business Profile — "Get more reviews" direct link from GBP Dashboard
   // Format: https://g.page/r/XXXXXXXXXXXXXXXXXX/review
   // Update this URL from: Google Business Profile → Home → "Get more reviews"
-  googleReviewUrl: "https://g.page/r/CXxxxxxxxxxxxxxxxxx/review",
+  googleReviewUrl: "https://g.page/r/CTjchxby6OS8EBM/review",
   googleProfileUrl: "https://share.google/KtUZNa28mb0KLpnLB",
   bankDetails: {
     bank: "Sharjah Islamic Bank",
