@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { MapPin, Anchor } from "lucide-react";
+import Link from "next/link";
+import { MapPin, Anchor, UtensilsCrossed, ChevronRight } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
@@ -175,6 +176,28 @@ export function DestinationsPageClient({
                 — our home base between Palm Jumeirah and Bluewaters Island.
               </p>
             </div>
+          </Reveal>
+
+          {/* Dock & Dine Guide banner */}
+          <Reveal>
+            <Link
+              href="/destinations/dock-and-dine-dubai"
+              className="mb-12 flex items-center gap-4 rounded-xl bg-navy-800/60 border border-gold-500/15 hover:border-gold-500/30 px-6 py-4 max-w-2xl mx-auto transition-all duration-300 group"
+            >
+              <div className="w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-gold-500/20 transition-colors">
+                <UtensilsCrossed className="w-5 h-5 text-gold-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">
+                  Dock &amp; Dine Guide
+                </p>
+                <p className="text-xs text-white/40 mt-0.5">
+                  20 marinas in Dubai where yachts moor for free while dining at
+                  waterfront restaurants.
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-gold-400 transition-colors flex-shrink-0" />
+            </Link>
           </Reveal>
 
           {/* Full catalog */}
