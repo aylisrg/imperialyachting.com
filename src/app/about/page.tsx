@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { organizationSchema } from "@/components/seo/schemas";
+import { organizationSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { AboutPageContent } from "./AboutPageContent";
 
 export const metadata: Metadata = {
@@ -28,6 +28,12 @@ export default function AboutPage() {
   return (
     <>
       <JsonLd data={organizationSchema()} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "About Imperial Yachting", url: "/about" },
+        ])}
+      />
       <AboutPageContent />
     </>
   );

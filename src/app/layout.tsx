@@ -70,6 +70,16 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_CONFIG.url,
+    languages: {
+      en: SITE_CONFIG.url,
+      "x-default": SITE_CONFIG.url,
+    },
+  },
+  other: {
+    "geo.region": "AE-DU",
+    "geo.placename": "Dubai",
+    "geo.position": "25.0805;55.1403",
+    ICBM: "25.0805, 55.1403",
   },
   openGraph: {
     type: "website",

@@ -73,6 +73,30 @@ export function localBusinessSchema() {
     },
     priceRange: "$$$",
     currenciesAccepted: "AED,USD,EUR",
+    paymentAccepted: "Cash, Credit Card, Bank Transfer",
+    knowsAbout: [
+      "Luxury Yacht Charter",
+      "Yacht Management",
+      "Dubai Harbour",
+      "Dubai Marina",
+      "Palm Jumeirah Cruises",
+      "Corporate Yacht Events",
+      "Birthday Party Yacht Dubai",
+      "Sunset Cruise Dubai",
+    ],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      reviewCount: "87",
+      bestRating: "5",
+      worstRating: "1",
+    },
+    hasMap: "https://maps.google.com/?q=Dubai+Harbour+Yacht+Club",
+    sameAs: [
+      SITE_CONFIG.instagram,
+      SITE_CONFIG.youtube,
+      SITE_CONFIG.linkedinCeo,
+    ],
   };
 }
 
@@ -209,6 +233,114 @@ export function articleSchema(opts: ArticleSchemaOptions) {
       "@type": "WebPage",
       "@id": opts.url,
     },
+  };
+}
+
+export function breadcrumbSchema(items: Array<{ name: string; url: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url.startsWith("http") ? item.url : `${SITE_CONFIG.url}${item.url}`,
+    })),
+  };
+}
+
+export function serviceAreaSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${SITE_CONFIG.url}/#localbusiness-area`,
+    name: SITE_CONFIG.name,
+    areaServed: [
+      {
+        "@type": "City",
+        name: "Dubai",
+        containedInPlace: { "@type": "Country", name: "United Arab Emirates" },
+      },
+    ],
+    serviceArea: {
+      "@type": "GeoCircle",
+      geoMidpoint: {
+        "@type": "GeoCoordinates",
+        latitude: 25.0805,
+        longitude: 55.1403,
+      },
+      geoRadius: "50000",
+    },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Yacht Charter Services",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Luxury Yacht Charter Dubai",
+            description:
+              "All-inclusive crewed yacht charter from Dubai Harbour. Hourly, daily and weekly rates.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Yacht Management Dubai",
+            description:
+              "Full-service yacht management including charter revenue optimisation, crew, maintenance and marketing.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Yacht Cinematography Dubai",
+            description:
+              "Professional on-water photo and video production for brands and private clients.",
+          },
+        },
+      ],
+    },
+  };
+}
+
+export function serviceSchema(opts: {
+  name: string;
+  description: string;
+  url: string;
+  priceFrom?: number;
+  priceCurrency?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: opts.name,
+    description: opts.description,
+    url: opts.url,
+    provider: {
+      "@type": "Organization",
+      "@id": `${SITE_CONFIG.url}/#organization`,
+      name: SITE_CONFIG.name,
+      url: SITE_CONFIG.url,
+    },
+    areaServed: {
+      "@type": "City",
+      name: "Dubai",
+      containedInPlace: { "@type": "Country", name: "United Arab Emirates" },
+    },
+    ...(opts.priceFrom
+      ? {
+          offers: {
+            "@type": "Offer",
+            priceCurrency: opts.priceCurrency ?? "AED",
+            price: opts.priceFrom,
+            availability: "https://schema.org/InStock",
+          },
+        }
+      : {}),
   };
 }
 

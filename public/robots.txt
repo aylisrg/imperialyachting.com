@@ -4,16 +4,30 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /admin/
 
 # Google
 User-agent: Googlebot
 Allow: /
 
-# AI Crawlers — explicitly allowed for GEO
+User-agent: Googlebot-Image
+Allow: /
+
+# Bing / Microsoft
+User-agent: Bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
+# AI Crawlers — explicitly allowed for GEO (Generative Engine Optimisation)
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
 Allow: /
 
 User-agent: PerplexityBot
@@ -23,6 +37,18 @@ User-agent: ClaudeBot
 Allow: /
 
 User-agent: Anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Gemini
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: YouBot
 Allow: /
 
 # Sitemap

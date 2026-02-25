@@ -13,7 +13,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { localBusinessSchema } from "@/components/seo/schemas";
+import { localBusinessSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { SITE_CONFIG } from "@/lib/constants";
 import { ContactForm } from "@/components/forms/ContactForm";
 
@@ -71,6 +71,12 @@ export default function ContactPage() {
   return (
     <>
       <JsonLd data={localBusinessSchema()} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Contact Imperial Yachting", url: "/contact" },
+        ])}
+      />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 sm:pt-40 sm:pb-24 overflow-hidden">

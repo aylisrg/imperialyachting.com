@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
+import { yachtProductSchema, faqSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import { fetchAllYachts } from "@/lib/yachts-db";
@@ -54,6 +54,12 @@ export default async function FleetPage() {
     <>
       <JsonLd data={itemListSchema} />
       <JsonLd data={faqSchema(fleetFAQ)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Yacht Charter Fleet Dubai", url: "/fleet" },
+        ])}
+      />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden">

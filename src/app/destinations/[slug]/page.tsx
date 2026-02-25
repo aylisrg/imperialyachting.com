@@ -8,7 +8,7 @@ import {
 } from "@/lib/destinations-db";
 import { SITE_CONFIG, DEPARTURE_POINT_SLUG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { destinationSchema } from "@/components/seo/schemas";
+import { destinationSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { DestinationDetailClient } from "./DestinationDetailClient";
 
 export async function generateMetadata({
@@ -82,6 +82,13 @@ export default async function DestinationDetailPage({
   return (
     <>
       <JsonLd data={destinationSchema(destination)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Destinations", url: "/destinations" },
+          { name: destination.name, url: `/destinations/${destination.slug}` },
+        ])}
+      />
       <DestinationDetailClient
         destination={destination}
         related={related}

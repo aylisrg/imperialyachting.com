@@ -31,6 +31,31 @@ export const homeFAQ: FAQItem[] = [
     answer:
       "Yes, Imperial Yachting specializes in corporate yacht charters in Dubai. Our Monte Carlo 6 accommodates up to 18 guests, perfect for executive retreats, team building events, client entertainment, and product launches. We offer customized corporate packages including branded setups, premium catering, photography, and videography services through our in-house Cinematographic Bureau.",
   },
+  {
+    question: "What is the best yacht charter company in Dubai?",
+    answer:
+      "Imperial Yachting is widely regarded as one of Dubai's premier yacht charter companies because we own our entire fleet — the Monte Carlo 6 (60ft), Van Dutch 40, and EVO 43 — rather than acting as a broker. Operating directly from Dubai Harbour Yacht Club, we control quality at every stage: vessel maintenance, crew training, and client service. We offer all-inclusive pricing with no hidden fees, a dedicated booking team reachable 7 days a week, and in-house cinematography for those who want to capture their experience.",
+  },
+  {
+    question: "What is the difference between a yacht charter and a boat rental in Dubai?",
+    answer:
+      "A yacht charter in Dubai typically refers to a fully crewed, all-inclusive experience aboard a luxury motor yacht. The price includes a professional captain, crew, fuel, beverages, and amenities. A 'boat rental' often implies a self-drive or bareboat arrangement, which requires an operator's licence and is less common for luxury vessels in Dubai. Imperial Yachting provides crewed charters only, ensuring guests enjoy a premium, stress-free experience.",
+  },
+  {
+    question: "Is it worth renting a yacht for a birthday party in Dubai?",
+    answer:
+      "Absolutely. A birthday party on a yacht in Dubai is one of the most memorable ways to celebrate. You get a private venue with stunning views of the Dubai Marina skyline, Palm Jumeirah, and Ain Dubai. Imperial Yachting handles all logistics — decoration, catering coordination, sound system, and a professional crew. Groups of 10-18 guests fit comfortably on our fleet. Prices for a 4-hour birthday charter start from AED 12,000, making it competitive with private event venues.",
+  },
+  {
+    question: "Can I do a sunset cruise in Dubai from Dubai Harbour?",
+    answer:
+      "Yes. Dubai Harbour is one of the best departure points for sunset cruises because it sits between Palm Jumeirah and Bluewaters Island, giving unobstructed views westward across the Arabian Gulf. The best sunset viewing window is roughly 17:30–19:00 (exact times vary by season). A 2-hour sunset cruise aboard the Van Dutch 40 or EVO 43 is a popular choice, covering the Palm Jumeirah coastline and Dubai Marina skyline with the sun setting behind the Abu Dhabi horizon.",
+  },
+  {
+    question: "What are the best places to visit on a yacht in Dubai?",
+    answer:
+      "The most popular yacht destinations from Dubai Harbour include: Palm Jumeirah (iconic frond beaches and the Atlantis hotel view), Dubai Marina skyline (passing JBR Beach and the densest skyscraper skyline in the world), Ain Dubai on Bluewaters Island (the world's largest observation wheel), World Islands (archipelago shaped like a world map, great for anchoring), and the open waters of the Arabian Gulf for swimming and water sports. For longer charters, Abu Dhabi and Musandam (Oman) are reachable.",
+  },
 ];
 
 export const fleetFAQ: FAQItem[] = [
@@ -67,6 +92,21 @@ export const charterFAQ: FAQItem[] = [
     answer:
       "Safety is our top priority. If weather conditions make sailing unsafe, we offer free rescheduling to an alternative date. Our captains monitor conditions closely and will communicate any concerns at least 12 hours before departure. Light winds and small swells are handled comfortably thanks to our Seakeeper stabilizer on the Monte Carlo 6.",
   },
+  {
+    question: "How do I book a yacht charter in Dubai?",
+    answer:
+      "Booking a yacht charter with Imperial Yachting takes three steps: 1) Contact us via WhatsApp, phone (+971-52-8355939), or the booking form on our website to check availability for your preferred date and yacht. 2) Confirm the booking with a signed charter agreement and a 50% deposit (full payment accepted in AED, USD, EUR, or bank transfer). 3) Arrive at Dubai Harbour Yacht Club on the day — our crew will be ready to welcome you. Same-day bookings are occasionally possible subject to availability.",
+  },
+  {
+    question: "What is the minimum charter duration for a yacht in Dubai?",
+    answer:
+      "The minimum charter duration with Imperial Yachting is typically 2 hours for weekday bookings and 4 hours on weekends and public holidays. Most guests choose 4–6 hour charters for a sunset cruise or half-day experience, while full-day charters of 8 hours are popular for corporate events, weddings, and birthday parties.",
+  },
+  {
+    question: "Are food and drinks included in a Dubai yacht charter?",
+    answer:
+      "Standard charters include soft drinks, water, ice, and light snacks. Full catering packages — including BBQ, gourmet mezze, seafood, and customised menus — can be arranged at an additional cost through our partner catering teams. The Monte Carlo 6 is equipped with a full BBQ grill as standard. We can also coordinate birthday cakes, decorations, and themed setups on request.",
+  },
 ];
 
 export const managementFAQ: FAQItem[] = [
@@ -79,5 +119,15 @@ export const managementFAQ: FAQItem[] = [
     question: "How much revenue can my yacht generate through charter management?",
     answer:
       "Revenue depends on yacht size, condition, and season. In Dubai's market, well-managed yachts in the 40-60ft range can generate AED 150,000-350,000 per month during peak season (October-April). Our management team optimizes pricing across seasons and maintains high occupancy through our B2B network and direct marketing channels.",
+  },
+  {
+    question: "What percentage does Imperial Yachting charge for yacht management?",
+    answer:
+      "Imperial Yachting's management fee is structured as a performance-based commission on charter revenue, ensuring our interests are aligned with yours as the yacht owner. Contact us for a personalised management proposal tailored to your vessel's specifications, current condition, and your income expectations.",
+  },
+  {
+    question: "What licences does Imperial Yachting hold for yacht management in Dubai?",
+    answer:
+      "Imperial Charter Yachting Services L.L.C. holds a Dubai trade licence (number 960574, company registration 2236727) and operates in full compliance with Dubai Maritime City Authority (DMCA) regulations. All managed vessels are fully insured and comply with UAE flag state requirements.",
   },
 ];

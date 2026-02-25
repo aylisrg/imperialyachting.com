@@ -29,7 +29,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { FAQAccordion } from "@/components/shared/FAQAccordion";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { yachtProductSchema, faqSchema } from "@/components/seo/schemas";
+import { yachtProductSchema, faqSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { YachtGallery } from "@/components/gallery/YachtGallery";
 import { VideoGallery } from "@/components/gallery/VideoGallery";
 import { fetchYachtBySlug } from "@/lib/yachts-db";
@@ -146,6 +146,13 @@ export default async function YachtDetailPage({
     <>
       <JsonLd data={yachtProductSchema(yacht)} />
       <JsonLd data={faqSchema(fleetFAQ)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Fleet", url: "/fleet" },
+          { name: yacht.name, url: `/fleet/${yacht.slug}` },
+        ])}
+      />
 
       {/* Breadcrumb */}
       <div className="bg-navy-950 pt-28 sm:pt-32">
