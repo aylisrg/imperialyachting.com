@@ -8,7 +8,10 @@ import {
   organizationSchema,
   localBusinessSchema,
   websiteSchema,
+  faqSchema,
+  serviceAreaSchema,
 } from "@/components/seo/schemas";
+import { homeFAQ } from "@/data/faq";
 import { fetchAllYachts } from "@/lib/yachts-db";
 import { fetchAllDestinations } from "@/lib/destinations-db";
 import { getLowestPrice } from "@/lib/pricing";
@@ -59,6 +62,8 @@ export default async function HomePage() {
       <JsonLd data={organizationSchema()} />
       <JsonLd data={localBusinessSchema()} />
       <JsonLd data={websiteSchema()} />
+      <JsonLd data={serviceAreaSchema()} />
+      <JsonLd data={faqSchema(homeFAQ)} />
 
       <Hero />
       <TrustBar />

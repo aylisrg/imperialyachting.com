@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { faqSchema } from "@/components/seo/schemas";
+import { faqSchema, serviceSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { managementFAQ } from "@/data/faq";
 import { YachtManagementPageContent } from "./YachtManagementPageContent";
 
@@ -29,6 +29,21 @@ export default function YachtManagementPage() {
   return (
     <>
       <JsonLd data={faqSchema(managementFAQ)} />
+      <JsonLd
+        data={serviceSchema({
+          name: "Yacht Management Dubai",
+          description:
+            "Full-service yacht management in Dubai by Imperial Yachting. Services include charter revenue optimisation, crew recruitment and training, scheduled maintenance, financial reporting, berth management at Dubai Harbour, and marketing across B2B and direct channels.",
+          url: `${SITE_CONFIG.url}/services/yacht-management`,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Services", url: "/services" },
+          { name: "Yacht Management Dubai", url: "/services/yacht-management" },
+        ])}
+      />
       <YachtManagementPageContent />
     </>
   );

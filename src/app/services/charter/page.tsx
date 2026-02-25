@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { faqSchema } from "@/components/seo/schemas";
+import { faqSchema, serviceSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { charterFAQ } from "@/data/faq";
 import { CharterPageContent } from "./CharterPageContent";
 
@@ -29,6 +29,23 @@ export default function CharterPage() {
   return (
     <>
       <JsonLd data={faqSchema(charterFAQ)} />
+      <JsonLd
+        data={serviceSchema({
+          name: "Luxury Yacht Charter Dubai",
+          description:
+            "All-inclusive crewed yacht charter from Dubai Harbour. Choose from the Monte Carlo 6 (60ft, 18 guests), Van Dutch 40 (40ft, 10 guests) or EVO 43 (43ft, 12 guests). Rates from AED 2,500/hr including captain, crew, fuel and amenities.",
+          url: `${SITE_CONFIG.url}/services/charter`,
+          priceFrom: 2500,
+          priceCurrency: "AED",
+        })}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Services", url: "/services" },
+          { name: "Yacht Charter Dubai", url: "/services/charter" },
+        ])}
+      />
       <CharterPageContent />
     </>
   );
