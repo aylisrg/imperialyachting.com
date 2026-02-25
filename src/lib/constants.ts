@@ -28,6 +28,11 @@ export const SITE_CONFIG = {
   companyRegistration: "2236727",
   taxId: "100601445800003",
   googleAnalyticsId: "G-BQPZ2WJWWL",
+  // Google Business Profile — "Get more reviews" direct link from GBP Dashboard
+  // Format: https://g.page/r/XXXXXXXXXXXXXXXXXX/review
+  // Update this URL from: Google Business Profile → Home → "Get more reviews"
+  googleReviewUrl: "https://g.page/r/CXxxxxxxxxxxxxxxxxx/review",
+  googleProfileUrl: "https://share.google/KtUZNa28mb0KLpnLB",
   bankDetails: {
     bank: "Sharjah Islamic Bank",
     iban: "AE860410000012134346001",
