@@ -3,6 +3,7 @@ export const revalidate = 3600;
 import dynamicImport from "next/dynamic";
 import { Hero } from "@/components/sections/Hero";
 import { TrustBar } from "@/components/sections/TrustBar";
+import { GoogleReviewCTA } from "@/components/sections/GoogleReviewCTA";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   organizationSchema,
@@ -71,6 +72,7 @@ export default async function HomePage() {
       <ServicesOverview />
       <WhyImperial />
       <TestimonialCarousel />
+      <GoogleReviewCTA />
       <DestinationsSection destinations={destinations} />
       <CTASection />
       <FAQSection />

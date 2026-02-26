@@ -23,8 +23,10 @@ import {
 import { Container } from "@/components/layout/Container";
 import { Badge } from "@/components/ui/Badge";
 import { Reveal } from "@/components/ui/Reveal";
+import { BeholdWidget } from "@/components/instagram/BeholdWidget";
 import { SITE_CONFIG } from "@/lib/constants";
 import type { YouTubeVideo } from "@/lib/youtube";
+import type { InstagramPost } from "@/lib/instagram";
 
 /* ──────────────────────────────────────────────────────────────────────
    STATIC FALLBACK DATA
@@ -297,17 +299,16 @@ function VideoThumbnail({
    ────────────────────────────────────────────────────────────────────── */
 
 interface BlogPageClientProps {
-  /** Real YouTube videos fetched server-side via RSS. Empty array = use fallback UI. */
   videos: YouTubeVideo[];
+  instagramPosts: InstagramPost[];
 }
 
 /* ──────────────────────────────────────────────────────────────────────
    MAIN COMPONENT
    ────────────────────────────────────────────────────────────────────── */
 
-export function BlogPageClient({ videos }: BlogPageClientProps) {
+export function BlogPageClient({ videos, instagramPosts }: BlogPageClientProps) {
   const { mounted, getTime, getPublishedTime } = useSocialPulse();
-
   // Use real videos if available, otherwise show static fallbacks
   const hasRealVideos = videos.length > 0;
   const featuredVideo = hasRealVideos ? videos[0] : undefined;
@@ -681,73 +682,11 @@ export function BlogPageClient({ videos }: BlogPageClientProps) {
             </a>
           </div>
 
-          {/* Instagram embed widget */}
           <Reveal>
-            <div className="rounded-2xl overflow-hidden border border-white/5 bg-navy-900/50">
-              <InstagramFeedEmbed />
+            <div className="rounded-2xl overflow-hidden border border-white/5 bg-navy-900/30 p-2">
+              <BeholdWidget />
             </div>
           </Reveal>
-
-          {/* Bento grid — static preview cards (click opens Instagram) */}
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 auto-rows-[180px] sm:auto-rows-[220px] gap-3">
-            {INSTAGRAM_POSTS.map((post, i) => {
-              const PostIcon = post.icon;
-              const spanClass =
-                post.size === "tall"
-                  ? "row-span-2"
-                  : post.size === "wide"
-                    ? "col-span-2"
-                    : "";
-
-              return (
-                <Reveal key={i} delay={i * 60}>
-                  <a
-                    href={SITE_CONFIG.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`group relative rounded-xl overflow-hidden border border-white/5 hover:border-pink-500/20 transition-all h-full block bg-gradient-to-br ${post.gradient} ${spanClass}`}
-                  >
-                    {/* Decorative icon */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <PostIcon
-                        className="w-20 h-20 text-white/[0.05] group-hover:text-white/[0.08] transition-colors duration-500"
-                        strokeWidth={0.8}
-                      />
-                    </div>
-
-                    {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-navy-950/0 group-hover:bg-navy-950/60 transition-all duration-300 flex flex-col items-center justify-center gap-2">
-                      <div className="opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 flex flex-col items-center gap-2">
-                        <div className="flex items-center gap-3">
-                          <span className="flex items-center gap-1.5 text-sm text-pink-300">
-                            <Heart className="w-4 h-4" fill="currentColor" />{" "}
-                            {post.likes}
-                          </span>
-                        </div>
-                        <p className="text-xs text-white/70 text-center px-4 max-w-[200px]">
-                          {post.caption}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Timestamp */}
-                    {mounted && (
-                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] text-white/50 bg-navy-950/60 backdrop-blur-sm rounded-full px-2 py-0.5">
-                          {getTime(post.hoursAgo)}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Instagram icon */}
-                    <div className="absolute bottom-3 right-3 opacity-20 group-hover:opacity-60 transition-opacity">
-                      <Instagram className="w-4 h-4 text-white" />
-                    </div>
-                  </a>
-                </Reveal>
-              );
-            })}
-          </div>
 
           {/* Instagram profile card */}
           <Reveal delay={200}>

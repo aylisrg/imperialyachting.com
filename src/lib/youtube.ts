@@ -73,8 +73,8 @@ function parseYouTubeRss(xml: string): YouTubeVideo[] {
       id: videoId,
       title,
       published,
-      thumbnail: mediaThumbnail || ytThumbnail(videoId, "mq"),
-      thumbnailHq: ytThumbnail(videoId, "hq"),
+      thumbnail: mediaThumbnail || ytThumbnail(videoId, "sd"),
+      thumbnailHq: ytThumbnail(videoId, "max"),
       url: ytUrl(videoId),
       channelTitle,
     };

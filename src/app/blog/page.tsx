@@ -28,5 +28,5 @@ export const revalidate = 3600;
 
 export default async function BlogPage() {
   const videos = await fetchYouTubeVideos(12);
-  return <BlogPageClient videos={videos} />;
+  return <BlogPageClient videos={videos} instagramPosts={[]} />;
 }
