@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { fetchYouTubeVideos } from "@/lib/youtube";
-import { fetchInstagramPosts } from "@/lib/instagram";
 import { BlogPageClient } from "@/components/pages/BlogPageClient";
 
 export const metadata: Metadata = {
@@ -28,20 +27,6 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function BlogPage() {
-  // NEXT_PUBLIC_ prefix so it's readable server-side and available at build time
-  const beholdWidgetId = process.env.NEXT_PUBLIC_BEHOLD_WIDGET_ID;
-
-  const [videos, instagramPosts] = await Promise.all([
-    fetchYouTubeVideos(12),
-    // Skip Graph API fetch if Behold widget is configured — saves an API call
-    beholdWidgetId ? Promise.resolve([]) : fetchInstagramPosts(9),
-  ]);
-
-  return (
-    <BlogPageClient
-      videos={videos}
-      instagramPosts={instagramPosts}
-      beholdWidgetId={beholdWidgetId}
-    />
-  );
+  const videos = await fetchYouTubeVideos(12);
+  return <BlogPageClient videos={videos} instagramPosts={[]} />;
 }
