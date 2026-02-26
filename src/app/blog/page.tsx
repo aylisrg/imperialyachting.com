@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { fetchYouTubeVideos } from "@/lib/youtube";
+import { fetchInstagramPosts } from "@/lib/instagram";
 import { BlogPageClient } from "@/components/pages/BlogPageClient";
 
 export const metadata: Metadata = {
@@ -27,6 +28,9 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function BlogPage() {
-  const videos = await fetchYouTubeVideos(12);
-  return <BlogPageClient videos={videos} />;
+  const [videos, instagramPosts] = await Promise.all([
+    fetchYouTubeVideos(12),
+    fetchInstagramPosts(9),
+  ]);
+  return <BlogPageClient videos={videos} instagramPosts={instagramPosts} />;
 }

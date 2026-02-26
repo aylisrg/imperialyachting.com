@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "yt3.ggpht.com",
       },
-      // Instagram CDN images
+      // Instagram CDN images (Basic Display API serves from these domains)
       {
         protocol: "https",
         hostname: "*.cdninstagram.com",
@@ -36,6 +36,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "*.instagram.com",
+      },
+      // Instagram may serve images via Facebook CDN
+      {
+        protocol: "https",
+        hostname: "*.fbcdn.net",
       },
       ...(supabaseHostname
         ? [
