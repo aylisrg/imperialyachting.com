@@ -23,6 +23,7 @@ import {
 import { Container } from "@/components/layout/Container";
 import { Badge } from "@/components/ui/Badge";
 import { Reveal } from "@/components/ui/Reveal";
+import { BeholdWidget } from "@/components/instagram/BeholdWidget";
 import { SITE_CONFIG } from "@/lib/constants";
 import type { YouTubeVideo } from "@/lib/youtube";
 import type { InstagramPost } from "@/lib/instagram";
@@ -300,15 +301,17 @@ function VideoThumbnail({
 interface BlogPageClientProps {
   /** Real YouTube videos fetched server-side via RSS. Empty array = use fallback UI. */
   videos: YouTubeVideo[];
-  /** Real Instagram posts fetched server-side via Basic Display API. Empty array = use fallback UI. */
+  /** Real Instagram posts via Graph API. Empty array = use Behold widget or fallback. */
   instagramPosts: InstagramPost[];
+  /** Behold.so widget ID — set NEXT_PUBLIC_BEHOLD_WIDGET_ID env var. Takes priority over everything. */
+  beholdWidgetId?: string;
 }
 
 /* ──────────────────────────────────────────────────────────────────────
    MAIN COMPONENT
    ────────────────────────────────────────────────────────────────────── */
 
-export function BlogPageClient({ videos, instagramPosts }: BlogPageClientProps) {
+export function BlogPageClient({ videos, instagramPosts, beholdWidgetId }: BlogPageClientProps) {
   const { mounted, getTime, getPublishedTime } = useSocialPulse();
   const hasRealInsta = instagramPosts.length > 0;
 
@@ -685,8 +688,15 @@ export function BlogPageClient({ videos, instagramPosts }: BlogPageClientProps) 
             </a>
           </div>
 
-          {/* Real Instagram photos grid — shown when INSTAGRAM_ACCESS_TOKEN is set */}
-          {hasRealInsta ? (
+          {/* ── Option 1: Behold.so widget — real photos, zero setup ───────── */}
+          {beholdWidgetId ? (
+            <Reveal>
+              <div className="rounded-2xl overflow-hidden border border-white/5 bg-navy-900/30 p-2">
+                <BeholdWidget widgetId={beholdWidgetId} />
+              </div>
+            </Reveal>
+          ) : hasRealInsta ? (
+          /* ── Option 2: Instagram Graph API photos ──────────────────────── */
             <Reveal>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {instagramPosts.slice(0, 9).map((post, i) => {
