@@ -43,11 +43,6 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
 /* Mobile touch optimizations */
 a, button {
   touch-action: manipulation;
@@ -56,6 +51,12 @@ a, button {
 /* Optimise images for mobile rendering */
 img {
   content-visibility: auto;
+}
+
+/* Skip layout computation for below-fold sections until they approach viewport */
+.section-lazy {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 /* Gold gradient text utility */

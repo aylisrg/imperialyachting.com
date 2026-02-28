@@ -1,5 +1,6 @@
 export const revalidate = 3600;
 
+import { Suspense } from "react";
 import dynamicImport from "next/dynamic";
 import { Hero } from "@/components/sections/Hero";
 import { TrustBar } from "@/components/sections/TrustBar";
@@ -68,14 +69,26 @@ export default async function HomePage() {
 
       <Hero />
       <TrustBar />
-      <FleetPreview yachts={fleetPreviewData} />
-      <ServicesOverview />
-      <WhyImperial />
-      <TestimonialCarousel />
-      <GoogleReviewCTA />
-      <DestinationsSection destinations={destinations} />
-      <CTASection />
-      <FAQSection />
+
+      <Suspense fallback={<div className="py-24 sm:py-32" />}>
+        <FleetPreview yachts={fleetPreviewData} />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <ServicesOverview />
+        <WhyImperial />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <TestimonialCarousel />
+        <GoogleReviewCTA />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <DestinationsSection destinations={destinations} />
+        <CTASection />
+        <FAQSection />
+      </Suspense>
     </>
   );
 }

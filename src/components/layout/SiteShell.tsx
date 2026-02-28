@@ -2,9 +2,14 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
 import { Header } from "./Header";
-import { Footer } from "./Footer";
-import { PromoPopup } from "@/components/promo/PromoPopup";
+
+const Footer = dynamic(() => import("./Footer").then((m) => m.Footer));
+const PromoPopup = dynamic(
+  () => import("@/components/promo/PromoPopup").then((m) => m.PromoPopup),
+  { ssr: false },
+);
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
