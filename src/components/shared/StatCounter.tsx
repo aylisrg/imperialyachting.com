@@ -29,14 +29,19 @@ function formatNumber(n: number, hasDecimals: boolean): string {
 
 export function StatCounter({ value, label, className }: StatCounterProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [displayNum, setDisplayNum] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(false);
   const { num, prefix, suffix } = parseValue(value);
   const hasDecimals = value.includes(".");
 
+  // Start with final value to avoid CLS (SSR shows correct number, no "0" flash)
+  const [displayNum, setDisplayNum] = useState(num);
+  const animatingRef = useRef(false);
+
   const animate = useCallback(() => {
-    if (hasAnimated) return;
-    setHasAnimated(true);
+    if (animatingRef.current) return;
+    animatingRef.current = true;
+
+    // Reset to 0 and animate up
+    setDisplayNum(0);
 
     const duration = 2000;
     const startTime = performance.now();
@@ -55,7 +60,7 @@ export function StatCounter({ value, label, className }: StatCounterProps) {
     }
 
     requestAnimationFrame(step);
-  }, [hasAnimated, num]);
+  }, [num]);
 
   useEffect(() => {
     const el = ref.current;

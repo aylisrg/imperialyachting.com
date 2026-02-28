@@ -1,5 +1,3 @@
-"use client";
-
 import { Ship, Settings, Video, Palette, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";

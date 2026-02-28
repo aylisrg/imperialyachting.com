@@ -6,9 +6,14 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS, SERVICE_NAV, SITE_CONFIG } from "@/lib/constants";
+import dynamic from "next/dynamic";
 import { Container } from "./Container";
-import { PromoBanner } from "@/components/promo/PromoBanner";
 import { trackPhoneClick, trackWhatsAppClick } from "@/lib/analytics";
+
+const PromoBanner = dynamic(
+  () => import("@/components/promo/PromoBanner").then((m) => m.PromoBanner),
+  { ssr: false },
+);
 
 interface HeaderProps {
   bannerVisible?: boolean;

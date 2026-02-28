@@ -1,5 +1,3 @@
-"use client";
-
 import { Star, ExternalLink } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SITE_CONFIG } from "@/lib/constants";

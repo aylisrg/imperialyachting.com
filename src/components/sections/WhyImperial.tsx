@@ -1,5 +1,3 @@
-"use client";
-
 import { Shield, Package, MapPin } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";

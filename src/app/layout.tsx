@@ -10,7 +10,7 @@ const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
   display: "swap",
-  weight: ["600", "700", "800"],
+  weight: ["600", "700"],
 });
 
 const inter = Inter({
@@ -22,7 +22,7 @@ const inter = Inter({
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  display: "swap",
+  display: "optional",
   weight: ["400"],
 });
 
@@ -135,7 +135,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <link
           rel="preconnect"
@@ -147,6 +147,11 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        {process.env.NEXT_PUBLIC_SUPABASE_URL && (
+          <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
+        )}
+        <link rel="dns-prefetch" href="https://wa.me" />
+        <link rel="preload" as="image" href="/media/hero/hero-poster.jpg" type="image/jpeg" />
       </head>
       <body
         className={`${syne.variable} ${inter.variable} ${playfair.variable} antialiased`}
