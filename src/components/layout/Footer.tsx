@@ -20,8 +20,8 @@ export function Footer() {
   return (
     <footer className="bg-navy-950 border-t border-white/5">
       {/* Main Footer */}
-      <Container className="py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <Container className="py-12 sm:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-6">
@@ -154,7 +154,7 @@ export function Footer() {
                 href={SITE_CONFIG.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center px-5 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 text-sm font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-gold-500/20"
+                className="inline-flex items-center px-5 py-3 sm:py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 text-sm font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-gold-500/20"
                 onClick={() => trackWhatsAppClick("footer")}
               >
                 WhatsApp Us

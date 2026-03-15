@@ -6,21 +6,10 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS, SERVICE_NAV, SITE_CONFIG } from "@/lib/constants";
-import dynamic from "next/dynamic";
 import { Container } from "./Container";
 import { trackPhoneClick, trackWhatsAppClick } from "@/lib/analytics";
 
-const PromoBanner = dynamic(
-  () => import("@/components/promo/PromoBanner").then((m) => m.PromoBanner),
-  { ssr: false },
-);
-
-interface HeaderProps {
-  bannerVisible?: boolean;
-  onBannerDismiss?: () => void;
-}
-
-export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) {
+export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
@@ -43,7 +32,6 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-50">
-        {bannerVisible && <PromoBanner onDismiss={onBannerDismiss} />}
         <header
           className={cn(
             "transition-all duration-500",
@@ -126,11 +114,12 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
             </div>
 
             {/* CTA + Mobile toggle */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <a
                 href={`tel:${SITE_CONFIG.phone}`}
-                className="hidden sm:flex items-center gap-2 text-sm text-white/70 hover:text-gold-400 transition-colors"
+                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:gap-2 text-sm text-white/70 hover:text-gold-400 transition-colors rounded-full sm:rounded-none bg-white/5 sm:bg-transparent"
                 onClick={() => trackPhoneClick("header")}
+                aria-label="Call us"
               >
                 <Phone className="w-4 h-4" />
                 <span className="hidden md:inline">{SITE_CONFIG.phone}</span>
@@ -146,7 +135,7 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
               </a>
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="lg:hidden p-2 text-white/80 hover:text-white transition-colors"
+                className="lg:hidden flex items-center justify-center w-10 h-10 text-white/80 hover:text-white transition-colors rounded-full"
                 aria-label="Toggle menu"
               >
                 {isMobileOpen ? (
@@ -169,13 +158,13 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
         )}
         aria-hidden={!isMobileOpen}
       >
-        <div className="flex flex-col items-center justify-center h-full gap-6 pt-20">
+        <div className="flex flex-col items-center justify-center h-full gap-5 px-6 pt-20 pb-8">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "text-2xl font-heading font-semibold transition-colors",
+                "text-2xl font-heading font-semibold transition-colors py-1",
                 pathname === link.href
                   ? "text-gold-400"
                   : "text-white/80 hover:text-white"
@@ -185,12 +174,12 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
               {link.label}
             </Link>
           ))}
-          <div className="mt-4 flex flex-col items-center gap-4">
+          <div className="mt-6 flex flex-col items-center gap-4 w-full max-w-xs">
             <a
               href={SITE_CONFIG.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold rounded-lg transition-all text-lg"
+              className="w-full text-center px-8 py-3.5 bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold rounded-xl transition-all text-lg"
               tabIndex={isMobileOpen ? 0 : -1}
               onClick={() => trackWhatsAppClick("header_mobile")}
             >
@@ -198,9 +187,10 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
             </a>
             <a
               href={`tel:${SITE_CONFIG.phone}`}
-              className="text-white/60 hover:text-gold-400 transition-colors"
+              className="flex items-center gap-2 py-2 text-white/60 hover:text-gold-400 transition-colors"
               tabIndex={isMobileOpen ? 0 : -1}
             >
+              <Phone className="w-4 h-4" />
               {SITE_CONFIG.phone}
             </a>
           </div>
