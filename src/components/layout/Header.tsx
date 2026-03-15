@@ -117,7 +117,11 @@ export function Header() {
             <div className="flex items-center gap-2 sm:gap-3">
               <a
                 href={`tel:${SITE_CONFIG.phone}`}
-                className="flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:gap-2 text-sm text-white/70 hover:text-gold-400 transition-colors rounded-full sm:rounded-none bg-white/5 sm:bg-transparent"
+                className={cn(
+                  "flex items-center justify-center text-sm text-white/70 hover:text-gold-400 transition-colors",
+                  "w-10 h-10 rounded-full bg-white/5",
+                  "sm:w-auto sm:h-auto sm:gap-2 sm:rounded-none sm:bg-transparent"
+                )}
                 onClick={() => trackPhoneClick("header")}
                 aria-label="Call us"
               >
@@ -179,7 +183,7 @@ export function Header() {
               href={SITE_CONFIG.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full text-center px-8 py-3.5 bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold rounded-xl transition-all text-lg"
+              className="w-full text-center px-8 py-3.5 bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold rounded-lg transition-all text-lg"
               tabIndex={isMobileOpen ? 0 : -1}
               onClick={() => trackWhatsAppClick("header_mobile")}
             >
