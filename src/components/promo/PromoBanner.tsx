@@ -30,11 +30,7 @@ export function PromoBanner({ onDismiss }: PromoBannerProps) {
             <span className="text-sm sm:text-base font-heading font-bold text-white">
               4+1 Special
             </span>
-            <span className="hidden sm:inline text-white/40">|</span>
-            <span className="text-xs sm:text-sm text-white/70">
-              Book 4 hours, get the 5th
-              <span className="text-gold-400 font-semibold"> FREE</span>
-            </span>
+
           </div>
         </div>
 
