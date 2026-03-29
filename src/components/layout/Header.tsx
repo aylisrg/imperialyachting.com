@@ -6,21 +6,10 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS, SERVICE_NAV, SITE_CONFIG } from "@/lib/constants";
-import dynamic from "next/dynamic";
 import { Container } from "./Container";
 import { trackPhoneClick, trackWhatsAppClick } from "@/lib/analytics";
 
-const PromoBanner = dynamic(
-  () => import("@/components/promo/PromoBanner").then((m) => m.PromoBanner),
-  { ssr: false },
-);
-
-interface HeaderProps {
-  bannerVisible?: boolean;
-  onBannerDismiss?: () => void;
-}
-
-export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) {
+export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
@@ -43,7 +32,6 @@ export function Header({ bannerVisible = false, onBannerDismiss }: HeaderProps) 
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-50">
-        {bannerVisible && <PromoBanner onDismiss={onBannerDismiss} />}
         <header
           className={cn(
             "transition-all duration-500",
