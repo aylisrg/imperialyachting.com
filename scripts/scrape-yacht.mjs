@@ -1,4 +1,5 @@
 import { load } from "cheerio";
+import { YACHT_FACTS, MODEL_OVERVIEW } from "./yacht-facts.mjs";
 
 const SITE = "https://imperialyachting.com";
 
@@ -32,11 +33,12 @@ export async function scrapeYacht(slug) {
   const rawImages = Array.isArray(product.image) ? product.image : [product.image].filter(Boolean);
   // Route Supabase Storage URLs through the render API so we get correctly-sized
   // re-encoded JPEGs (the originals are 4K and trip @react-pdf's JPEG decoder).
+  // Higher width than before for sharper print/PDF output.
   const images = rawImages.map((url) =>
     url.replace(
       "/storage/v1/object/public/",
       "/storage/v1/render/image/public/"
-    ) + (url.includes("?") ? "&" : "?") + "width=1600&quality=80"
+    ) + (url.includes("?") ? "&" : "?") + "width=2000&quality=85"
   );
 
   // --- Name / tagline / hero --------------------------------------------------
@@ -105,7 +107,19 @@ export async function scrapeYacht(slug) {
   while ((m = ytRegex.exec(html)) !== null) youtubeIds.add(m[1]);
 
   // --- Description (clean from JSON-LD) ---------------------------------------
-  const description = (product.description || "").trim();
+  let description = (product.description || "").trim();
+  // If the database has only placeholder text (very short, no paragraph break),
+  // fall back to the curated model overview so brokers see real copy.
+  const placeholder = description.length < 120 || !/\n/.test(description);
+  if (placeholder && MODEL_OVERVIEW[slug]) {
+    description = MODEL_OVERVIEW[slug];
+  }
+
+  // --- Merge curated factory facts -------------------------------------------
+  const facts = YACHT_FACTS[slug] || {};
+  if (facts.yearOverride && quickSpecs.Year) {
+    quickSpecs.Year = String(facts.yearOverride);
+  }
 
   return {
     slug,
@@ -123,6 +137,8 @@ export async function scrapeYacht(slug) {
       typeof product.brand === "object"
         ? product.brand?.name || ""
         : product.brand || "",
+    factory: facts.factory || {},
+    features: facts.features || [],
   };
 }
 

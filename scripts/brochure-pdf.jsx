@@ -11,246 +11,364 @@ import {
   Path,
 } from "@react-pdf/renderer";
 
-// Brand palette mirrors the site
+// Brand palette mirrors the site (navy + gold)
 const COLOR = {
-  navy950: "#03070D",
-  navy900: "#0A1424",
-  navy800: "#0F1E36",
-  navy700: "#16284A",
+  ink: "#03070D",          // deepest navy / near-black
+  navy: "#0A1424",
+  navySoft: "#0F1E36",
+  navyEdge: "#16284A",
   white: "#FFFFFF",
-  white80: "rgba(255,255,255,0.82)",
-  white60: "rgba(255,255,255,0.62)",
-  white40: "rgba(255,255,255,0.4)",
-  white10: "rgba(255,255,255,0.1)",
+  text: "#F2F4F7",
+  text80: "rgba(242,244,247,0.82)",
+  text65: "rgba(242,244,247,0.65)",
+  text50: "rgba(242,244,247,0.5)",
+  text35: "rgba(242,244,247,0.35)",
+  hairline: "rgba(255,255,255,0.08)",
   gold: "#C9A24B",
   goldSoft: "#E2C277",
+  goldDim: "rgba(201,162,75,0.6)",
 };
 
+const PAGE_MARGIN = 44;
+
 const styles = StyleSheet.create({
+  // ---------- generic pages ----------
   page: {
-    backgroundColor: COLOR.navy950,
-    color: COLOR.white,
+    backgroundColor: COLOR.ink,
+    color: COLOR.text,
     fontFamily: "Helvetica",
     fontSize: 10,
-    paddingTop: 36,
-    paddingBottom: 36,
-    paddingHorizontal: 36,
+    paddingTop: 38,
+    paddingBottom: 44,
+    paddingHorizontal: PAGE_MARGIN,
   },
-  pageCover: {
-    backgroundColor: COLOR.navy950,
-    color: COLOR.white,
+  pageBleed: {
+    backgroundColor: COLOR.ink,
+    color: COLOR.text,
     fontFamily: "Helvetica",
     fontSize: 10,
     padding: 0,
   },
+
   // ---------- COVER ----------
   coverImageWrap: {
-    position: "relative",
-    width: "100%",
-    height: 540,
-    backgroundColor: COLOR.navy900,
-  },
-  coverImage: { width: "100%", height: "100%", objectFit: "cover" },
-  coverOverlay: {
     position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    top: 0,
-    backgroundColor: "rgba(3,7,13,0.55)",
+    top: 0, left: 0, right: 0,
+    height: 660, // ~78% of A4 (842pt)
+    backgroundColor: COLOR.navy,
+  },
+  coverImage: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    width: "100%", height: "100%",
+    objectFit: "cover",
+  },
+  coverScrim: {
+    position: "absolute", left: 0, right: 0, top: 0, bottom: 0,
+    backgroundColor: "rgba(3,7,13,0.32)",
   },
   coverGradient: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 260,
-    backgroundColor: "rgba(3,7,13,0.92)",
-  },
-  coverBody: {
-    position: "absolute",
-    left: 0, right: 0, bottom: 0,
-    paddingHorizontal: 40,
-    paddingBottom: 44,
-  },
-  coverGoldLine: {
-    width: 56,
-    height: 2,
-    backgroundColor: COLOR.gold,
-    marginBottom: 18,
+    position: "absolute", left: 0, right: 0, bottom: 0,
+    height: "55%",
+    backgroundColor: "rgba(3,7,13,0.85)",
   },
   coverEyebrow: {
     color: COLOR.gold,
-    fontSize: 9,
-    letterSpacing: 3,
-    textTransform: "uppercase",
+    fontSize: 8.5,
+    letterSpacing: 4,
     fontFamily: "Helvetica-Bold",
-    marginBottom: 10,
+    textTransform: "uppercase",
   },
+  coverGoldLine: { width: 56, height: 2, backgroundColor: COLOR.gold, marginVertical: 14 },
   coverName: {
     color: COLOR.white,
     fontFamily: "Helvetica-Bold",
-    fontSize: 44,
-    letterSpacing: -0.5,
-    lineHeight: 1.05,
+    fontSize: 52,
+    letterSpacing: -1,
+    lineHeight: 1.02,
+    marginBottom: 8,
   },
   coverTagline: {
     color: COLOR.goldSoft,
-    fontSize: 14,
-    marginTop: 8,
     fontFamily: "Helvetica-Oblique",
+    fontSize: 14.5,
+    marginBottom: 2,
+  },
+  coverCaption: {
+    position: "absolute",
+    left: PAGE_MARGIN,
+    right: PAGE_MARGIN,
+    bottom: 230, // sit just above the dark footer band
   },
   coverFooter: {
+    position: "absolute",
+    left: 0, right: 0, bottom: 0,
+    height: 182, // ~22% of A4
+    paddingHorizontal: PAGE_MARGIN,
+    paddingTop: 30,
+    paddingBottom: 38,
+    backgroundColor: COLOR.ink,
+  },
+  coverSpecsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 40,
-    paddingTop: 30,
-    paddingBottom: 28,
+    paddingTop: 22,
+    borderTopWidth: 0.5,
+    borderTopColor: COLOR.hairline,
   },
-  coverFooterLeft: { color: COLOR.white60, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase" },
-  coverFooterRight: { color: COLOR.gold, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", fontFamily: "Helvetica-Bold" },
+  coverSpecCell: { flex: 1, paddingRight: 8 },
+  coverSpecLabel: {
+    color: COLOR.text35,
+    fontSize: 7,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  coverSpecValue: {
+    color: COLOR.white,
+    fontSize: 13,
+    fontFamily: "Helvetica-Bold",
+  },
+  coverFooterMark: {
+    position: "absolute",
+    right: PAGE_MARGIN,
+    bottom: 14,
+    color: COLOR.text35,
+    fontSize: 7.5,
+    letterSpacing: 2.5,
+    textTransform: "uppercase",
+  },
 
-  // ---------- HEADER ----------
+  // ---------- HEADER / FOOTER ----------
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingBottom: 14,
-    marginBottom: 18,
+    paddingBottom: 12,
+    marginBottom: 22,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLOR.white10,
+    borderBottomColor: COLOR.hairline,
   },
-  headerName: { color: COLOR.white, fontFamily: "Helvetica-Bold", fontSize: 11, letterSpacing: 0.5 },
-  headerBrand: { color: COLOR.gold, fontSize: 9, letterSpacing: 2, textTransform: "uppercase", fontFamily: "Helvetica-Bold" },
+  headerLeft: { color: COLOR.white, fontFamily: "Helvetica-Bold", fontSize: 10.5, letterSpacing: 0.4 },
+  headerRight: { color: COLOR.gold, fontSize: 8, letterSpacing: 2.5, textTransform: "uppercase", fontFamily: "Helvetica-Bold" },
+
+  pageFooter: {
+    position: "absolute",
+    left: PAGE_MARGIN, right: PAGE_MARGIN,
+    bottom: 22,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingTop: 8,
+    borderTopWidth: 0.5,
+    borderTopColor: COLOR.hairline,
+  },
+  pageFooterText: {
+    color: COLOR.text35,
+    fontSize: 7.5,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+  },
 
   // ---------- SECTION ----------
-  sectionGoldLine: { width: 36, height: 1.5, backgroundColor: COLOR.gold, marginBottom: 10 },
+  sectionGoldLine: { width: 34, height: 1.5, backgroundColor: COLOR.gold, marginBottom: 11 },
+  sectionEyebrow: {
+    color: COLOR.gold,
+    fontSize: 8,
+    letterSpacing: 3,
+    textTransform: "uppercase",
+    fontFamily: "Helvetica-Bold",
+    marginBottom: 6,
+  },
   sectionTitle: {
     color: COLOR.white,
     fontFamily: "Helvetica-Bold",
-    fontSize: 18,
-    marginBottom: 4,
+    fontSize: 22,
+    letterSpacing: -0.3,
+    marginBottom: 5,
   },
-  sectionSubtitle: { color: COLOR.white40, fontSize: 9, marginBottom: 16, letterSpacing: 0.5 },
+  sectionSubtitle: {
+    color: COLOR.text35,
+    fontSize: 9,
+    marginBottom: 18,
+    letterSpacing: 0.4,
+  },
 
-  // ---------- QUICK SPECS ----------
-  specsRow: {
+  // ---------- AT A GLANCE GRID ----------
+  glanceGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    backgroundColor: COLOR.navy800,
-    borderRadius: 8,
+    backgroundColor: COLOR.navySoft,
+    borderRadius: 6,
     borderWidth: 0.5,
-    borderColor: COLOR.white10,
-    padding: 14,
-    marginBottom: 18,
+    borderColor: COLOR.hairline,
+    padding: 18,
+    marginBottom: 26,
   },
-  specCell: {
-    width: "33.333%",
-    paddingVertical: 8,
-    paddingHorizontal: 6,
-  },
-  specLabel: { color: COLOR.white40, fontSize: 7.5, letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 4 },
-  specValue: { color: COLOR.white, fontSize: 12, fontFamily: "Helvetica-Bold" },
+  glanceCell: { width: "33.333%", paddingVertical: 10, paddingHorizontal: 6 },
+  glanceLabel: { color: COLOR.text35, fontSize: 7, letterSpacing: 2, textTransform: "uppercase", marginBottom: 5 },
+  glanceValue: { color: COLOR.white, fontSize: 13, fontFamily: "Helvetica-Bold" },
 
-  // ---------- DESCRIPTION ----------
-  para: { color: COLOR.white80, fontSize: 10.5, lineHeight: 1.55, marginBottom: 8 },
-  paraLead: { color: COLOR.gold, fontSize: 11.5, lineHeight: 1.5, marginBottom: 12, fontFamily: "Helvetica-Oblique" },
+  // ---------- BODY TEXT ----------
+  paraLead: {
+    color: COLOR.goldSoft,
+    fontFamily: "Helvetica-Oblique",
+    fontSize: 12,
+    lineHeight: 1.55,
+    marginBottom: 14,
+  },
+  para: { color: COLOR.text80, fontSize: 10.5, lineHeight: 1.6, marginBottom: 9 },
+
+  // ---------- FEATURES (key highlights) ----------
+  featuresGrid: { flexDirection: "row", flexWrap: "wrap", marginTop: 4 },
+  featureItem: {
+    width: "50%",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingVertical: 6,
+    paddingRight: 12,
+  },
+  featureBullet: {
+    width: 5, height: 5, borderRadius: 3,
+    backgroundColor: COLOR.gold,
+    marginTop: 5, marginRight: 9, flexShrink: 0,
+  },
+  featureText: { color: COLOR.text80, fontSize: 10.2, lineHeight: 1.5, flex: 1 },
+
+  // ---------- SPEC SHEET TABLE ----------
+  specTable: { marginBottom: 16 },
+  specSubhead: {
+    color: COLOR.gold,
+    fontFamily: "Helvetica-Bold",
+    fontSize: 9,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    paddingTop: 16,
+    paddingBottom: 6,
+    borderBottomWidth: 0.5,
+    borderBottomColor: COLOR.goldDim,
+    marginBottom: 4,
+  },
+  specRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    paddingVertical: 6.5,
+    borderBottomWidth: 0.5,
+    borderBottomColor: COLOR.hairline,
+  },
+  specRowLabel: { color: COLOR.text65, fontSize: 9.5, flex: 1 },
+  specRowValue: { color: COLOR.white, fontSize: 10, fontFamily: "Helvetica-Bold", textAlign: "right" },
+  specTwoCol: { flexDirection: "row", gap: 26 },
+  specCol: { flex: 1 },
+
+  // ---------- FULL-BLEED PHOTO PAGES ----------
+  fullPhotoWrap: {
+    width: 595.28,
+    height: 841.89,
+    backgroundColor: COLOR.navy,
+  },
+  fullPhotoImg: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+  },
+  fullPhotoCaption: {
+    position: "absolute",
+    left: PAGE_MARGIN,
+    bottom: 28,
+    color: COLOR.white,
+    fontFamily: "Helvetica-Bold",
+    fontSize: 9,
+    letterSpacing: 3,
+    textTransform: "uppercase",
+    backgroundColor: "rgba(3,7,13,0.7)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
 
   // ---------- GALLERY ----------
-  galleryGrid: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
-  galleryItem: {
-    width: "49.2%",
-    height: 160,
-    marginBottom: 6,
-    backgroundColor: COLOR.navy800,
-    borderRadius: 4,
+  galleryRow2: { flexDirection: "row", marginBottom: 8 },
+  galleryHalf: {
+    width: "49.4%",
+    backgroundColor: COLOR.navy,
     overflow: "hidden",
   },
-  galleryItemFull: {
+  galleryHalfRight: { marginLeft: "1.2%" },
+  galleryFull: {
     width: "100%",
-    height: 280,
-    marginBottom: 6,
-    backgroundColor: COLOR.navy800,
-    borderRadius: 4,
+    backgroundColor: COLOR.navy,
     overflow: "hidden",
+    marginBottom: 8,
   },
   galleryImg: { width: "100%", height: "100%", objectFit: "cover" },
+  galleryTallH: { height: 250 },
+  galleryShortH: { height: 175 },
+  galleryRowH: { height: 175 },
 
-  // ---------- AMENITIES ----------
-  chipsRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 4 },
-  chip: {
-    backgroundColor: COLOR.navy800,
-    borderWidth: 0.5,
-    borderColor: COLOR.white10,
-    borderRadius: 14,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    marginRight: 6,
-    marginBottom: 6,
-  },
-  chipText: { color: COLOR.white80, fontSize: 9.5 },
-
-  // ---------- INCLUDED ----------
-  includedRow: { flexDirection: "row", alignItems: "center", paddingVertical: 5 },
-  includedDot: {
-    width: 5, height: 5, borderRadius: 3, backgroundColor: COLOR.gold, marginRight: 9,
-  },
-  includedText: { color: COLOR.white80, fontSize: 10 },
-
-  // ---------- VIDEO GRID ----------
-  videoGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  // ---------- VIDEOS ----------
+  videoGrid: { flexDirection: "row", flexWrap: "wrap", marginTop: 4 },
   videoCard: {
-    width: "48.5%",
-    marginBottom: 10,
+    width: "31.5%",
+    marginRight: "2.75%",
+    marginBottom: 14,
+  },
+  videoCardEdge: {
+    width: "31.5%",
+    marginBottom: 14,
   },
   videoThumbWrap: {
     width: "100%",
-    height: 110,
-    backgroundColor: COLOR.navy800,
-    borderRadius: 4,
+    height: 100,
+    backgroundColor: COLOR.navy,
+    borderRadius: 3,
     overflow: "hidden",
     position: "relative",
   },
   videoThumb: { width: "100%", height: "100%", objectFit: "cover" },
   videoPlayBadge: {
     position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: 36,
-    height: 36,
-    marginLeft: -18,
-    marginTop: -18,
-    backgroundColor: "rgba(201,162,75,0.92)",
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
+    top: "50%", left: "50%",
+    width: 42, height: 42,
+    marginLeft: -21, marginTop: -21,
+    backgroundColor: "rgba(201,162,75,0.94)",
+    borderRadius: 21,
+    alignItems: "center", justifyContent: "center",
   },
-  videoPlayTriangle: { color: COLOR.navy950, fontSize: 14, fontFamily: "Helvetica-Bold" },
-  videoLink: { color: COLOR.goldSoft, fontSize: 8.5, marginTop: 5, textDecoration: "none" },
-  videoLabel: { color: COLOR.white60, fontSize: 8, letterSpacing: 1, textTransform: "uppercase", marginTop: 3 },
+  videoLabel: {
+    color: COLOR.gold,
+    fontSize: 7.5, letterSpacing: 2.2,
+    textTransform: "uppercase",
+    fontFamily: "Helvetica-Bold",
+    marginTop: 7,
+  },
+  videoLink: { color: COLOR.text65, fontSize: 8.5, marginTop: 2, textDecoration: "none" },
 
-  // ---------- FOOTER ----------
-  pageFooter: {
-    position: "absolute",
-    left: 36,
-    right: 36,
-    bottom: 18,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingTop: 8,
+  // ---------- BACK MARK ----------
+  endStamp: {
+    marginTop: 24,
+    paddingTop: 16,
     borderTopWidth: 0.5,
-    borderTopColor: COLOR.white10,
+    borderTopColor: COLOR.hairline,
+    alignItems: "center",
   },
-  pageFooterText: { color: COLOR.white40, fontSize: 8, letterSpacing: 1, textTransform: "uppercase" },
+  endStampText: {
+    color: COLOR.gold,
+    fontSize: 8,
+    letterSpacing: 4,
+    textTransform: "uppercase",
+    fontFamily: "Helvetica-Bold",
+  },
 });
 
+// ---------------------------------------------------------------------------
+// Helpers
 // ---------------------------------------------------------------------------
 
 function Header({ yacht }) {
   return (
     <View style={styles.header} fixed>
-      <Text style={styles.headerName}>{yacht.name}</Text>
-      <Text style={styles.headerBrand}>Imperial Yachting · Fleet Dossier</Text>
+      <Text style={styles.headerLeft}>{yacht.name}</Text>
+      <Text style={styles.headerRight}>Imperial Yachting · Fleet Dossier</Text>
     </View>
   );
 }
@@ -261,168 +379,370 @@ function Footer() {
       <Text style={styles.pageFooterText}>Imperial Yachting — Dubai</Text>
       <Text
         style={styles.pageFooterText}
-        render={({ pageNumber, totalPages }) =>
-          `${pageNumber} / ${totalPages}`
-        }
+        render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
       />
     </View>
   );
 }
 
-function CleanDescription({ text }) {
-  // Drop the noisy intro lines (sales bullets duplicated as paragraphs), keep
-  // the prose. We split on blank lines and skip lines that are pure heading-style
-  // (very short OR formatted as "Label: ...").
-  const paragraphs = (text || "")
+function PlayTriangle() {
+  return (
+    <Svg width="16" height="16" viewBox="0 0 16 16">
+      <Path d="M4 2 L13 8 L4 14 Z" fill={COLOR.ink} />
+    </Svg>
+  );
+}
+
+function splitParagraphs(text) {
+  return (text || "")
     .split(/\n+/)
     .map((s) => s.trim())
     .filter(Boolean);
-  if (paragraphs.length === 0) return null;
+}
 
-  // Lead: the first line that is a real sentence (>40 chars)
-  const leadIdx = paragraphs.findIndex((p) => p.length >= 60);
-  const lead = leadIdx >= 0 ? paragraphs[leadIdx] : paragraphs[0];
-  const body = paragraphs.filter((_, i) => i !== leadIdx).slice(0, 8);
+// Strip the marketing bullets that some descriptions duplicate as standalone
+// "Label: text" lines just before the prose. Keeps the real narrative.
+function cleanDescription(paragraphs) {
+  const out = [];
+  for (const p of paragraphs) {
+    // Drop short headings ("The Vibe: ...") if next paragraph continues the same idea — keep as part of prose
+    if (p.length < 8) continue;
+    out.push(p);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+
+function CoverPage({ yacht }) {
+  const items = [
+    { label: "Length", value: yacht.quickSpecs.Length },
+    { label: "Guests", value: yacht.quickSpecs.Capacity },
+    { label: "Builder", value: yacht.quickSpecs.Builder },
+    { label: "Year", value: yacht.quickSpecs.Year },
+  ].filter((x) => x.value);
 
   return (
-    <>
-      <Text style={styles.paraLead}>{lead}</Text>
-      {body.map((p, i) => (
-        <Text key={i} style={styles.para}>
-          {p}
-        </Text>
-      ))}
-    </>
+    <Page size="A4" style={styles.pageBleed}>
+      <View style={styles.coverImageWrap}>
+        {yacht.images[0] && <Image src={yacht.images[0]} style={styles.coverImage} />}
+        <View style={styles.coverScrim} />
+        <View style={styles.coverGradient} />
+        <View style={styles.coverCaption}>
+          <Text style={styles.coverEyebrow}>Imperial Yachting · Dubai</Text>
+          <View style={styles.coverGoldLine} />
+          <Text style={styles.coverName}>{yacht.name}</Text>
+          {yacht.tagline ? <Text style={styles.coverTagline}>{yacht.tagline}</Text> : null}
+        </View>
+      </View>
+
+      <View style={styles.coverFooter}>
+        <View style={styles.coverSpecsRow}>
+          {items.map((it) => (
+            <View key={it.label} style={styles.coverSpecCell}>
+              <Text style={styles.coverSpecLabel}>{it.label}</Text>
+              <Text style={styles.coverSpecValue}>{it.value}</Text>
+            </View>
+          ))}
+        </View>
+        <Text style={styles.coverFooterMark}>Fleet Dossier</Text>
+      </View>
+    </Page>
   );
 }
 
-function QuickSpecs({ yacht }) {
+function GlanceAndAboutPage({ yacht }) {
   const order = ["Length", "Capacity", "Builder", "Year", "Cabins", "Location"];
-  const items = order
+  const glance = order
     .map((label) => ({ label, value: yacht.quickSpecs[label] }))
     .filter((x) => x.value);
-  // Append speed if present in specs
-  for (const s of yacht.specs) {
-    if (!items.find((i) => i.label === s.label)) items.push(s);
-  }
-  return (
-    <View style={styles.specsRow}>
-      {items.map((it) => (
-        <View key={it.label} style={styles.specCell}>
-          <Text style={styles.specLabel}>{it.label}</Text>
-          <Text style={styles.specValue}>{it.value}</Text>
-        </View>
-      ))}
-    </View>
-  );
-}
 
-function Gallery({ images }) {
-  if (!images || images.length === 0) return null;
-  // Skip the hero (already used on cover) and lay out remaining photos as a
-  // 2-column grid. wrap={false} per row to avoid a row splitting across pages.
-  const photos = images.slice(1, 9);
-  const rows = [];
-  for (let i = 0; i < photos.length; i += 2) {
-    rows.push(photos.slice(i, i + 2));
-  }
+  const paras = cleanDescription(splitParagraphs(yacht.description));
+  const leadIdx = paras.findIndex((p) => p.length >= 80);
+  const lead = leadIdx >= 0 ? paras[leadIdx] : paras[0];
+  const rest = paras.filter((_, i) => i !== leadIdx).slice(0, 6);
+  const hasDescription = !!lead;
+
   return (
-    <View>
-      {rows.map((row, ri) => (
-        <View key={ri} style={styles.galleryGrid} wrap={false}>
-          {row.map((src, ci) => (
-            <View key={ci} style={styles.galleryItem}>
-              <Image src={src} style={styles.galleryImg} />
+    <Page size="A4" style={styles.page} wrap>
+      <Header yacht={yacht} />
+
+      <View wrap={false}>
+        <Text style={styles.sectionEyebrow}>Specification Summary</Text>
+        <View style={styles.sectionGoldLine} />
+        <Text style={styles.sectionTitle}>At a Glance</Text>
+        <Text style={styles.sectionSubtitle}>Key vessel details — full spec sheet on the following page.</Text>
+        <View style={styles.glanceGrid}>
+          {glance.map((it) => (
+            <View key={it.label} style={styles.glanceCell}>
+              <Text style={styles.glanceLabel}>{it.label}</Text>
+              <Text style={styles.glanceValue}>{it.value}</Text>
             </View>
           ))}
         </View>
-      ))}
-    </View>
+      </View>
+
+      {hasDescription && (
+        <View>
+          <Text style={styles.sectionEyebrow}>Overview</Text>
+          <View style={styles.sectionGoldLine} />
+          <Text style={styles.sectionTitle}>About the {yacht.name}</Text>
+          <Text style={styles.sectionSubtitle}>What makes this yacht stand out.</Text>
+          <Text style={styles.paraLead}>{lead}</Text>
+          {rest.map((p, i) => (
+            <Text key={i} style={styles.para}>{p}</Text>
+          ))}
+        </View>
+      )}
+
+      <Footer />
+    </Page>
   );
 }
 
-function Amenities({ items }) {
-  // Filter out garbage data like "1223"
-  const clean = (items || []).filter((x) => x && !/^\d+$/.test(x) && x.length > 2);
-  if (clean.length === 0) return null;
+function FullBleedPhoto({ src, caption }) {
   return (
-    <View style={{ marginBottom: 20 }} wrap={false}>
-      <View style={styles.sectionGoldLine} />
-      <Text style={styles.sectionTitle}>Amenities</Text>
-      <Text style={styles.sectionSubtitle}>Everything on board for comfort and enjoyment.</Text>
-      <View style={styles.chipsRow}>
-        {clean.map((label, i) => (
-          <View key={i} style={styles.chip}>
-            <Text style={styles.chipText}>{label}</Text>
+    <Page size="A4" style={styles.pageBleed}>
+      <View style={styles.fullPhotoWrap}>
+        <Image src={src} style={styles.fullPhotoImg} />
+      </View>
+      {caption ? <Text style={styles.fullPhotoCaption}>{caption}</Text> : null}
+    </Page>
+  );
+}
+
+function SpecSheetPage({ yacht }) {
+  const factory = yacht.factory || {};
+  const features = yacht.features || [];
+
+  // Group factory specs into a couple of meaningful columns.
+  const dimensionKeys = [
+    "Designer", "Builder", "Model", "Hull material", "Hull type",
+    "LOA", "Beam", "Beam (closed)", "Beam (Beach Mode)", "Draft", "Displacement",
+  ];
+  const propulsionKeys = [
+    "Engines", "Total power", "Max speed", "Cruising speed", "Range",
+    "Fuel capacity", "Water capacity",
+  ];
+  const accommodationKeys = [
+    "Cabins", "Heads", "Crew", "Guests (day)", "Guests (overnight)",
+  ];
+
+  const groups = [
+    { title: "Design & Dimensions", keys: dimensionKeys },
+    { title: "Performance & Capacity", keys: propulsionKeys },
+    { title: "Accommodation", keys: accommodationKeys },
+  ]
+    .map((g) => ({
+      ...g,
+      rows: g.keys.filter((k) => factory[k]).map((k) => ({ label: k, value: factory[k] })),
+    }))
+    .filter((g) => g.rows.length > 0);
+
+  return (
+    <Page size="A4" style={styles.page} wrap>
+      <Header yacht={yacht} />
+
+      <View wrap={false}>
+        <Text style={styles.sectionEyebrow}>Technical File</Text>
+        <View style={styles.sectionGoldLine} />
+        <Text style={styles.sectionTitle}>Specifications</Text>
+        <Text style={styles.sectionSubtitle}>
+          Factory data for the {factory.Model || yacht.name}. Verified against manufacturer datasheets.
+        </Text>
+      </View>
+
+      <View style={styles.specTwoCol}>
+        {/* Left column: Design & Dimensions + Accommodation */}
+        <View style={styles.specCol}>
+          {groups
+            .filter((g) => g.title !== "Performance & Capacity")
+            .map((g) => (
+              <View key={g.title} style={styles.specTable}>
+                <Text style={styles.specSubhead}>{g.title}</Text>
+                {g.rows.map((r) => (
+                  <View key={r.label} style={styles.specRow}>
+                    <Text style={styles.specRowLabel}>{r.label}</Text>
+                    <Text style={styles.specRowValue}>{r.value}</Text>
+                  </View>
+                ))}
+              </View>
+            ))}
+        </View>
+
+        {/* Right column: Performance & Capacity */}
+        <View style={styles.specCol}>
+          {groups
+            .filter((g) => g.title === "Performance & Capacity")
+            .map((g) => (
+              <View key={g.title} style={styles.specTable}>
+                <Text style={styles.specSubhead}>{g.title}</Text>
+                {g.rows.map((r) => (
+                  <View key={r.label} style={styles.specRow}>
+                    <Text style={styles.specRowLabel}>{r.label}</Text>
+                    <Text style={styles.specRowValue}>{r.value}</Text>
+                  </View>
+                ))}
+              </View>
+            ))}
+
+          {features.length > 0 && (
+            <View style={[styles.specTable, { marginTop: 4 }]}>
+              <Text style={styles.specSubhead}>Key Features</Text>
+              <View style={styles.featuresGrid}>
+                {features.map((f, i) => (
+                  <View key={i} style={[styles.featureItem, { width: "100%" }]}>
+                    <View style={styles.featureBullet} />
+                    <Text style={styles.featureText}>{f}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+        </View>
+      </View>
+
+      <Footer />
+    </Page>
+  );
+}
+
+function GalleryPages({ yacht }) {
+  const photos = yacht.images || [];
+  if (photos.length === 0) return null;
+
+  // Split into pages of up to 6 photos, then choose an adaptive magazine layout
+  // per page so we never leave a single photo orphaned.
+  const PER_PAGE = 6;
+  const pages = [];
+  for (let i = 0; i < photos.length; i += PER_PAGE) {
+    pages.push(photos.slice(i, i + PER_PAGE));
+  }
+
+  function renderRow(left, right, key) {
+    return (
+      <View style={styles.galleryRow2} wrap={false} key={key}>
+        <View style={[styles.galleryHalf, styles.galleryRowH]}>
+          {left && <Image src={left} style={styles.galleryImg} />}
+        </View>
+        {right ? (
+          <View style={[styles.galleryHalf, styles.galleryHalfRight, styles.galleryRowH]}>
+            <Image src={right} style={styles.galleryImg} />
           </View>
-        ))}
+        ) : (
+          <View style={[styles.galleryHalf, styles.galleryHalfRight, styles.galleryRowH, { backgroundColor: "transparent" }]} />
+        )}
       </View>
-    </View>
-  );
+    );
+  }
+
+  function layoutForBatch(batch) {
+    const n = batch.length;
+    if (n === 6) {
+      // 3 rows × 2 cols, no hero — every photo gets balanced real estate.
+      return (
+        <>
+          {renderRow(batch[0], batch[1], "r1")}
+          {renderRow(batch[2], batch[3], "r2")}
+          {renderRow(batch[4], batch[5], "r3")}
+        </>
+      );
+    }
+    if (n === 5) {
+      return (
+        <>
+          <View style={[styles.galleryFull, styles.galleryTallH]}>
+            <Image src={batch[0]} style={styles.galleryImg} />
+          </View>
+          {renderRow(batch[1], batch[2], "r1")}
+          {renderRow(batch[3], batch[4], "r2")}
+        </>
+      );
+    }
+    if (n === 4) {
+      return (
+        <>
+          {renderRow(batch[0], batch[1], "r1")}
+          {renderRow(batch[2], batch[3], "r2")}
+        </>
+      );
+    }
+    if (n === 3) {
+      return (
+        <>
+          <View style={[styles.galleryFull, styles.galleryTallH]}>
+            <Image src={batch[0]} style={styles.galleryImg} />
+          </View>
+          {renderRow(batch[1], batch[2], "r1")}
+        </>
+      );
+    }
+    if (n === 2) {
+      return renderRow(batch[0], batch[1], "r1");
+    }
+    return (
+      <View style={[styles.galleryFull, styles.galleryTallH]}>
+        <Image src={batch[0]} style={styles.galleryImg} />
+      </View>
+    );
+  }
+
+  return pages.map((batch, idx) => (
+    <Page key={`gallery-${idx}`} size="A4" style={styles.page} wrap={false}>
+      <Header yacht={yacht} />
+
+      {idx === 0 && (
+        <View wrap={false}>
+          <Text style={styles.sectionEyebrow}>Photography</Text>
+          <View style={styles.sectionGoldLine} />
+          <Text style={styles.sectionTitle}>Gallery</Text>
+          <Text style={styles.sectionSubtitle}>
+            On-board, at sea, and on-deck imagery.
+          </Text>
+        </View>
+      )}
+
+      {layoutForBatch(batch)}
+
+      <Footer />
+    </Page>
+  ));
 }
 
-function Included({ items }) {
-  // Some yachts have a single string "Captain, Stew, Fuel" — split on commas.
-  const flat = (items || [])
-    .flatMap((x) => x.split(/,\s*/))
-    .map((x) => x.trim())
-    .filter(Boolean);
-  if (flat.length === 0) return null;
-  // Render in 2 columns
-  const mid = Math.ceil(flat.length / 2);
-  const col1 = flat.slice(0, mid);
-  const col2 = flat.slice(mid);
-  return (
-    <View style={{ marginBottom: 20 }} wrap={false}>
-      <View style={styles.sectionGoldLine} />
-      <Text style={styles.sectionTitle}>What's Included</Text>
-      <Text style={styles.sectionSubtitle}>Comes with every charter at no extra cost.</Text>
-      <View style={{ flexDirection: "row" }}>
-        <View style={{ flex: 1 }}>
-          {col1.map((item, i) => (
-            <View key={i} style={styles.includedRow}>
-              <View style={styles.includedDot} />
-              <Text style={styles.includedText}>{item}</Text>
-            </View>
-          ))}
-        </View>
-        <View style={{ flex: 1 }}>
-          {col2.map((item, i) => (
-            <View key={i} style={styles.includedRow}>
-              <View style={styles.includedDot} />
-              <Text style={styles.includedText}>{item}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-    </View>
-  );
-}
+function VideoPage({ yacht }) {
+  const ids = yacht.youtubeIds || [];
+  if (ids.length === 0) return null;
 
-function Videos({ ids }) {
-  if (!ids || ids.length === 0) return null;
   return (
-    <View>
-      <View style={styles.sectionGoldLine} />
-      <Text style={styles.sectionTitle}>Watch on YouTube</Text>
-      <Text style={styles.sectionSubtitle}>Tap any thumbnail to open the full video in your browser.</Text>
+    <Page size="A4" style={styles.page} wrap>
+      <Header yacht={yacht} />
+
+      <View wrap={false}>
+        <Text style={styles.sectionEyebrow}>On Camera</Text>
+        <View style={styles.sectionGoldLine} />
+        <Text style={styles.sectionTitle}>Watch on YouTube</Text>
+        <Text style={styles.sectionSubtitle}>
+          Tap any thumbnail to open the full video in your browser.
+        </Text>
+      </View>
+
       <View style={styles.videoGrid}>
         {ids.map((id, i) => {
           const url = `https://www.youtube.com/watch?v=${id}`;
           const thumb = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+          // 3 columns: every third card has no right margin.
+          const cardStyle = (i + 1) % 3 === 0 ? styles.videoCardEdge : styles.videoCard;
           return (
-            <View key={id} style={styles.videoCard} wrap={false}>
+            <View key={id} style={cardStyle} wrap={false}>
               <Link src={url}>
                 <View style={styles.videoThumbWrap}>
                   <Image src={thumb} style={styles.videoThumb} />
                   <View style={styles.videoPlayBadge}>
-                    <Svg width="14" height="14" viewBox="0 0 14 14">
-                      <Path d="M3 1 L12 7 L3 13 Z" fill={COLOR.navy950} />
-                    </Svg>
+                    <PlayTriangle />
                   </View>
                 </View>
               </Link>
-              <Text style={styles.videoLabel}>Video {i + 1}</Text>
+              <Text style={styles.videoLabel}>Video {String(i + 1).padStart(2, "0")}</Text>
               <Link src={url} style={styles.videoLink}>
                 youtu.be/{id}
               </Link>
@@ -430,78 +750,47 @@ function Videos({ ids }) {
           );
         })}
       </View>
-    </View>
+
+      <View style={styles.endStamp}>
+        <Text style={styles.endStampText}>End of Dossier · Imperial Yachting</Text>
+      </View>
+
+      <Footer />
+    </Page>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Document
+// ---------------------------------------------------------------------------
+
 export function BrochureDoc({ yacht }) {
+  // Page layout:
+  //   1. Cover (hero photo, name, tagline, quick specs)
+  //   2. Full-bleed feature photo #2
+  //   3. At a Glance + About
+  //   4. Full Technical Specifications + Key Features
+  //   5. Full-bleed feature photo #3 (if available)
+  //   6+. Gallery (4 photos per page)
+  //   N. Watch on YouTube
+  const images = yacht.images || [];
+  const featurePhoto1 = images[1] || images[0];
+  const featurePhoto2 = images.length > 4 ? images[Math.floor(images.length / 2)] : null;
+
   return (
     <Document
       title={`${yacht.name} — Fleet Dossier`}
       author="Imperial Yachting"
-      subject={`${yacht.name} brochure for charter brokers`}
-      keywords={`${yacht.name}, yacht charter, Dubai, ${yacht.brand}`}
+      subject={`${yacht.name} — Charter brochure for brokers`}
+      keywords={`${yacht.name}, yacht charter, Dubai, ${yacht.brand}, ${yacht.factory?.Model || ""}`}
     >
-      {/* ---------- COVER PAGE ---------- */}
-      <Page size="A4" style={styles.pageCover}>
-        <View style={styles.coverImageWrap}>
-          {yacht.images[0] && (
-            <Image src={yacht.images[0]} style={styles.coverImage} />
-          )}
-          <View style={styles.coverOverlay} />
-          <View style={styles.coverGradient} />
-          <View style={styles.coverBody}>
-            <View style={styles.coverGoldLine} />
-            <Text style={styles.coverEyebrow}>Imperial Yachting · Dubai</Text>
-            <Text style={styles.coverName}>{yacht.name}</Text>
-            {yacht.tagline ? (
-              <Text style={styles.coverTagline}>{yacht.tagline}</Text>
-            ) : null}
-          </View>
-        </View>
-        <View style={styles.coverFooter}>
-          <Text style={styles.coverFooterLeft}>
-            {yacht.quickSpecs.Length ? `${yacht.quickSpecs.Length}` : ""}
-            {yacht.quickSpecs.Capacity ? `  ·  ${yacht.quickSpecs.Capacity}` : ""}
-            {yacht.quickSpecs.Builder ? `  ·  ${yacht.quickSpecs.Builder}` : ""}
-          </Text>
-          <Text style={styles.coverFooterRight}>Fleet Dossier</Text>
-        </View>
-      </Page>
-
-      {/* ---------- CONTENT — auto-paginates with fixed header/footer ---------- */}
-      <Page size="A4" style={styles.page} wrap>
-        <Header yacht={yacht} />
-
-        <View wrap={false}>
-          <View style={styles.sectionGoldLine} />
-          <Text style={styles.sectionTitle}>At a Glance</Text>
-          <Text style={styles.sectionSubtitle}>Key vessel specifications.</Text>
-          <QuickSpecs yacht={yacht} />
-        </View>
-
-        <View style={styles.sectionGoldLine} />
-        <Text style={styles.sectionTitle}>About this yacht</Text>
-        <Text style={styles.sectionSubtitle}>Why this yacht stands out.</Text>
-        <CleanDescription text={yacht.description} />
-
-        {yacht.images && yacht.images.length > 0 && (
-          <View style={{ marginTop: 18 }}>
-            <View wrap={false}>
-              <View style={styles.sectionGoldLine} />
-              <Text style={styles.sectionTitle}>Gallery</Text>
-              <Text style={styles.sectionSubtitle}>On-board and on-water photography.</Text>
-            </View>
-            <Gallery images={yacht.images} />
-          </View>
-        )}
-
-        <Amenities items={yacht.amenities} />
-        <Included items={yacht.included} />
-        <Videos ids={yacht.youtubeIds} />
-
-        <Footer />
-      </Page>
+      <CoverPage yacht={yacht} />
+      {featurePhoto1 && <FullBleedPhoto src={featurePhoto1} caption={yacht.name} />}
+      <GlanceAndAboutPage yacht={yacht} />
+      {Object.keys(yacht.factory || {}).length > 0 && <SpecSheetPage yacht={yacht} />}
+      {featurePhoto2 && <FullBleedPhoto src={featurePhoto2} caption={`${yacht.name} · Dubai Harbour`} />}
+      {GalleryPages({ yacht })}
+      <VideoPage yacht={yacht} />
     </Document>
   );
 }
