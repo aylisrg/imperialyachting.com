@@ -521,7 +521,8 @@ function SpecSheetPage({ yacht }) {
     "LOA", "Beam", "Beam (closed)", "Beam (Beach Mode)", "Draft", "Displacement",
   ];
   const propulsionKeys = [
-    "Engines", "Total power", "Max speed", "Cruising speed", "Range",
+    "Engines", "Drive system", "Total power",
+    "Max speed", "Cruising speed", "Range",
     "Fuel capacity", "Water capacity",
   ];
   const accommodationKeys = [

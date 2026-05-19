@@ -8,7 +8,7 @@ export const MODEL_OVERVIEW = {
   "vd-40":
     "The VanDutch 40 is one of the most instantly recognisable silhouettes in the day-yacht segment. Conceived by Dutch naval architect Frank Mulder, its uncluttered “walk-around” deck and flush-mounted hardware give it the visual purity of a supercar. The 2024 refit takes that signature design and layers in the modern essentials Dubai charter clients expect — a 3 kW concert-grade audio rig, AirPlay-ready Wi-Fi, full air-conditioning and an electrically-actuated bathing platform. It is the rare yacht that performs as well as a head-turner as it does as a day-cruising platform for 10.",
   "monte-carlo-6":
-    "The Monte Carlo 6 is the long-range flagship of Beneteau’s sport-flybridge line, drawn by Italian studio Nuvolari & Lenard and built at the Monte Carlo Yachts shipyard in Monfalcone. Its variable-deadrise deep-V hull pairs cruising stability with 31-knot sprint performance, while a Volvo IPS 600 driveline allows joystick docking and dynamic positioning. Three en-suite cabins (full-beam master, forepeak VIP and twin) accommodate up to six guests overnight, with the flybridge, aft cockpit and bow lounger comfortably seating fifteen for day charter. Hand-laid teak, solid marble fittings and an Italian-designed saloon give the MC6 the unmistakable feel of a much larger superyacht.",
+    "The Monte Carlo 6 is the long-range flagship of Beneteau’s sport-flybridge line, drawn by Italian studio Nuvolari & Lenard and built at the Monte Carlo Yachts shipyard in Monfalcone. Its variable-deadrise deep-V hull pairs cruising stability with 31-knot sprint performance, while twin Cummins QSC 8.3 engines driving Zeus pod drives deliver joystick docking and SkyHook station-keeping. Three en-suite cabins (full-beam master, forepeak VIP and twin) accommodate up to six guests overnight, with the flybridge, aft cockpit and bow lounger comfortably seating fifteen for day charter. Hand-laid teak, solid marble fittings and an Italian-designed saloon give the MC6 the unmistakable feel of a much larger superyacht.",
   evo4:
     "The Evo R4 (marketed as the Evo 43) is one of the most architecturally radical day yachts launched in the last decade. Designed by Naples-based Valerio Rivellini for Sea Engineering, two pairs of hydraulically actuated bulwarks fold outboard at anchor, transforming the cockpit from a 4.2 m beam underway into a 6.4 m, 40 m² floating beach club. Underway, twin Volvo IPS 600s deliver a 37-knot top speed and joystick docking; at rest, the convertible furniture, integrated e-Foil, sun pads and shaded saloon turn the boat into a private waterfront terrace. It is the most photographable yacht on the Dubai charter circuit.",
 };
@@ -33,7 +33,7 @@ export const YACHT_FACTS = {
       "Total power": "660 HP",
       "Max speed": "38 knots",
       "Cruising speed": "28 knots",
-      Range: "≈ 250 nm",
+      Range: "approx. 250 nm",
       Cabins: "1 double + saloon convertible",
       Heads: "1 (electric)",
       "Guests (day)": "10",
@@ -67,11 +67,12 @@ export const YACHT_FACTS = {
       Displacement: "26,000 kg (light)",
       "Fuel capacity": "2,500 L",
       "Water capacity": "530 L",
-      Engines: "2 × Volvo Penta IPS 600",
-      "Total power": "870 HP",
+      Engines: "2 × Cummins QSC 8.3",
+      "Drive system": "Cummins Zeus pod drives",
+      "Total power": "1,200 HP",
       "Max speed": "31 knots",
       "Cruising speed": "25 knots",
-      Range: "≈ 310 nm",
+      Range: "approx. 310 nm",
       Cabins: "3 (Master + VIP + Twin)",
       Heads: "3 en-suite",
       "Guests (day)": "15",
@@ -80,7 +81,7 @@ export const YACHT_FACTS = {
     },
     features: [
       "Three en-suite cabins, full-beam master",
-      "Volvo IPS joystick docking & dynamic positioning",
+      "Cummins Zeus pod drives — joystick docking & SkyHook station-keeping",
       "Hydraulic swim platform / tender garage",
       "Large flybridge with wet bar",
       "Open-air aft cockpit dining for 10",
@@ -110,7 +111,7 @@ export const YACHT_FACTS = {
       "Total power": "870 HP",
       "Max speed": "37 knots",
       "Cruising speed": "28 knots",
-      Range: "≈ 280 nm",
+      Range: "approx. 280 nm",
       Cabins: "1 double + saloon convertible",
       Heads: "1 en-suite",
       "Guests (day)": "10",
