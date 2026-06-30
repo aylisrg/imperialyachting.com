@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
-import { SITE_CONFIG } from "@/lib/constants";
-import { DocumentsPageClient } from "@/components/pages/DocumentsPageClient";
+import { isUnlocked } from "@/lib/documents-auth";
+import { getDocumentsWithAvailability } from "@/lib/documents-files";
+import { DocumentsGate } from "@/components/documents/DocumentsGate";
+import { DocumentsPortal } from "@/components/documents/DocumentsPortal";
 
 export const metadata: Metadata = {
-  title: "Documents & Resources",
+  title: "Confidential Documents",
   description:
-    "Company registration, banking details, and guest documentation for Imperial Yachting partners and charter clients.",
-  openGraph: {
-    title: `Documents & Resources | ${SITE_CONFIG.name}`,
-    description:
-      "Company registration, banking details, and guest documentation for partners and charter clients.",
-    url: `${SITE_CONFIG.url}/documents`,
-  },
-  robots: { index: true, follow: true },
+    "Password-protected corporate documents for Imperial Yachting partners and charter clients.",
+  robots: { index: false, follow: false },
 };
 
-export default function DocumentsPage() {
-  return <DocumentsPageClient />;
+// Reads cookies to decide gate vs. portal — render per request, never cache.
+export const dynamic = "force-dynamic";
+
+export default async function DocumentsPage() {
+  if (!(await isUnlocked())) {
+    return <DocumentsGate />;
+  }
+
+  const documents = getDocumentsWithAvailability();
+  return <DocumentsPortal documents={documents} />;
 }
