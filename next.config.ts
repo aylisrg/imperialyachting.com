@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
+  // Ensure the private (non-public) document PDFs are bundled with the
+  // serverless function that streams them after password authentication.
+  outputFileTracingIncludes: {
+    "/api/documents/file/[slug]": ["./private/documents/**"],
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200],
