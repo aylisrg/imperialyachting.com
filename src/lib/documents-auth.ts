@@ -18,10 +18,10 @@ export const DOCUMENTS_COOKIE = "imperial_docs_session";
 // Session lifetime: 7 days.
 export const DOCUMENTS_SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
-// Fallback password used only when DOCUMENTS_PASSWORD is not configured.
-// IMPORTANT: set DOCUMENTS_PASSWORD in the environment for production — see
-// DOCUMENTS_RU.md. This default exists so the page never hard-fails locally.
-const FALLBACK_PASSWORD = "ImperialDocs2025";
+// Default password used when DOCUMENTS_PASSWORD is not set in the environment.
+// Setting DOCUMENTS_PASSWORD in Vercel always overrides this value without any
+// code change — see DOCUMENTS_RU.md.
+const FALLBACK_PASSWORD = "Imperial";
 
 // Static payload that gets signed. Changing the password invalidates all
 // existing sessions automatically because the password is part of the key.
