@@ -46,6 +46,7 @@ DOCUMENTS_SESSION_SECRET = любая_длинная_случайная_стро
 
 | Документ                     | Имя файла                            |
 | ---------------------------- | ------------------------------------ |
+| Company Card                 | `company-card.pdf`                   |
 | Trade License                | `trade-license.pdf`                  |
 | EJARI Tenancy Contract       | `ejari.pdf`                          |
 | Certificate of Incorporation | `certificate-of-incorporation.pdf`   |

@@ -35,6 +35,7 @@ const ICONS: Record<CompanyDocument["icon"], LucideIcon> = {
   incorporation: Landmark,
   establishment: BadgeCheck,
   memorandum: FileText,
+  profile: Building2,
 };
 
 const companyDetails = [

@@ -12,6 +12,7 @@ Drop the real PDFs here using exactly these names (the document automatically
 
 | Document                     | File name                            |
 | ---------------------------- | ------------------------------------ |
+| Company Card                 | `company-card.pdf`                   |
 | Trade License                | `trade-license.pdf`                  |
 | EJARI Tenancy Contract       | `ejari.pdf`                          |
 | Certificate of Incorporation | `certificate-of-incorporation.pdf`   |
