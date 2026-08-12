@@ -21,7 +21,13 @@ export interface CompanyDocument {
   /** Grouping for the portal layout. */
   category: DocumentCategory;
   /** Lucide icon key (mapped to a component in the portal). */
-  icon: "license" | "ejari" | "incorporation" | "establishment" | "memorandum";
+  icon:
+    | "license"
+    | "ejari"
+    | "incorporation"
+    | "establishment"
+    | "memorandum"
+    | "profile";
 }
 
 export const DOCUMENT_CATEGORIES: Record<
@@ -39,6 +45,15 @@ export const DOCUMENT_CATEGORIES: Record<
 };
 
 export const COMPANY_DOCUMENTS: CompanyDocument[] = [
+  {
+    slug: "company-card",
+    title: "Company Card",
+    description:
+      "One-page company profile: activity, website, and bank details for wire transfers.",
+    filename: "company-card.pdf",
+    category: "corporate",
+    icon: "profile",
+  },
   {
     slug: "trade-license",
     title: "Trade License",
