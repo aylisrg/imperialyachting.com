@@ -7,6 +7,7 @@ export const MAP_POSITIONS: Record<string, MapPosition> = {
   worldIslands: { x: 560, y: 120 },
   ainDubai: { x: 290, y: 355 },
   openSea: { x: 160, y: 170 },
+  golfZone: { x: 175, y: 275 },
   jumeirahBay: { x: 480, y: 275 },
   moonIsland: { x: 630, y: 160 },
 };
