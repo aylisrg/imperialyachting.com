@@ -118,7 +118,7 @@ export const managementFAQ: FAQItem[] = [
   {
     question: "How much revenue can my yacht generate through charter management?",
     answer:
-      "Revenue depends on yacht size, condition, and season. In Dubai's market, well-managed yachts in the 40-60ft range can generate AED 150,000-350,000 per month during peak season (October-April). Our management team optimizes pricing across seasons and maintains high occupancy through our B2B network and direct marketing channels.",
+      "It depends on the yacht's size and condition, on the season, and on how much of the calendar you keep for yourself. We don't publish a monthly average — the only figure worth anything to you is the one for your vessel. Send us the specification and the weeks you want to block, and we'll come back with a projection you can check line by line: charter rates for that size and season, our commission, and the running costs.",
   },
   {
     question: "What percentage does Imperial Yachting charge for yacht management?",
