@@ -17,34 +17,61 @@ Meta выпустила собственный **MCP-сервер для рек�
 
 ## 1. Что нужно получить в Meta
 
-### 1.1. Приложение и разрешения
+### 1.1. Для интерактивной работы — ничего не нужно
 
-1. Создайте (или возьмите существующее) приложение на
-   [developers.facebook.com/apps](https://developers.facebook.com/apps).
-2. **Use cases → Add use cases → «Create & manage ads with ads MCP server»**.
-3. Запомните **App ID** — он понадобится для OAuth.
+**Приложение на developers.facebook.com создавать не требуется.** MCP-сервер
+Meta поддерживает динамическую регистрацию клиента: Claude Code сам
+регистрируется и открывает вход через Facebook Business. Проверяется это так —
+сервер публикует свои OAuth-метаданные:
 
-Нужные разрешения (scopes):
-
-```
-ads_mcp_management, ads_read, ads_management,
-catalog_management, business_management,
-pages_show_list, instagram_basic
+```bash
+curl https://mcp.facebook.com/.well-known/oauth-authorization-server/ads
 ```
 
-> Если вы управляете рекламой других компаний (агентская схема), для
-> `ads_mcp_management` потребуется App Review и Advanced Access. Для своего
-> собственного кабинета — не требуется.
+В ответе есть `"registration_endpoint"` и
+`"token_endpoint_auth_methods_supported": ["none"]` — то есть client_id
+выдаётся автоматически.
 
-### 1.2. Токен доступа
+Требуется только: **роль администратора или рекламодателя** в Business Manager
+на нужном рекламном кабинете.
 
-Для **автоматического** контура нужен токен, который живёт долго и не требует
-входа руками. Получите User Access Token в
-[Graph API Explorer](https://developers.facebook.com/tools/explorer/) с
-перечисленными выше scopes и обменяйте его на долгоживущий.
+Запрашиваемые разрешения (Meta покажет их в окне входа):
 
-MCP-сервер Meta принимает его как обычный bearer-токен — отдельного OAuth на
-каждый запуск не нужно.
+```
+ads_management, ads_read, catalog_management,
+business_management, pages_show_list,
+instagram_basic, ads_mcp_management
+```
+
+> Своё приложение и use case «Create & manage ads with ads MCP server» нужны
+> только в агентской схеме — когда вы управляете рекламой **других** компаний.
+> Тогда же потребуется App Review и Advanced Access на `ads_mcp_management`.
+> Use case живёт в приложении в разделе **Use cases → Add use case →
+> Ads and monetization**; если его там нет — приложение не типа Business, либо
+> создано по старой модели «Permissions and Features», либо доступ ещё не
+> раскатан на аккаунт (Meta включает поэтапно).
+
+### 1.2. Токен доступа — только для автоматического контура
+
+Ночной GitHub Actions не может пройти интерактивный OAuth, поэтому ему нужен
+долгоживущий bearer-токен. Вот **для него** приложение всё-таки понадобится:
+токен всегда выпускается от имени какого-то приложения.
+
+Два способа:
+
+- **Graph API Explorer** —
+  [developers.facebook.com/tools/explorer](https://developers.facebook.com/tools/explorer/):
+  выберите приложение, отметьте scopes из п. 1.1, получите User Access Token и
+  обменяйте его на долгоживущий (60 дней).
+- **System User** (надёжнее, токен без срока) — Business Settings → Users →
+  System Users → Add → Generate token, выбрать приложение и те же scopes.
+
+MCP-сервер принимает такой токен как обычный `Authorization: Bearer` — OAuth на
+каждый запуск не нужен.
+
+> Если возиться с токеном сейчас не хочется — пропустите этот пункт. Пункт 5
+> (интерактивная работа) заработает и без него, а ночной отчёт можно включить
+> позже.
 
 ### 1.3. ID рекламного кабинета
 
@@ -114,26 +141,24 @@ supabase/migrations/20260910_ads_tables.sql
 
 ## 5. Интерактивная работа (самое полезное)
 
-В корне лежит `.mcp.json` — Claude Code подхватит сервер `meta-ads` сам.
-Задайте переменную окружения с App ID из п. 1.1:
+В корне лежит `.mcp.json` — Claude Code подхватит сервер `meta-ads` сам,
+настраивать ничего не нужно.
 
-```bash
-export META_APP_ID=<ваш App ID>
-```
+1. Запустите `claude` в папке проекта.
+2. Он спросит подтверждение на подключение MCP-сервера из `.mcp.json` —
+   согласитесь.
+3. При первом обращении откроется вход через Facebook Business. Войдите и
+   выдайте доступ к нужному рекламному кабинету.
+4. Дальше токен обновляется сам — повторно входить не придётся.
 
-Если вход через Facebook не проходит (Claude Code не подставил переменную —
-видно по ошибке про неизвестный `client_id`), пропишите App ID напрямую в
-локальный конфиг:
+Проверить, что сервер подключился: `claude mcp list`.
 
-```bash
-claude mcp add --transport http --client-id <ваш App ID> meta-ads https://mcp.facebook.com/ads
-```
-
-При первом запуске Claude Code спросит подтверждение на подключение
-MCP-сервера из `.mcp.json` — это нормально, согласитесь.
-
-При первом обращении Claude откроет вход через Facebook Business — дальше токен
-обновляется сам.
+> Если вы всё-таки хотите использовать **своё** приложение (агентская схема),
+> добавьте сервер с его App ID — это перекроет автоматическую регистрацию:
+>
+> ```bash
+> claude mcp add --transport http --client-id <ваш App ID> meta-ads https://mcp.facebook.com/ads
+> ```
 
 Затем просто просите:
 

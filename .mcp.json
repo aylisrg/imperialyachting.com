@@ -2,10 +2,7 @@
   "mcpServers": {
     "meta-ads": {
       "type": "http",
-      "url": "https://mcp.facebook.com/ads",
-      "oauth": {
-        "clientId": "${META_APP_ID}"
-      }
+      "url": "https://mcp.facebook.com/ads"
     }
   }
 }
