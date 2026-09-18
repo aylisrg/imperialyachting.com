@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Ship,
@@ -20,33 +20,36 @@ export default function AdminDashboard() {
   const [imageCounts, setImageCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadYachts();
+  const loadYachts = useCallback(async () => {
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("yachts")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (data) {
+        const yachtData = data as Yacht[];
+        setYachts(yachtData);
+        // Load image counts
+        const counts: Record<string, number> = {};
+        for (const yacht of yachtData) {
+          const { count } = await supabase
+            .from("yacht_images")
+            .select("*", { count: "exact", head: true })
+            .eq("yacht_id", yacht.id);
+          counts[yacht.id] = count || 0;
+        }
+        setImageCounts(counts);
+      }
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  async function loadYachts() {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("yachts")
-      .select("*")
-      .order("created_at", { ascending: true });
-
-    if (data) {
-      const yachtData = data as Yacht[];
-      setYachts(yachtData);
-      // Load image counts
-      const counts: Record<string, number> = {};
-      for (const yacht of yachtData) {
-        const { count } = await supabase
-          .from("yacht_images")
-          .select("*", { count: "exact", head: true })
-          .eq("yacht_id", yacht.id);
-        counts[yacht.id] = count || 0;
-      }
-      setImageCounts(counts);
-    }
-    setLoading(false);
-  }
+  useEffect(() => {
+    loadYachts();
+  }, [loadYachts]);
 
   async function deleteYacht(id: string, name: string) {
     if (!confirm(`Are you sure you want to delete "${name}"? This will also delete all photos and data.`)) {

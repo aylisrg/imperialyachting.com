@@ -32,9 +32,9 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { yachtProductSchema, faqSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { YachtGallery } from "@/components/gallery/YachtGallery";
 import { VideoGallery } from "@/components/gallery/VideoGallery";
-import { fetchYachtBySlug } from "@/lib/yachts-db";
+import { fetchAllYachts, fetchYachtBySlug } from "@/lib/yachts-db";
 import { getLowestPrice, getHourlyRate } from "@/lib/pricing";
-import { fleetFAQ } from "@/data/faq";
+import { buildYachtFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import { PriceConstructor } from "@/components/pricing/PriceConstructor";
 import type { Yacht, YachtAmenity } from "@/types/yacht";
@@ -50,6 +50,17 @@ const amenityIconMap: Record<string, React.ComponentType<{ className?: string }>
   anchor: Anchor,
   snowflake: Snowflake,
 };
+
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    const yachts = await fetchAllYachts();
+    return yachts.map((yacht) => ({ slug: yacht.slug }));
+  } catch {
+    return [];
+  }
+}
 
 export async function generateMetadata({
   params,
@@ -145,7 +156,7 @@ export default async function YachtDetailPage({
   return (
     <>
       <JsonLd data={yachtProductSchema(yacht)} />
-      <JsonLd data={faqSchema(fleetFAQ)} />
+      <JsonLd data={faqSchema(buildYachtFAQ(yacht))} />
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", url: "/" },
@@ -557,7 +568,7 @@ export default async function YachtDetailPage({
               subtitle="Common questions about our fleet and charter options."
               align="center"
             />
-            <FAQAccordion items={fleetFAQ} />
+            <FAQAccordion items={buildYachtFAQ(yacht)} />
           </div>
         </Container>
       </section>

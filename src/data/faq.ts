@@ -58,6 +58,49 @@ export const homeFAQ: FAQItem[] = [
   },
 ];
 
+export interface YachtFAQInput {
+  name: string;
+  capacity: number;
+  length: { feet: number };
+  builder: string;
+  cabins?: number;
+  minHoursWeekday?: number;
+  minHoursWeekend?: number;
+}
+
+export function buildYachtFAQ(yacht: YachtFAQInput): FAQItem[] {
+  const minWeekday = yacht.minHoursWeekday ?? 2;
+  const minWeekend = yacht.minHoursWeekend ?? 4;
+
+  return [
+    {
+      question: `How many guests can the ${yacht.name} accommodate?`,
+      answer:
+        `The ${yacht.name} is a ${yacht.length.feet}ft ${yacht.builder} yacht that comfortably accommodates up to ${yacht.capacity} guests` +
+        (yacht.cabins
+          ? `, with ${yacht.cabins} cabin${yacht.cabins > 1 ? "s" : ""} on board for overnight or multi-day charters.`
+          : ", making it a great fit for day charters, celebrations, and group outings."),
+    },
+    {
+      question: `What is the minimum charter duration for the ${yacht.name}?`,
+      answer:
+        `The minimum charter duration for the ${yacht.name} is ${minWeekday} hour${minWeekday > 1 ? "s" : ""} on weekdays and ${minWeekend} hours on weekends and public holidays. Most guests choose 4-hour or longer charters to make the most of the route from Dubai Harbour.`,
+    },
+    {
+      question: `How is the ${yacht.name}'s charter price calculated, and what's included?`,
+      answer:
+        `Charter pricing for the ${yacht.name} is based on an hourly (or daily, for longer bookings) rate that includes a professional captain and crew, fuel for standard cruising routes, soft drinks, bottled water, ice, and fresh towels. Catering, decoration, photography, and water sports are available as optional extras.`,
+    },
+    {
+      question: `Where does the ${yacht.name} depart from?`,
+      answer:
+        `The ${yacht.name} is berthed at Dubai Harbour Yacht Club, between Palm Jumeirah and Bluewaters Island, giving quick access to the Dubai Marina skyline, Palm Jumeirah, Atlantis, Burj Al Arab, and Ain Dubai.`,
+    },
+    fleetFAQ[1],
+    fleetFAQ[2],
+  ];
+}
+
 export const fleetFAQ: FAQItem[] = [
   {
     question: "What types of yachts does Imperial Yachting offer?",

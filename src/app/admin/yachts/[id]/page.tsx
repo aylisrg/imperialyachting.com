@@ -14,6 +14,7 @@ import {
 import { AdminHeader } from "../../components/AdminHeader";
 import { PhotoUploader } from "../../components/PhotoUploader";
 import { createClient } from "@/lib/supabase/client";
+import { yachtUrls } from "@/lib/seo/indexnow";
 import type {
   Database,
   Yacht,
@@ -45,6 +46,11 @@ const defaultYacht: FormYacht = {
   show_videos: false,
   daily_rules: "",
   weekly_rules: "",
+  min_hours_weekday: 2,
+  min_hours_weekend: 4,
+  currency: "AED",
+  calendar_id: null,
+  booking_enabled: true,
 };
 
 export default function YachtEditPage() {
@@ -190,6 +196,20 @@ export default function YachtEditPage() {
         router.push(`/admin/yachts/${yachtId}`);
       }
       router.refresh();
+
+      // Fire-and-forget: let search engines know this yacht changed. Never
+      // blocks or fails the save if this errors.
+      try {
+        fetch("/api/indexnow/submit", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ urls: yachtUrls(sanitizedYacht.slug) }),
+        }).catch(() => {});
+      } catch {
+        // ignore
+      }
+
       alert("Saved successfully!");
     } catch (err) {
       alert(`Error saving: ${err instanceof Error ? err.message : "Unknown error"}`);
@@ -685,6 +705,9 @@ function PricingTab({
                 weekly_b2b: null,
                 monthly_b2b: null,
                 sort_order: pricing.length,
+                valid_from: null,
+                valid_to: null,
+                is_weekend: false,
               },
             ])
           }

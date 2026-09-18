@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback } from "react";
 import { MapPin, Move, RotateCcw, Save } from "lucide-react";
 
 interface MapPoint {
@@ -30,11 +30,16 @@ export function AdminMapEditor({
   const [points, setPoints] = useState<MapPoint[]>(initialPoints);
   const [dragging, setDragging] = useState<string | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [prevInitialPoints, setPrevInitialPoints] = useState(initialPoints);
 
-  useEffect(() => {
+  // Reset local state when the incoming points change (e.g. switching which
+  // destination is being edited). Adjusting state during render instead of
+  // in an effect avoids the extra "commit, then re-render" cascade.
+  if (initialPoints !== prevInitialPoints) {
+    setPrevInitialPoints(initialPoints);
     setPoints(initialPoints);
     setHasChanges(false);
-  }, [initialPoints]);
+  }
 
   const getSVGPoint = useCallback(
     (clientX: number, clientY: number) => {
