@@ -1,0 +1,17 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.imperialyachting/booking",
+  "description": "Live connector for Imperial Yachting's Dubai yacht charter fleet: browse yachts, destinations and extras, check availability, build a quote, and get a secure Stripe deposit link.",
+  "version": "0.1.0",
+  "websiteUrl": "https://imperialyachting.com/ai",
+  "repository": {
+    "url": "https://github.com/aylisrg/imperialyachting.com",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://imperialyachting.com/api/mcp"
+    }
+  ]
+}

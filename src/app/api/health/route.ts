@@ -1,59 +1,61 @@
 import { NextResponse } from "next/server";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { verifyBearer } from "@/lib/api/auth";
+import { runHealthChecks, DB_EMPTY_WARNING } from "@/lib/health/checks";
 
 export const dynamic = "force-dynamic";
 
 /**
- * GET /api/health — DB health check endpoint.
+ * GET /api/health — service health-check endpoint.
  *
- * Returns the count of yachts and destinations in the database.
- * Use this after deployments to verify the DB is reachable and populated.
+ * Shallow mode (default): public. Reports DB reachability/counts (as
+ * before) plus, for every other integration (Supabase admin client,
+ * Stripe, Google Calendar, email, Telegram, IndexNow, the MCP server),
+ * only whether it is configured — no secrets, no outbound calls to paid
+ * or external APIs.
+ *
+ * Deep mode (`?deep=1`): requires a valid `Authorization: Bearer <secret>`
+ * header (BOOKING_CRON_SECRET or ANALYTICS_CRON_SECRET) because it
+ * exercises each configured integration with a real, lightweight call
+ * (e.g. a Stripe balance lookup) — that costs money/quota and must not be
+ * publicly triggerable.
  *
  * Response:
- *   200 — DB is reachable and has yacht data
- *   503 — DB is unreachable or query failed
- *   500 — Unexpected error (missing env vars, etc.)
+ *   200 — status is "healthy" or "warning"
+ *   401 — deep mode requested without a valid bearer token
+ *   503 — status is "error" (e.g. the database is unreachable)
  */
-export async function GET() {
-  try {
-    const supabase = await createServerSupabase();
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const deep = url.searchParams.get("deep") === "1";
 
-    const [yachtsResult, destinationsResult] = await Promise.all([
-      supabase.from("yachts").select("*", { count: "exact", head: true }),
-      supabase.from("destinations").select("*", { count: "exact", head: true }),
-    ]);
-
-    if (yachtsResult.error || destinationsResult.error) {
-      return NextResponse.json(
-        {
-          status: "error",
-          yachts: yachtsResult.error ? { error: yachtsResult.error.message } : { count: yachtsResult.count },
-          destinations: destinationsResult.error
-            ? { error: destinationsResult.error.message }
-            : { count: destinationsResult.count },
-        },
-        { status: 503 }
-      );
+  if (deep) {
+    const expected = process.env.BOOKING_CRON_SECRET ?? process.env.ANALYTICS_CRON_SECRET;
+    if (!verifyBearer(request, expected)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const yachtCount = yachtsResult.count ?? 0;
-    const destinationCount = destinationsResult.count ?? 0;
-
-    return NextResponse.json({
-      status: yachtCount > 0 ? "healthy" : "warning",
-      yachts: { count: yachtCount },
-      destinations: { count: destinationCount },
-      ...(yachtCount === 0 && {
-        warning: "Yacht table is empty — fleet pages will show no content. Run supabase/seed.sql or add yachts via /admin.",
-      }),
-    });
-  } catch (err) {
-    return NextResponse.json(
-      {
-        status: "error",
-        message: err instanceof Error ? err.message : "Unknown error",
-      },
-      { status: 500 }
-    );
   }
+
+  const report = await runHealthChecks({ deep, origin: url.origin });
+
+  const yachtCount = report.meta?.yachts ?? 0;
+  const destinationCount = report.meta?.destinations ?? 0;
+  const dbErrored = !report.checks.database?.ok && report.checks.database?.detail !== DB_EMPTY_WARNING;
+
+  const httpStatus = report.status === "error" ? 503 : 200;
+
+  return NextResponse.json(
+    {
+      status: report.status,
+      yachts: dbErrored
+        ? { error: report.checks.database?.detail }
+        : { count: yachtCount },
+      destinations: dbErrored
+        ? { error: report.checks.database?.detail }
+        : { count: destinationCount },
+      ...(!dbErrored && yachtCount === 0 && { warning: DB_EMPTY_WARNING }),
+      checks: report.checks,
+      timestamp: report.timestamp,
+    },
+    { status: httpStatus }
+  );
 }

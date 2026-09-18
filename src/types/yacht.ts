@@ -19,6 +19,9 @@ export interface SeasonPricing {
   dailyB2B?: number | null;
   weeklyB2B?: number | null;
   monthlyB2B?: number | null;
+  validFrom?: string | null;
+  validTo?: string | null;
+  isWeekend?: boolean;
 }
 
 export interface Yacht {
@@ -46,4 +49,9 @@ export interface Yacht {
   showVideos: boolean;
   dailyRules: string;
   weeklyRules: string;
+  minHoursWeekday?: number;
+  minHoursWeekend?: number;
+  currency?: string;
+  calendarId?: string | null;
+  bookingEnabled?: boolean;
 }

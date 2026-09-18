@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { sendTelegramNotification } from "@/lib/analytics/telegram-notifier";
+import { verifyBearer } from "@/lib/api/auth";
 import type { AnalyticsReport, Hypothesis } from "@/lib/analytics/types";
 
 /**
@@ -9,10 +10,7 @@ import type { AnalyticsReport, Hypothesis } from "@/lib/analytics/types";
  * Body: { report_id: string }
  */
 export async function POST(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  const expectedToken = process.env.ANALYTICS_CRON_SECRET;
-
-  if (!expectedToken || authHeader !== `Bearer ${expectedToken}`) {
+  if (!verifyBearer(request, process.env.ANALYTICS_CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

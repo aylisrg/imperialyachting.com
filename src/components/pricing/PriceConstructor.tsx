@@ -2,13 +2,19 @@
 
 import { useState, useMemo } from "react";
 import { Clock, Gift, ArrowRight } from "lucide-react";
+import { BookingWidget } from "./BookingWidget";
 
 const WHATSAPP_NUMBER = "971528355939";
 const UTM_PARAMS = "utm_source=website&utm_medium=price_constructor&utm_campaign=4plus1_hours";
 
 interface PriceConstructorProps {
+  yachtSlug: string;
   yachtName: string;
   hourlyRate: number; // lowest hourly rate across seasons
+  capacity: number;
+  minHoursWeekday?: number;
+  minHoursWeekend?: number;
+  bookingEnabled?: boolean;
 }
 
 function getWhatsAppBookingUrl(yachtName: string, hours: number, bonusHours: number, totalPrice: number) {
@@ -22,7 +28,13 @@ function getWhatsAppBookingUrl(yachtName: string, hours: number, bonusHours: num
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}&${UTM_PARAMS}`;
 }
 
-export function PriceConstructor({ yachtName, hourlyRate }: PriceConstructorProps) {
+export function PriceConstructor({
+  yachtSlug,
+  yachtName,
+  hourlyRate,
+  capacity,
+  bookingEnabled,
+}: PriceConstructorProps) {
   const [hours, setHours] = useState(3);
 
   const { bonusHours, totalPrice, totalTime, savedAmount } = useMemo(() => {
@@ -35,6 +47,17 @@ export function PriceConstructor({ yachtName, hourlyRate }: PriceConstructorProp
   }, [hours, hourlyRate]);
 
   const whatsappUrl = getWhatsAppBookingUrl(yachtName, hours, bonusHours, totalPrice);
+
+  if (bookingEnabled !== false) {
+    return (
+      <BookingWidget
+        yachtSlug={yachtSlug}
+        yachtName={yachtName}
+        hourlyRate={hourlyRate}
+        capacity={capacity}
+      />
+    );
+  }
 
   return (
     <div className="rounded-2xl bg-navy-800 border border-white/5 overflow-hidden">

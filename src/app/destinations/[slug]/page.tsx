@@ -11,6 +11,17 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { destinationSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { DestinationDetailClient } from "./DestinationDetailClient";
 
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    const destinations = await fetchAllDestinations();
+    return destinations.map((destination) => ({ slug: destination.slug }));
+  } catch {
+    return [];
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {

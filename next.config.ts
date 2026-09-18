@@ -61,6 +61,15 @@ const nextConfig: NextConfig = {
         : []),
     ],
   },
+  rewrites: async () => [
+    // IndexNow key verification file, expected at https://<host>/<key>.txt.
+    // The key itself is at least 8 hex chars, so this never matches short
+    // static files like /robots.txt or /llms.txt.
+    {
+      source: "/:key(\\w{8,64}).txt",
+      destination: "/api/indexnow/key/:key",
+    },
+  ],
   headers: async () => [
     {
       source: "/:path*",
