@@ -3,6 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { analyzeAdsWithClaude } from "@/lib/ads/mcp-analyzer";
 import { fetchPaidSocialSignals } from "@/lib/ads/site-signals";
 import { sendAdsTelegramNotification } from "@/lib/ads/telegram-notifier";
+import { verifyBearer } from "@/lib/api/auth";
 import type {
   AdsAnalysisInput,
   AdsRecommendation,
@@ -23,10 +24,7 @@ export const maxDuration = 300;
  * Telegram. Protected by ANALYTICS_CRON_SECRET, same as the weekly GA job.
  */
 export async function POST(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  const expectedToken = process.env.ANALYTICS_CRON_SECRET;
-
-  if (!expectedToken || authHeader !== `Bearer ${expectedToken}`) {
+  if (!verifyBearer(request, process.env.ANALYTICS_CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -1,5 +1,21 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { verifyBearer } from "@/lib/api/auth";
+
+/**
+ * Allows either the analytics cron secret (bearer token) or a logged-in
+ * Supabase user (the admin dashboard, which sends cookies same-origin).
+ * Ad spend, campaign names and recommendations are not public data.
+ */
+async function isAuthorized(request: Request): Promise<boolean> {
+  if (verifyBearer(request, process.env.ANALYTICS_CRON_SECRET)) return true;
+
+  const supabase = await createServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return !!user;
+}
 
 /**
  * GET /api/ads/reports
@@ -7,6 +23,10 @@ import { createServerSupabase } from "@/lib/supabase/server";
  * recommendations. Query params: ?limit=10&offset=0
  */
 export async function GET(request: Request) {
+  if (!(await isAuthorized(request))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const limit = Math.min(Number(searchParams.get("limit") ?? 10), 50);
   const offset = Number(searchParams.get("offset") ?? 0);
