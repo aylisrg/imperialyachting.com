@@ -7,7 +7,21 @@ const EXPECTED_TOOL_NAMES = [
   "list_destinations",
   "list_extras",
   "get_booking_terms",
+  "check_availability",
+  "create_quote",
+  "create_checkout",
+  "get_booking",
 ];
+
+const READ_ONLY_TOOL_NAMES = new Set([
+  "list_yachts",
+  "get_yacht",
+  "list_destinations",
+  "list_extras",
+  "get_booking_terms",
+  "check_availability",
+  "get_booking",
+]);
 
 function jsonRpcRequest(body: unknown, headers: Record<string, string> = {}) {
   return new Request("http://localhost/api/mcp", {
@@ -47,7 +61,7 @@ describe("/api/mcp route", () => {
     expect(res.headers.get("access-control-expose-headers")).toContain("Mcp-Session-Id");
   });
 
-  it("lists all 5 read tools with titles and annotations via tools/list", async () => {
+  it("lists all 9 tools with titles and annotations via tools/list", async () => {
     const { POST } = await import("@/app/api/mcp/route");
     const res = await POST(
       jsonRpcRequest({ jsonrpc: "2.0", id: 1, method: "tools/list", params: {} })
@@ -65,12 +79,18 @@ describe("/api/mcp route", () => {
 
     for (const tool of body.result.tools) {
       expect(tool.title).toBeTruthy();
-      expect(tool.annotations).toMatchObject({
-        readOnlyHint: true,
-        idempotentHint: true,
-        openWorldHint: false,
-      });
+      if (READ_ONLY_TOOL_NAMES.has(tool.name)) {
+        expect(tool.annotations).toMatchObject({ readOnlyHint: true, idempotentHint: true });
+      } else {
+        expect(tool.annotations).toMatchObject({ readOnlyHint: false });
+      }
     }
+
+    const createCheckout = body.result.tools.find((t) => t.name === "create_checkout");
+    expect(createCheckout?.annotations).toMatchObject({
+      readOnlyHint: false,
+      idempotentHint: true,
+    });
   });
 
   it("lists the reference resources via resources/list", async () => {
@@ -129,5 +149,66 @@ describe("/api/mcp route", () => {
     }
 
     expect(lastStatus).toBe(429);
+  });
+
+  it("rejects the 11th create_quote tools/call within a minute with a 429", async () => {
+    const { POST } = await import("@/app/api/mcp/route");
+    const headers = { "x-forwarded-for": "203.0.113.42" };
+
+    let lastStatus = 200;
+    for (let i = 0; i < 11; i++) {
+      const res = await POST(
+        jsonRpcRequest(
+          {
+            jsonrpc: "2.0",
+            id: i,
+            method: "tools/call",
+            params: {
+              name: "create_quote",
+              arguments: {
+                yachtSlug: "monte-carlo-6",
+                date: "2099-01-01",
+                startHour: 10,
+                hours: 4,
+                guests: 4,
+              },
+            },
+          },
+          headers
+        )
+      );
+      lastStatus = res.status;
+      if (lastStatus === 429) break;
+    }
+
+    expect(lastStatus).toBe(429);
+  });
+
+  it("does not rate-limit create_quote calls under the write limit for a fresh IP", async () => {
+    const { POST } = await import("@/app/api/mcp/route");
+    const headers = { "x-forwarded-for": "203.0.113.99" };
+
+    const res = await POST(
+      jsonRpcRequest(
+        {
+          jsonrpc: "2.0",
+          id: 1,
+          method: "tools/call",
+          params: {
+            name: "create_quote",
+            arguments: {
+              yachtSlug: "monte-carlo-6",
+              date: "2099-01-01",
+              startHour: 10,
+              hours: 4,
+              guests: 4,
+            },
+          },
+        },
+        headers
+      )
+    );
+
+    expect(res.status).toBe(200);
   });
 });

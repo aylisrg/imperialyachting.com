@@ -66,3 +66,19 @@ export function trackPromoPopup(action: "view" | "click" | "dismiss") {
 export function trackCtaSectionView() {
   trackEvent("view_cta_section");
 }
+
+export function trackBookingStart(yachtSlug: string, totalAmount: number, currency: string) {
+  trackEvent("booking_quote_created", {
+    yacht_slug: yachtSlug,
+    value: totalAmount,
+    currency,
+  });
+}
+
+export function trackCheckoutRedirect(yachtSlug: string, depositAmount: number, currency: string) {
+  trackEvent("booking_checkout_redirect", {
+    yacht_slug: yachtSlug,
+    value: depositAmount,
+    currency,
+  });
+}

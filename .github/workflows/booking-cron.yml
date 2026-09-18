@@ -1,0 +1,64 @@
+name: Booking Cron
+
+# Fallback/backup trigger for the booking cron routes, modelled on
+# analytics-weekly.yml. Vercel Cron (see vercel.json) is the primary
+# trigger; on the Hobby plan Vercel only allows daily crons, so this
+# workflow's more frequent expire-holds schedule is the real trigger for
+# that route in that case, while balance-reminders is a redundant daily
+# backstop in case a Vercel Cron run is missed.
+
+on:
+  schedule:
+    # Expire stale quotes/holds every 15 minutes.
+    - cron: '*/15 * * * *'
+    # Balance reminders once a day.
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  expire-holds:
+    if: github.event.schedule == '*/15 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Expire stale quotes/holds
+        run: |
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.SITE_URL }}/api/cron/expire-holds" \
+            -H "Authorization: Bearer ${{ secrets.BOOKING_CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -1)
+
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" != "200" ]; then
+            echo "::error::expire-holds cron failed with status $http_code"
+            exit 1
+          fi
+
+  balance-reminders:
+    if: github.event.schedule == '0 6 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Send balance payment reminders
+        run: |
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.SITE_URL }}/api/cron/balance-reminders" \
+            -H "Authorization: Bearer ${{ secrets.BOOKING_CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | head -n -1)
+
+          echo "HTTP Status: $http_code"
+          echo "Response: $body"
+
+          if [ "$http_code" != "200" ]; then
+            echo "::error::balance-reminders cron failed with status $http_code"
+            exit 1
+          fi

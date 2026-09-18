@@ -31,23 +31,44 @@ import {
   getBookingTermsOutputSchema,
   getBookingTermsMeta,
 } from "./tools/get-booking-terms";
+import {
+  checkAvailability,
+  checkAvailabilityInputSchema,
+  checkAvailabilityOutputSchema,
+  checkAvailabilityMeta,
+} from "./tools/check-availability";
+import {
+  createQuote,
+  createQuoteInputSchema,
+  createQuoteOutputSchema,
+  createQuoteMeta,
+} from "./tools/create-quote";
+import {
+  createCheckout,
+  createCheckoutInputSchema,
+  createCheckoutOutputSchema,
+  createCheckoutMeta,
+} from "./tools/create-checkout";
+import {
+  getBooking,
+  getBookingInputSchema,
+  getBookingOutputSchema,
+  getBookingMeta,
+} from "./tools/get-booking";
 
 /**
- * Registers every read-only tool, resource, and prompt Imperial Yachting's
- * MCP server exposes today.
+ * Registers every tool, resource, and prompt Imperial Yachting's MCP server
+ * exposes: read-only lookups plus the D2 write tools (`check_availability`,
+ * `create_quote`, `create_checkout`, `get_booking`) built on top of
+ * `src/lib/booking/{pricing-engine,availability,quotes,checkout,bookings-db,constants}.ts`.
+ * Every tool follows the same pattern: a pure `(input) => Promise<{ structured, text }>`
+ * function per tool file under `src/lib/mcp/tools/`, imported and wired up here.
  *
- * EXTENSION POINT for task D2: write tools (`create_quote`,
- * `create_checkout`, `get_booking`, `check_availability`) are built on top
- * of `src/lib/booking/{pricing-engine,availability,constants}.ts` (owned by
- * another task) and are NOT registered here yet. Add them with their own
- * `registerTool` calls below, following the same pattern as the read tools:
- * a pure `(input) => Promise<{ structured, text }>` function per tool file
- * under `src/lib/mcp/tools/`, imported and wired up here.
- *
- * Per-request rate limiting is applied at the HTTP layer
- * (`src/app/api/mcp/route.ts`), not here, because `mcp-handler` v2 is
- * stateless per request and the simplest, most reliable place to reject an
- * over-limit request is before the JSON-RPC body is ever parsed.
+ * Per-request rate limiting (including a stricter limit for write tools) is
+ * applied at the HTTP layer (`src/app/api/mcp/route.ts`), not here, because
+ * `mcp-handler` v2 is stateless per request and the simplest, most reliable
+ * place to reject an over-limit request is before the JSON-RPC body is ever
+ * parsed.
  */
 export function registerImperialServer(server: McpServer): void {
   server.registerTool(
@@ -137,6 +158,82 @@ export function registerImperialServer(server: McpServer): void {
       return {
         content: [{ type: "text", text }],
         structuredContent: structured,
+      };
+    }
+  );
+
+  server.registerTool(
+    checkAvailabilityMeta.name,
+    {
+      title: checkAvailabilityMeta.title,
+      description: checkAvailabilityMeta.description,
+      inputSchema: checkAvailabilityInputSchema,
+      outputSchema: checkAvailabilityOutputSchema,
+      annotations: checkAvailabilityMeta.annotations,
+    },
+    async (input) => {
+      const { structured, text, isError } = await checkAvailability(input);
+      return {
+        content: [{ type: "text", text }],
+        structuredContent: structured,
+        ...(isError ? { isError: true } : {}),
+      };
+    }
+  );
+
+  server.registerTool(
+    createQuoteMeta.name,
+    {
+      title: createQuoteMeta.title,
+      description: createQuoteMeta.description,
+      inputSchema: createQuoteInputSchema,
+      outputSchema: createQuoteOutputSchema,
+      annotations: createQuoteMeta.annotations,
+    },
+    async (input) => {
+      const { structured, text, isError } = await createQuote(input);
+      return {
+        content: [{ type: "text", text }],
+        structuredContent: structured,
+        ...(isError ? { isError: true } : {}),
+      };
+    }
+  );
+
+  server.registerTool(
+    createCheckoutMeta.name,
+    {
+      title: createCheckoutMeta.title,
+      description: createCheckoutMeta.description,
+      inputSchema: createCheckoutInputSchema,
+      outputSchema: createCheckoutOutputSchema,
+      annotations: createCheckoutMeta.annotations,
+    },
+    async (input) => {
+      const { structured, text, isError } = await createCheckout(input);
+      return {
+        content: [{ type: "text", text }],
+        structuredContent: structured,
+        ...(isError ? { isError: true } : {}),
+      };
+    }
+  );
+
+  server.registerTool(
+    getBookingMeta.name,
+    {
+      title: getBookingMeta.title,
+      description: getBookingMeta.description,
+      inputSchema: getBookingInputSchema,
+      outputSchema: getBookingOutputSchema,
+      annotations: getBookingMeta.annotations,
+    },
+    async (input) => {
+      const { structured, text, isError } = await getBooking(input);
+      return {
+        content: [{ type: "text", text }],
+        structuredContent: structured,
+        ...(isError ? { isError: true } : {}),
       };
     }
   );

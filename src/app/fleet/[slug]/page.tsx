@@ -463,7 +463,15 @@ export default async function YachtDetailPage({
         <section className="py-16 sm:py-24 bg-navy-950">
           <Container>
             <div className="max-w-2xl mx-auto">
-              <PriceConstructor yachtName={yacht.name} hourlyRate={hourlyRate} />
+              <PriceConstructor
+                yachtSlug={yacht.slug}
+                yachtName={yacht.name}
+                hourlyRate={hourlyRate}
+                capacity={yacht.capacity}
+                minHoursWeekday={yacht.minHoursWeekday}
+                minHoursWeekend={yacht.minHoursWeekend}
+                bookingEnabled={yacht.bookingEnabled}
+              />
             </div>
           </Container>
         </section>
