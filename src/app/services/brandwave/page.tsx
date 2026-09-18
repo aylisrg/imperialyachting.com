@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { serviceSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { BrandwavePageContent } from "./BrandwavePageContent";
 
 export const metadata: Metadata = {
@@ -23,5 +25,24 @@ export const metadata: Metadata = {
 };
 
 export default function BrandwavePage() {
-  return <BrandwavePageContent />;
+  return (
+    <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Brandwave — Yacht Branding & Marketing",
+          description:
+            "Full-service yacht branding and marketing — brand identity, yacht wrapping, digital campaigns, and luxury brand positioning.",
+          url: `${SITE_CONFIG.url}/services/brandwave`,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Services", url: "/services" },
+          { name: "Brandwave", url: "/services/brandwave" },
+        ])}
+      />
+      <BrandwavePageContent />
+    </>
+  );
 }

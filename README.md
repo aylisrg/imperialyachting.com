@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Imperial Yachting
 
-## Getting Started
+Marketing site and booking platform for Imperial Yachting, a Dubai yacht
+charter and management company, at [imperialyachting.com](https://imperialyachting.com).
 
-First, run the development server:
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router) + React 19 + TypeScript
+- [Tailwind CSS 4](https://tailwindcss.com)
+- [Supabase](https://supabase.com) (Postgres + RLS) for fleet, destinations,
+  and booking data
+- [Zod 4](https://zod.dev) for schema validation
+- [Vitest](https://vitest.dev) + Testing Library for tests
+- [Stripe](https://stripe.com) for deposit/balance payments
+- A live [MCP](https://modelcontextprotocol.io) server (`src/app/api/mcp`)
+  exposing the fleet and booking flow to AI assistants (ChatGPT, Claude,
+  Perplexity) — see `docs/MCP.md` and the human-readable `/ai` page.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev          # start the dev server at http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy `.env.example` to `.env.local` and fill in the values you need for the
+areas you're working on (Supabase keys, Stripe, Google Calendar/Analytics,
+Resend, IndexNow, etc.) — see the comments in that file for what each
+variable is for.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the Next.js dev server |
+| `npm run build` | Production build |
+| `npm run start` | Serve a production build |
+| `npm run lint` | ESLint |
+| `npm test` | Run the vitest suite once |
+| `npm run test:watch` | Run vitest in watch mode |
+| `npm run test:coverage` | Run vitest with coverage |
+| `npx tsc --noEmit` | Type-check without emitting |
+| `npx tsx scripts/mcp-smoke.ts` | Manual smoke test against the MCP server |
 
-## Learn More
+## Docs
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [`docs/AI_COMMERCE_PLAN.md`](docs/AI_COMMERCE_PLAN.md) — the plan behind
+  the MCP server, agentic booking via Stripe, and AI-visibility/SEO work.
+- [`docs/MCP.md`](docs/MCP.md) — MCP server architecture, tool reference,
+  local testing, client setup, and registry publishing.
+- [`docs/INDEXNOW.md`](docs/INDEXNOW.md) — IndexNow integration for faster
+  Bing/ChatGPT-search indexing.

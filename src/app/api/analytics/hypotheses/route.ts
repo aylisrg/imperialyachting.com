@@ -1,5 +1,20 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { verifyBearer } from "@/lib/api/auth";
+
+/**
+ * Allows either the analytics cron secret (bearer token) or a logged-in
+ * Supabase user (the admin dashboard, which sends cookies same-origin).
+ */
+async function isAuthorized(request: Request): Promise<boolean> {
+  if (verifyBearer(request, process.env.ANALYTICS_CRON_SECRET)) return true;
+
+  const supabase = await createServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return !!user;
+}
 
 /**
  * GET /api/analytics/hypotheses
@@ -38,6 +53,10 @@ export async function GET(request: Request) {
  * Body: { id: string, status?: string, notes?: string }
  */
 export async function PATCH(request: Request) {
+  if (!(await isAuthorized(request))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await request.json();
   const { id, status, notes } = body;
 

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "imperial-yachting": {
+      "url": "https://imperialyachting.com/api/mcp",
+      "transport": "streamable-http",
+      "description": "Browse the Imperial Yachting fleet, destinations, and extras, check availability, build a quote, and get a secure Stripe deposit link for a Dubai yacht charter.",
+      "auth": "none",
+      "docs": "https://imperialyachting.com/ai"
+    }
+  },
+  "schemaVersion": "1"
+}

@@ -22,6 +22,11 @@ export interface Database {
           show_videos: boolean;
           daily_rules: string;
           weekly_rules: string;
+          min_hours_weekday: number;
+          min_hours_weekend: number;
+          currency: string;
+          calendar_id: string | null;
+          booking_enabled: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -45,6 +50,11 @@ export interface Database {
           show_videos?: boolean;
           daily_rules?: string;
           weekly_rules?: string;
+          min_hours_weekday?: number;
+          min_hours_weekend?: number;
+          currency?: string;
+          calendar_id?: string | null;
+          booking_enabled?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -68,6 +78,11 @@ export interface Database {
           show_videos?: boolean;
           daily_rules?: string;
           weekly_rules?: string;
+          min_hours_weekday?: number;
+          min_hours_weekend?: number;
+          currency?: string;
+          calendar_id?: string | null;
+          booking_enabled?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -166,6 +181,9 @@ export interface Database {
           weekly_b2b: number | null;
           monthly_b2b: number | null;
           sort_order: number;
+          valid_from: string | null;
+          valid_to: string | null;
+          is_weekend: boolean;
         };
         Insert: {
           id?: string;
@@ -181,6 +199,9 @@ export interface Database {
           weekly_b2b?: number | null;
           monthly_b2b?: number | null;
           sort_order?: number;
+          valid_from?: string | null;
+          valid_to?: string | null;
+          is_weekend?: boolean;
         };
         Update: {
           id?: string;
@@ -196,6 +217,9 @@ export interface Database {
           weekly_b2b?: number | null;
           monthly_b2b?: number | null;
           sort_order?: number;
+          valid_from?: string | null;
+          valid_to?: string | null;
+          is_weekend?: boolean;
         };
         Relationships: [];
       };
@@ -502,6 +526,216 @@ export interface Database {
         };
         Relationships: [];
       };
+      extras: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          description: string;
+          price: number;
+          unit: string;
+          category: string;
+          image: string;
+          active: boolean;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          name: string;
+          description?: string;
+          price: number;
+          unit: string;
+          category?: string;
+          image?: string;
+          active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          name?: string;
+          description?: string;
+          price?: number;
+          unit?: string;
+          category?: string;
+          image?: string;
+          active?: boolean;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      bookings: {
+        Row: {
+          id: string;
+          yacht_id: string;
+          status: string;
+          starts_at: string;
+          ends_at: string;
+          hours: number;
+          guests: number;
+          customer_name: string | null;
+          customer_email: string | null;
+          customer_phone: string | null;
+          source: string;
+          base_amount: number;
+          extras_amount: number;
+          bonus_hours: number;
+          total_amount: number;
+          deposit_amount: number;
+          currency: string;
+          quote_expires_at: string | null;
+          hold_expires_at: string | null;
+          stripe_checkout_id: string | null;
+          stripe_payment_intent_id: string | null;
+          gcal_event_id: string | null;
+          notes: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          yacht_id: string;
+          status?: string;
+          starts_at: string;
+          ends_at: string;
+          hours: number;
+          guests: number;
+          customer_name?: string | null;
+          customer_email?: string | null;
+          customer_phone?: string | null;
+          source?: string;
+          base_amount?: number;
+          extras_amount?: number;
+          bonus_hours?: number;
+          total_amount?: number;
+          deposit_amount?: number;
+          currency?: string;
+          quote_expires_at?: string | null;
+          hold_expires_at?: string | null;
+          stripe_checkout_id?: string | null;
+          stripe_payment_intent_id?: string | null;
+          gcal_event_id?: string | null;
+          notes?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          yacht_id?: string;
+          status?: string;
+          starts_at?: string;
+          ends_at?: string;
+          hours?: number;
+          guests?: number;
+          customer_name?: string | null;
+          customer_email?: string | null;
+          customer_phone?: string | null;
+          source?: string;
+          base_amount?: number;
+          extras_amount?: number;
+          bonus_hours?: number;
+          total_amount?: number;
+          deposit_amount?: number;
+          currency?: string;
+          quote_expires_at?: string | null;
+          hold_expires_at?: string | null;
+          stripe_checkout_id?: string | null;
+          stripe_payment_intent_id?: string | null;
+          gcal_event_id?: string | null;
+          notes?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      booking_extras: {
+        Row: {
+          id: string;
+          booking_id: string;
+          extra_id: string;
+          qty: number;
+          unit_price: number;
+          amount: number;
+        };
+        Insert: {
+          id?: string;
+          booking_id: string;
+          extra_id: string;
+          qty?: number;
+          unit_price: number;
+          amount: number;
+        };
+        Update: {
+          id?: string;
+          booking_id?: string;
+          extra_id?: string;
+          qty?: number;
+          unit_price?: number;
+          amount?: number;
+        };
+        Relationships: [];
+      };
+      leads: {
+        Row: {
+          id: string;
+          name: string;
+          email: string;
+          phone: string;
+          inquiry_type: string;
+          preferred_date: string | null;
+          message: string;
+          source: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          email: string;
+          phone?: string;
+          inquiry_type?: string;
+          preferred_date?: string | null;
+          message?: string;
+          source?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          email?: string;
+          phone?: string;
+          inquiry_type?: string;
+          preferred_date?: string | null;
+          message?: string;
+          source?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      stripe_events: {
+        Row: {
+          id: string;
+          type: string;
+          processed_at: string;
+        };
+        Insert: {
+          id: string;
+          type: string;
+          processed_at?: string;
+        };
+        Update: {
+          id?: string;
+          type?: string;
+          processed_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -518,3 +752,8 @@ export type YachtAmenity = Database["public"]["Tables"]["yacht_amenities"]["Row"
 export type YachtPricing = Database["public"]["Tables"]["yacht_pricing"]["Row"];
 export type YachtIncluded = Database["public"]["Tables"]["yacht_included"]["Row"];
 export type DestinationRow = Database["public"]["Tables"]["destinations"]["Row"];
+export type ExtraRow = Database["public"]["Tables"]["extras"]["Row"];
+export type BookingRow = Database["public"]["Tables"]["bookings"]["Row"];
+export type BookingExtraRow = Database["public"]["Tables"]["booking_extras"]["Row"];
+export type LeadRow = Database["public"]["Tables"]["leads"]["Row"];
+export type StripeEventRow = Database["public"]["Tables"]["stripe_events"]["Row"];

@@ -33,6 +33,20 @@ export const viewport: Viewport = {
   themeColor: "#060E1A",
 };
 
+function buildVerification(): Metadata["verification"] {
+  const verification: NonNullable<Metadata["verification"]> = {};
+
+  if (process.env.GOOGLE_SITE_VERIFICATION) {
+    verification.google = process.env.GOOGLE_SITE_VERIFICATION;
+  }
+
+  if (process.env.BING_SITE_VERIFICATION) {
+    verification.other = { "msvalidate.01": process.env.BING_SITE_VERIFICATION };
+  }
+
+  return Object.keys(verification).length > 0 ? verification : undefined;
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.url),
   title: {
@@ -125,6 +139,7 @@ export const metadata: Metadata = {
     },
   },
   category: "travel",
+  verification: buildVerification(),
 };
 
 export default function RootLayout({

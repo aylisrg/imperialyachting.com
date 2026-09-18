@@ -58,6 +58,49 @@ export const homeFAQ: FAQItem[] = [
   },
 ];
 
+export interface YachtFAQInput {
+  name: string;
+  capacity: number;
+  length: { feet: number };
+  builder: string;
+  cabins?: number;
+  minHoursWeekday?: number;
+  minHoursWeekend?: number;
+}
+
+export function buildYachtFAQ(yacht: YachtFAQInput): FAQItem[] {
+  const minWeekday = yacht.minHoursWeekday ?? 2;
+  const minWeekend = yacht.minHoursWeekend ?? 4;
+
+  return [
+    {
+      question: `How many guests can the ${yacht.name} accommodate?`,
+      answer:
+        `The ${yacht.name} is a ${yacht.length.feet}ft ${yacht.builder} yacht that comfortably accommodates up to ${yacht.capacity} guests` +
+        (yacht.cabins
+          ? `, with ${yacht.cabins} cabin${yacht.cabins > 1 ? "s" : ""} on board for overnight or multi-day charters.`
+          : ", making it a great fit for day charters, celebrations, and group outings."),
+    },
+    {
+      question: `What is the minimum charter duration for the ${yacht.name}?`,
+      answer:
+        `The minimum charter duration for the ${yacht.name} is ${minWeekday} hour${minWeekday > 1 ? "s" : ""} on weekdays and ${minWeekend} hours on weekends and public holidays. Most guests choose 4-hour or longer charters to make the most of the route from Dubai Harbour.`,
+    },
+    {
+      question: `How is the ${yacht.name}'s charter price calculated, and what's included?`,
+      answer:
+        `Charter pricing for the ${yacht.name} is based on an hourly (or daily, for longer bookings) rate that includes a professional captain and crew, fuel for standard cruising routes, soft drinks, bottled water, ice, and fresh towels. Catering, decoration, photography, and water sports are available as optional extras.`,
+    },
+    {
+      question: `Where does the ${yacht.name} depart from?`,
+      answer:
+        `The ${yacht.name} is berthed at Dubai Harbour Yacht Club, between Palm Jumeirah and Bluewaters Island, giving quick access to the Dubai Marina skyline, Palm Jumeirah, Atlantis, Burj Al Arab, and Ain Dubai.`,
+    },
+    fleetFAQ[1],
+    fleetFAQ[2],
+  ];
+}
+
 export const fleetFAQ: FAQItem[] = [
   {
     question: "What types of yachts does Imperial Yachting offer?",
@@ -118,7 +161,7 @@ export const managementFAQ: FAQItem[] = [
   {
     question: "How much revenue can my yacht generate through charter management?",
     answer:
-      "Revenue depends on yacht size, condition, and season. In Dubai's market, well-managed yachts in the 40-60ft range can generate AED 150,000-350,000 per month during peak season (October-April). Our management team optimizes pricing across seasons and maintains high occupancy through our B2B network and direct marketing channels.",
+      "It depends on the yacht's size and condition, on the season, and on how much of the calendar you keep for yourself. We don't publish a monthly average — the only figure worth anything to you is the one for your vessel. Send us the specification and the weeks you want to block, and we'll come back with a projection you can check line by line: charter rates for that size and season, our commission, and the running costs.",
   },
   {
     question: "What percentage does Imperial Yachting charge for yacht management?",

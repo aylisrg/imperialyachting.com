@@ -244,20 +244,24 @@ export function YachtManagementPageContent() {
               </h2>
 
               <p className="mt-6 text-white/50 leading-relaxed text-lg">
-                Well-managed yachts in the 40-60ft range can generate{" "}
+                What your yacht earns comes down to three things: her size, her
+                condition, and how many weeks you keep for yourself. We
+                won&apos;t quote you an average, because an average is a number
+                about somebody else&apos;s boat. Tell us the vessel and the dates
+                you want to hold, and we&apos;ll put the charter calendar and the
+                running costs into a{" "}
                 <span className="text-gold-400 font-semibold">
-                  AED 150,000 - 350,000 per month
+                  written projection
                 </span>{" "}
-                during peak season (October through April). Our management team
-                optimizes pricing across seasons and maintains high occupancy
-                through our B2B network and direct marketing channels.
+                before you sign anything. Pricing across the season is our job.
+                The arithmetic stays yours to check.
               </p>
 
               <div className="mt-10 grid grid-cols-3 gap-6">
                 {[
-                  { label: "Peak Season Revenue", value: "AED 350K+/mo" },
-                  { label: "Average Occupancy", value: "75%+" },
-                  { label: "Owner Net Margin", value: "60-70%" },
+                  { label: "Yachts we manage", value: "40-60ft" },
+                  { label: "Dubai charter season", value: "Oct-Apr" },
+                  { label: "Owner statement", value: "Monthly" },
                 ].map((stat, i) => (
                   <Reveal key={stat.label} delay={i * 100}>
                     <p className="font-heading text-2xl sm:text-3xl font-bold text-gold-400">

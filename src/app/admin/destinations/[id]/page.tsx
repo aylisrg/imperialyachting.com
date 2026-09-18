@@ -17,6 +17,7 @@ import { AdminHeader } from "../../components/AdminHeader";
 import { AdminMapEditor } from "../components/AdminMapEditor";
 import { createClient } from "@/lib/supabase/client";
 import { getEmbedUrl } from "@/lib/utils";
+import { destinationUrls } from "@/lib/seo/indexnow";
 import type { DestinationRow } from "@/lib/supabase/types";
 
 type Tab = "details" | "media" | "content" | "map";
@@ -286,6 +287,20 @@ export default function DestinationEditor() {
     }
 
     setSaving(false);
+
+    // Fire-and-forget: let search engines know this destination changed.
+    // Never blocks or fails the save if this errors.
+    try {
+      fetch("/api/indexnow/submit", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ urls: destinationUrls(payload.slug) }),
+      }).catch(() => {});
+    } catch {
+      // ignore
+    }
+
     router.push("/admin/destinations");
   }
 

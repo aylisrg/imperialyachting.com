@@ -29,22 +29,25 @@ export default function AdminDestinations() {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [savingMap, setSavingMap] = useState(false);
 
-  useEffect(() => {
-    loadDestinations();
+  const loadDestinations = useCallback(async () => {
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("destinations")
+        .select("*")
+        .order("sort_order", { ascending: true });
+
+      if (data) {
+        setDestinations(data as DestinationRow[]);
+      }
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  async function loadDestinations() {
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("destinations")
-      .select("*")
-      .order("sort_order", { ascending: true });
-
-    if (data) {
-      setDestinations(data as DestinationRow[]);
-    }
-    setLoading(false);
-  }
+  useEffect(() => {
+    loadDestinations();
+  }, [loadDestinations]);
 
   async function deleteDestination(id: string, name: string) {
     if (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { MapMarker } from "@/components/map/MapMarker";
 import { RouteLine, type RouteLineHandle } from "@/components/map/RouteLine";
 import { YachtIcon } from "@/components/map/YachtIcon";
@@ -33,9 +33,19 @@ export function DubaiSchematicMap({
   const routeLineRef = useRef<RouteLineHandle>(null);
   const [yachtActive, setYachtActive] = useState(false);
   const [routeKey, setRouteKey] = useState(0);
+  const [routePathElement, setRoutePathElement] = useState<SVGPathElement | null>(null);
 
   const selectedItem = items.find((i) => i.slug === selectedSlug) ?? null;
   const hoveredItem = items.find((i) => i.slug === hoveredSlug) ?? null;
+
+  // The route line mounts/remounts (via routeKey) before this reads its
+  // ref, so pick up the path element as an effect rather than during render.
+  useEffect(() => {
+    const nextPathElement = routeLineRef.current?.getPathElement() ?? null;
+    if (nextPathElement === routePathElement) return;
+    setRoutePathElement(nextPathElement);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-sync on route changes, not on routePathElement itself
+  }, [routeKey, selectedItem]);
 
   const handleMarkerClick = useCallback(
     (slug: string) => {
@@ -273,7 +283,7 @@ export function DubaiSchematicMap({
 
         {/* ===== Layer 4: Yacht animation ===== */}
         <YachtIcon
-          pathElement={routeLineRef.current?.getPathElement() ?? null}
+          pathElement={routePathElement}
           isActive={yachtActive && selectedItem !== null}
           onComplete={() => setYachtActive(false)}
         />

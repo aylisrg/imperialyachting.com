@@ -1,11 +1,13 @@
 import { SITE_CONFIG } from "@/lib/constants";
-import type { Yacht } from "@/types/yacht";
-import type { FAQItem, Destination } from "@/types/common";
+import type { Yacht, SeasonPricing } from "@/types/yacht";
+import type { FAQItem, Destination, Testimonial } from "@/types/common";
+import { testimonials as allTestimonials } from "@/data/testimonials";
 
 export function organizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${SITE_CONFIG.url}/#organization`,
     name: SITE_CONFIG.name,
     legalName: SITE_CONFIG.legalName,
     url: SITE_CONFIG.url,
@@ -34,7 +36,38 @@ export function organizationSchema() {
   };
 }
 
+/**
+ * Builds `Review` nodes from testimonials for attachment to the LocalBusiness
+ * node's `review` property. Accepts an explicit list for testability; defaults
+ * to the site's real testimonials.
+ */
+export function reviewSchemas(items: Testimonial[] = allTestimonials) {
+  return items.map((testimonial) => ({
+    "@type": "Review",
+    author: {
+      "@type": "Person",
+      name: testimonial.name,
+    },
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: testimonial.rating,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    reviewBody: testimonial.text,
+    ...(testimonial.date ? { datePublished: testimonial.date } : {}),
+    itemReviewed: { "@id": `${SITE_CONFIG.url}/#localbusiness` },
+  }));
+}
+
+/**
+ * Single LocalBusiness node for the whole site. Merges what used to be a
+ * separate `serviceAreaSchema()` node (areaServed / serviceArea / offer
+ * catalog) so there is exactly one LocalBusiness `@id` to reference.
+ */
 export function localBusinessSchema() {
+  const reviewCount = Math.max(allTestimonials.length, 6);
+
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -45,6 +78,7 @@ export function localBusinessSchema() {
     telephone: SITE_CONFIG.phone,
     email: SITE_CONFIG.email,
     image: `${SITE_CONFIG.url}/og-image.jpg`,
+    parentOrganization: { "@id": `${SITE_CONFIG.url}/#organization` },
     address: {
       "@type": "PostalAddress",
       streetAddress: SITE_CONFIG.harbour.name,
@@ -84,13 +118,63 @@ export function localBusinessSchema() {
       "Birthday Party Yacht Dubai",
       "Sunset Cruise Dubai",
     ],
+    areaServed: [
+      {
+        "@type": "City",
+        name: "Dubai",
+        containedInPlace: { "@type": "Country", name: "United Arab Emirates" },
+      },
+    ],
+    serviceArea: {
+      "@type": "GeoCircle",
+      geoMidpoint: {
+        "@type": "GeoCoordinates",
+        latitude: 25.0805,
+        longitude: 55.1403,
+      },
+      geoRadius: "50000",
+    },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: "Yacht Charter Services",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Luxury Yacht Charter Dubai",
+            description:
+              "All-inclusive crewed yacht charter from Dubai Harbour. Hourly, daily and weekly rates.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Yacht Management Dubai",
+            description:
+              "Full-service yacht management including charter revenue optimisation, crew, maintenance and marketing.",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Yacht Cinematography Dubai",
+            description:
+              "Professional on-water photo and video production for brands and private clients.",
+          },
+        },
+      ],
+    },
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "5.0",
-      reviewCount: "6",
-      bestRating: "5",
-      worstRating: "1",
+      ratingValue: 5.0,
+      reviewCount,
+      bestRating: 5,
+      worstRating: 1,
     },
+    review: reviewSchemas(),
     hasMap: "https://maps.google.com/?q=Dubai+Harbour+Yacht+Club",
     sameAs: [
       SITE_CONFIG.instagram,
@@ -98,6 +182,16 @@ export function localBusinessSchema() {
       SITE_CONFIG.linkedinCeo,
     ],
   };
+}
+
+/**
+ * @deprecated Superseded by `localBusinessSchema()`, which now carries
+ * areaServed/serviceArea/hasOfferCatalog directly so there is a single
+ * LocalBusiness node on the page. Kept as an alias so existing imports
+ * keep working.
+ */
+export function serviceAreaSchema() {
+  return localBusinessSchema();
 }
 
 export function websiteSchema() {
@@ -122,45 +216,171 @@ export function websiteSchema() {
   };
 }
 
+function absoluteUrl(pathOrUrl: string): string {
+  return pathOrUrl.startsWith("http") ? pathOrUrl : `${SITE_CONFIG.url}${pathOrUrl}`;
+}
+
+/**
+ * Extracts a YouTube video id from a full watch/share URL, a youtu.be short
+ * link, an embed URL, or a bare id string.
+ */
+export function extractYouTubeId(input: string): string {
+  if (!input) return "";
+  const watchMatch = input.match(/[?&]v=([^&]+)/);
+  if (watchMatch) return watchMatch[1];
+  const shortMatch = input.match(/youtu\.be\/([^?&/]+)/);
+  if (shortMatch) return shortMatch[1];
+  const embedMatch = input.match(/embed\/([^?&/]+)/);
+  if (embedMatch) return embedMatch[1];
+  // Already a bare id (no protocol/slashes)
+  return input;
+}
+
+interface VideoObjectOptions {
+  /** YouTube URL (watch, share, embed) or a bare video id. */
+  source: string;
+  name: string;
+  description?: string;
+  thumbnailUrl?: string;
+  /**
+   * schema.org requires `uploadDate`, but we don't have the real publish
+   * date for embedded yacht footage at build time. This is a known
+   * limitation — callers may pass a real date when they have one, otherwise
+   * a fixed placeholder date is used.
+   */
+  uploadDate?: string;
+}
+
+export function videoObjectSchema(opts: VideoObjectOptions) {
+  const id = extractYouTubeId(opts.source);
+  return {
+    "@type": "VideoObject",
+    name: opts.name,
+    description: opts.description ?? opts.name,
+    thumbnailUrl: opts.thumbnailUrl ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+    // Placeholder — see VideoObjectOptions.uploadDate doc comment above.
+    uploadDate: opts.uploadDate ?? "2025-01-01",
+    embedUrl: `https://www.youtube.com/embed/${id}`,
+    contentUrl: `https://www.youtube.com/watch?v=${id}`,
+  };
+}
+
+const UNIT_CODE = {
+  hourly: "HUR",
+  daily: "DAY",
+  weekly: "WEE",
+  monthly: "MON",
+} as const;
+
+const UNIT_LABEL = {
+  hourly: "hourly",
+  daily: "daily",
+  weekly: "weekly",
+  monthly: "monthly",
+} as const;
+
+type PricingUnit = keyof typeof UNIT_CODE;
+
+function minHoursForSeason(yacht: Yacht, season: SeasonPricing): number | undefined {
+  if (season.isWeekend) {
+    return yacht.minHoursWeekend ?? yacht.minHoursWeekday;
+  }
+  return yacht.minHoursWeekday ?? yacht.minHoursWeekend;
+}
+
 export function yachtProductSchema(yacht: Yacht) {
-  const lowestPrice = yacht.pricing.reduce<number | null>((min, season) => {
-    const daily = season.daily;
-    if (daily === null) return min;
-    if (min === null) return daily;
-    return daily < min ? daily : min;
-  }, null);
+  const currency = yacht.currency ?? "AED";
+  const endOfYear = new Date(new Date().getFullYear(), 11, 31)
+    .toISOString()
+    .split("T")[0];
+
+  const units: PricingUnit[] = ["hourly", "daily", "weekly", "monthly"];
+
+  const subOffers: Array<Record<string, unknown>> = [];
+  let hourlyLow: number | null = null;
+  let dailyLow: number | null = null;
+  let overallHigh: number | null = null;
+
+  for (const season of yacht.pricing) {
+    for (const unit of units) {
+      const value = season[unit];
+      if (value === null || value === undefined) continue;
+
+      if (unit === "hourly") {
+        hourlyLow = hourlyLow === null ? value : Math.min(hourlyLow, value);
+      }
+      if (unit === "daily") {
+        dailyLow = dailyLow === null ? value : Math.min(dailyLow, value);
+      }
+      overallHigh = overallHigh === null ? value : Math.max(overallHigh, value);
+
+      const minHours = unit === "hourly" ? minHoursForSeason(yacht, season) : undefined;
+
+      subOffers.push({
+        "@type": "Offer",
+        name: `${season.season} — ${UNIT_LABEL[unit]}`,
+        price: value,
+        priceCurrency: currency,
+        unitCode: UNIT_CODE[unit],
+        availability: "https://schema.org/InStock",
+        ...(season.validFrom ? { validFrom: season.validFrom } : {}),
+        validThrough: season.validTo ?? endOfYear,
+        ...(minHours !== undefined
+          ? {
+              eligibleQuantity: {
+                "@type": "QuantitativeValue",
+                minValue: minHours,
+                unitCode: "HUR",
+              },
+            }
+          : {}),
+      });
+    }
+  }
+
+  const lowPrice = hourlyLow ?? dailyLow;
+  const pageUrl = `${SITE_CONFIG.url}/fleet/${yacht.slug}`;
 
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: yacht.name,
     description: yacht.description,
-    image: yacht.images.map((img) =>
-      img.startsWith("http") ? img : `${SITE_CONFIG.url}${img}`
-    ),
+    image: yacht.images.map((img) => absoluteUrl(img)),
     brand: {
       "@type": "Brand",
       name: yacht.builder,
     },
     category: "Yacht Charter",
-    offers: lowestPrice
+    sku: yacht.slug,
+    productID: yacht.slug,
+    audience: {
+      "@type": "Audience",
+      audienceType: `up to ${yacht.capacity} guests`,
+    },
+    offers:
+      subOffers.length > 0 && lowPrice !== null
+        ? {
+            "@type": "AggregateOffer",
+            priceCurrency: currency,
+            lowPrice,
+            highPrice: overallHigh ?? lowPrice,
+            offerCount: subOffers.length,
+            availability: "https://schema.org/InStock",
+            url: pageUrl,
+            seller: { "@id": `${SITE_CONFIG.url}/#organization` },
+            offers: subOffers,
+          }
+        : undefined,
+    ...(yacht.youtubeVideo
       ? {
-          "@type": "Offer",
-          priceCurrency: "AED",
-          price: lowestPrice,
-          priceValidUntil: new Date(
-            new Date().getFullYear(),
-            11,
-            31
-          ).toISOString().split("T")[0],
-          availability: "https://schema.org/InStock",
-          url: `${SITE_CONFIG.url}/fleet/${yacht.slug}`,
-          seller: {
-            "@type": "Organization",
-            name: SITE_CONFIG.name,
-          },
+          subjectOf: videoObjectSchema({
+            source: yacht.youtubeVideo,
+            name: `${yacht.name} — Yacht Tour`,
+            description: `On-board tour of the ${yacht.name}, ${yacht.tagline}.`,
+          }),
         }
-      : undefined,
+      : {}),
     additionalProperty: [
       {
         "@type": "PropertyValue",
@@ -244,66 +464,8 @@ export function breadcrumbSchema(items: Array<{ name: string; url: string }>) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: item.url.startsWith("http") ? item.url : `${SITE_CONFIG.url}${item.url}`,
+      item: absoluteUrl(item.url),
     })),
-  };
-}
-
-export function serviceAreaSchema() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": `${SITE_CONFIG.url}/#localbusiness-area`,
-    name: SITE_CONFIG.name,
-    areaServed: [
-      {
-        "@type": "City",
-        name: "Dubai",
-        containedInPlace: { "@type": "Country", name: "United Arab Emirates" },
-      },
-    ],
-    serviceArea: {
-      "@type": "GeoCircle",
-      geoMidpoint: {
-        "@type": "GeoCoordinates",
-        latitude: 25.0805,
-        longitude: 55.1403,
-      },
-      geoRadius: "50000",
-    },
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Yacht Charter Services",
-      itemListElement: [
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Luxury Yacht Charter Dubai",
-            description:
-              "All-inclusive crewed yacht charter from Dubai Harbour. Hourly, daily and weekly rates.",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Yacht Management Dubai",
-            description:
-              "Full-service yacht management including charter revenue optimisation, crew, maintenance and marketing.",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Yacht Cinematography Dubai",
-            description:
-              "Professional on-water photo and video production for brands and private clients.",
-          },
-        },
-      ],
-    },
   };
 }
 
@@ -382,5 +544,91 @@ export function destinationSchema(destination: Destination) {
       name: SITE_CONFIG.name,
       url: SITE_CONFIG.url,
     },
+  };
+}
+
+export interface ItemListEntry {
+  name: string;
+  url: string;
+  image?: string;
+}
+
+/**
+ * Standalone ItemList schema — e.g. for a listing page's cards.
+ */
+export function itemListSchema(name: string, items: ItemListEntry[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      url: absoluteUrl(item.url),
+      ...(item.image ? { image: absoluteUrl(item.image) } : {}),
+    })),
+  };
+}
+
+export interface CollectionPageOptions {
+  name: string;
+  description: string;
+  url: string;
+  items: ItemListEntry[];
+}
+
+/**
+ * CollectionPage schema wrapping an ItemList as `mainEntity` — for
+ * catalogue-style pages (destinations, services, blog index).
+ */
+export function collectionPageSchema(opts: CollectionPageOptions) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: opts.name,
+    description: opts.description,
+    url: absoluteUrl(opts.url),
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: opts.items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.name,
+        url: absoluteUrl(item.url),
+        ...(item.image ? { image: absoluteUrl(item.image) } : {}),
+      })),
+    },
+  };
+}
+
+export interface PersonSchemaInput {
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+  linkedin?: string | null;
+}
+
+export function personSchema(member: PersonSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: member.name,
+    jobTitle: member.role,
+    description: member.bio,
+    image: absoluteUrl(member.image),
+    worksFor: { "@id": `${SITE_CONFIG.url}/#organization` },
+    ...(member.linkedin ? { sameAs: [member.linkedin] } : {}),
+  };
+}
+
+export function contactPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: `Contact ${SITE_CONFIG.name}`,
+    url: `${SITE_CONFIG.url}/contact`,
+    about: { "@id": `${SITE_CONFIG.url}/#localbusiness` },
   };
 }

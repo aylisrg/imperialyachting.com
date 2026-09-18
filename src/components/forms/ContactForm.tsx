@@ -22,6 +22,8 @@ const contactSchema = z.object({
     .string()
     .min(10, "Message must be at least 10 characters")
     .max(2000, "Message must be less than 2000 characters"),
+  // Honeypot: left empty by real users, hidden from view. Sent through as-is.
+  website: z.string().optional(),
 });
 
 type ContactFormValues = z.infer<typeof contactSchema>;
@@ -43,6 +45,7 @@ const errorClasses = "mt-1.5 text-xs text-red-400 flex items-center gap-1";
 
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const {
     register,
@@ -61,12 +64,27 @@ export function ContactForm() {
     },
   });
 
-  async function onSubmit() {
-    // Simulate network delay for UX feedback
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    trackInquirySubmit();
-    setSubmitted(true);
-    reset();
+  async function onSubmit(values: ContactFormValues) {
+    setSubmitError(null);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error("request_failed");
+      }
+
+      trackInquirySubmit();
+      setSubmitted(true);
+      reset();
+    } catch {
+      setSubmitError(
+        "Something went wrong sending your message. Please try again or reach us via WhatsApp."
+      );
+    }
   }
 
   if (submitted) {
@@ -99,6 +117,27 @@ export function ContactForm() {
       noValidate
       className="rounded-2xl bg-navy-800 border border-white/5 p-6 sm:p-8 lg:p-10 space-y-6"
     >
+      {/* Honeypot: hidden from real users, catches simple bots */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          width: "1px",
+          height: "1px",
+          overflow: "hidden",
+        }}
+      >
+        <label htmlFor="website">Website</label>
+        <input
+          id="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          {...register("website")}
+        />
+      </div>
+
       {/* Name & Email row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
@@ -223,6 +262,13 @@ export function ContactForm() {
           </p>
         )}
       </div>
+
+      {submitError && (
+        <p className={cn(errorClasses, "justify-center")}>
+          <AlertCircle className="w-3 h-3" />
+          {submitError}
+        </p>
+      )}
 
       {/* Submit */}
       <Button

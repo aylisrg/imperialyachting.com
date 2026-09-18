@@ -14,6 +14,7 @@ import {
 import { AdminHeader } from "../../components/AdminHeader";
 import { PhotoUploader } from "../../components/PhotoUploader";
 import { createClient } from "@/lib/supabase/client";
+import { yachtUrls } from "@/lib/seo/indexnow";
 import type {
   Database,
   Yacht,
@@ -45,6 +46,11 @@ const defaultYacht: FormYacht = {
   show_videos: false,
   daily_rules: "",
   weekly_rules: "",
+  min_hours_weekday: 2,
+  min_hours_weekend: 4,
+  currency: "AED",
+  calendar_id: null,
+  booking_enabled: true,
 };
 
 export default function YachtEditPage() {
@@ -171,6 +177,9 @@ export default function YachtEditPage() {
           weekly_b2b: p.weekly_b2b,
           monthly_b2b: p.monthly_b2b,
           sort_order: i,
+          valid_from: p.valid_from || null,
+          valid_to: p.valid_to || null,
+          is_weekend: p.is_weekend,
         })) as Database["public"]["Tables"]["yacht_pricing"]["Insert"][];
         await supabase.from("yacht_pricing").insert(pricingInserts);
       }
@@ -190,6 +199,20 @@ export default function YachtEditPage() {
         router.push(`/admin/yachts/${yachtId}`);
       }
       router.refresh();
+
+      // Fire-and-forget: let search engines know this yacht changed. Never
+      // blocks or fails the save if this errors.
+      try {
+        fetch("/api/indexnow/submit", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ urls: yachtUrls(sanitizedYacht.slug) }),
+        }).catch(() => {});
+      } catch {
+        // ignore
+      }
+
       alert("Saved successfully!");
     } catch (err) {
       alert(`Error saving: ${err instanceof Error ? err.message : "Unknown error"}`);
@@ -457,6 +480,71 @@ function DetailsTab({
           Featured yacht (shown prominently on homepage)
         </label>
       </div>
+
+      {/* Booking settings */}
+      <div className="p-5 bg-navy-800 rounded-xl border border-white/5 space-y-4">
+        <h3 className="font-heading text-lg font-bold text-white">
+          Booking Settings
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+          <Field label="Min Hours (Weekday)">
+            <input
+              type="number"
+              min={0}
+              value={yacht.min_hours_weekday}
+              onChange={(e) => update("min_hours_weekday", parseInt(e.target.value) || 0)}
+              className="admin-input"
+            />
+          </Field>
+          <Field label="Min Hours (Weekend)">
+            <input
+              type="number"
+              min={0}
+              value={yacht.min_hours_weekend}
+              onChange={(e) => update("min_hours_weekend", parseInt(e.target.value) || 0)}
+              className="admin-input"
+            />
+          </Field>
+          <Field label="Currency">
+            <select
+              value={yacht.currency}
+              onChange={(e) => update("currency", e.target.value)}
+              className="admin-input"
+            >
+              <option value="AED">AED</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </Field>
+        </div>
+
+        <Field label="Google Calendar ID">
+          <input
+            type="text"
+            value={yacht.calendar_id || ""}
+            onChange={(e) => update("calendar_id", e.target.value || null)}
+            className="admin-input"
+            placeholder="abc123@group.calendar.google.com"
+          />
+          <p className="mt-1.5 text-xs text-white/40">
+            Share the yacht&apos;s Google Calendar with the service account email so
+            availability can sync automatically.
+          </p>
+        </Field>
+
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="booking_enabled"
+            checked={yacht.booking_enabled}
+            onChange={(e) => update("booking_enabled", e.target.checked)}
+            className="w-4 h-4 rounded border-white/20 bg-navy-900 text-gold-500 focus:ring-gold-500/50"
+          />
+          <label htmlFor="booking_enabled" className="text-sm text-white/60">
+            Online booking enabled for this yacht
+          </label>
+        </div>
+      </div>
     </div>
   );
 }
@@ -685,6 +773,9 @@ function PricingTab({
                 weekly_b2b: null,
                 monthly_b2b: null,
                 sort_order: pricing.length,
+                valid_from: null,
+                valid_to: null,
+                is_weekend: false,
               },
             ])
           }
@@ -850,6 +941,40 @@ function PricingTab({
                 />
               </Field>
             </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 items-end">
+              <Field label="Valid From" compact>
+                <input
+                  type="date"
+                  value={season.valid_from ?? ""}
+                  onChange={(e) => updatePricing(i, "valid_from", e.target.value || null)}
+                  className="admin-input"
+                />
+              </Field>
+              <Field label="Valid To" compact>
+                <input
+                  type="date"
+                  value={season.valid_to ?? ""}
+                  onChange={(e) => updatePricing(i, "valid_to", e.target.value || null)}
+                  className="admin-input"
+                />
+              </Field>
+              <div className="flex items-center gap-2 pb-2.5">
+                <input
+                  type="checkbox"
+                  id={`is-weekend-${i}`}
+                  checked={season.is_weekend}
+                  onChange={(e) => updatePricing(i, "is_weekend", e.target.checked)}
+                  className="w-4 h-4 rounded border-white/20 bg-navy-900 text-gold-500 focus:ring-gold-500/50"
+                />
+                <label htmlFor={`is-weekend-${i}`} className="text-sm text-white/60">
+                  Weekend rate
+                </label>
+              </div>
+            </div>
+            <p className="text-xs text-white/40">
+              Weekend = Fri/Sat. Leave dates empty for a fallback rate.
+            </p>
           </div>
         ))}
       </div>

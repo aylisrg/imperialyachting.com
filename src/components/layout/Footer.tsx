@@ -90,6 +90,14 @@ export function Footer() {
                   Documents
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/ai"
+                  className="text-sm text-white/50 hover:text-gold-400 transition-colors"
+                >
+                  Book with AI
+                </Link>
+              </li>
             </ul>
           </div>
 
