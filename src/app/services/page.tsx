@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, itemListSchema } from "@/components/seo/schemas";
+import { services } from "@/data/services";
 import { ServicesPageContent } from "./ServicesPageContent";
 
 export const metadata: Metadata = {
@@ -23,5 +26,24 @@ export const metadata: Metadata = {
 };
 
 export default function ServicesPage() {
-  return <ServicesPageContent />;
+  return (
+    <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Services", url: "/services" },
+        ])}
+      />
+      <JsonLd
+        data={itemListSchema(
+          "Imperial Yachting Services",
+          services.map((service) => ({
+            name: service.title,
+            url: service.href,
+          }))
+        )}
+      />
+      <ServicesPageContent />
+    </>
+  );
 }

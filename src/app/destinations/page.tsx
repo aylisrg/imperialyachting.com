@@ -2,6 +2,8 @@ export const revalidate = 3600;
 
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, collectionPageSchema } from "@/components/seo/schemas";
 import { DestinationsPageClient } from "@/components/pages/DestinationsPageClient";
 import { fetchAllDestinations } from "@/lib/destinations-db";
 
@@ -27,5 +29,29 @@ export const metadata: Metadata = {
 
 export default async function DestinationsPage() {
   const destinations = await fetchAllDestinations();
-  return <DestinationsPageClient destinations={destinations} />;
+
+  return (
+    <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Destinations", url: "/destinations" },
+        ])}
+      />
+      <JsonLd
+        data={collectionPageSchema({
+          name: "Dubai Yacht Destinations",
+          description:
+            "Explore Dubai's top yacht cruise destinations departing from Dubai Harbour with Imperial Yachting.",
+          url: "/destinations",
+          items: destinations.map((destination) => ({
+            name: destination.name,
+            url: `/destinations/${destination.slug}`,
+            image: destination.coverImage,
+          })),
+        })}
+      />
+      <DestinationsPageClient destinations={destinations} />
+    </>
+  );
 }

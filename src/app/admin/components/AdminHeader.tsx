@@ -2,7 +2,17 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Anchor, LogOut, Home, Ship, MapPin, BarChart3 } from "lucide-react";
+import {
+  Anchor,
+  LogOut,
+  Home,
+  Ship,
+  MapPin,
+  BarChart3,
+  CalendarDays,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 export function AdminHeader() {
@@ -19,6 +29,9 @@ export function AdminHeader() {
   const navItems = [
     { label: "Fleet", href: "/admin", icon: Ship },
     { label: "Destinations", href: "/admin/destinations", icon: MapPin },
+    { label: "Bookings", href: "/admin/bookings", icon: CalendarDays },
+    { label: "Extras", href: "/admin/extras", icon: Sparkles },
+    { label: "Leads", href: "/admin/leads", icon: Users },
     { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   ];
 

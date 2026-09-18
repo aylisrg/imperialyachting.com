@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { serviceSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { CinematographyPageContent } from "./CinematographyPageContent";
 
 export const metadata: Metadata = {
@@ -23,5 +25,24 @@ export const metadata: Metadata = {
 };
 
 export default function CinematographyPage() {
-  return <CinematographyPageContent />;
+  return (
+    <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Yacht Cinematography & Content Production",
+          description:
+            "Professional yacht-based film production, drone footage, and content creation for brands, events, and social media through our Cinematographic Bureau.",
+          url: `${SITE_CONFIG.url}/services/cinematography`,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Services", url: "/services" },
+          { name: "Cinematography", url: "/services/cinematography" },
+        ])}
+      />
+      <CinematographyPageContent />
+    </>
+  );
 }

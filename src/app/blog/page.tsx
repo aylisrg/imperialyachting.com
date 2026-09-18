@@ -8,6 +8,8 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { fetchYouTubeVideos } from "@/lib/youtube";
 import { BlogPageClient } from "@/components/pages/BlogPageClient";
 import { posts } from "@/data/posts";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { breadcrumbSchema, itemListSchema } from "@/components/seo/schemas";
 
 export const metadata: Metadata = {
   title: "Blog, Guides & Videos",
@@ -45,6 +47,22 @@ export default async function BlogPage() {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog" },
+        ])}
+      />
+      <JsonLd
+        data={itemListSchema(
+          "Imperial Yachting Blog",
+          posts.map((post) => ({
+            name: post.title,
+            url: `/blog/${post.slug}`,
+          }))
+        )}
+      />
+
       {/* Articles */}
       <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden">
         <div className="absolute inset-0 bg-navy-950">

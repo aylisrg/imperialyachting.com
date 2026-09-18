@@ -15,7 +15,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { localBusinessSchema, breadcrumbSchema } from "@/components/seo/schemas";
+import { localBusinessSchema, breadcrumbSchema, contactPageSchema } from "@/components/seo/schemas";
 import { SITE_CONFIG } from "@/lib/constants";
 import { ContactForm } from "@/components/forms/ContactForm";
 
@@ -73,6 +73,7 @@ export default function ContactPage() {
   return (
     <>
       <JsonLd data={localBusinessSchema()} />
+      <JsonLd data={contactPageSchema()} />
       <JsonLd
         data={breadcrumbSchema([
           { name: "Home", url: "/" },
