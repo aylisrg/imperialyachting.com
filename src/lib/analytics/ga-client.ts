@@ -1,7 +1,7 @@
 import { BetaAnalyticsDataClient } from "@google-analytics/data";
 import type { GACollectedData, GAMetricsResponse, GAPageData, GAEventData, GATrafficData } from "./types";
 
-function getClient() {
+export function getClient() {
   const keyJson = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
   if (!keyJson) throw new Error("GOOGLE_SERVICE_ACCOUNT_KEY is not set");
 
@@ -12,7 +12,7 @@ function getClient() {
   return new BetaAnalyticsDataClient({ credentials });
 }
 
-function getPropertyId() {
+export function getPropertyId() {
   const id = process.env.GOOGLE_ANALYTICS_PROPERTY_ID;
   if (!id) throw new Error("GOOGLE_ANALYTICS_PROPERTY_ID is not set");
   return id;
