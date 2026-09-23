@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { createServerSupabase } from "./supabase/server";
+import { createPublicSupabase } from "./supabase/public";
 import { withRetry } from "./supabase/with-retry";
 import type { Database } from "./supabase/types";
 import type { Yacht } from "@/types/yacht";
@@ -18,7 +18,7 @@ type YachtIncludedRow = Database["public"]["Tables"]["yacht_included"]["Row"];
  * never silently returns empty (let error boundaries handle it).
  */
 export async function fetchAllYachts(): Promise<Yacht[]> {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicSupabase();
 
   const yachts = await withRetry(
     () =>
@@ -41,7 +41,7 @@ export async function fetchAllYachts(): Promise<Yacht[]> {
  * Retries on transient failures. Throws on persistent failure.
  */
 export async function fetchFeaturedYachts(): Promise<Yacht[]> {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicSupabase();
 
   const yachts = await withRetry(
     () =>
@@ -68,7 +68,7 @@ export async function fetchFeaturedYachts(): Promise<Yacht[]> {
 export async function fetchYachtBySlug(
   slug: string
 ): Promise<Yacht | null> {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicSupabase();
 
   const yacht = await withRetry(
     () =>
@@ -76,7 +76,7 @@ export async function fetchYachtBySlug(
         .from("yachts")
         .select("*")
         .eq("slug", slug)
-        .single(),
+        .maybeSingle(),
     { label: `fetchYachtBySlug(${slug})` }
   );
 

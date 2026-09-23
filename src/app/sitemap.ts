@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { fetchAllYachts } from "@/lib/yachts-db";
 import { fetchAllDestinations } from "@/lib/destinations-db";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createPublicSupabase } from "@/lib/supabase/public";
 
 const BASE_URL = "https://imperialyachting.com";
 const FIXED_LEGAL_DATE = "2025-01-01";
@@ -13,7 +13,7 @@ interface SlugUpdatedAt {
 
 async function fetchYachtSlugsAndDates(): Promise<SlugUpdatedAt[]> {
   try {
-    const supabase = await createServerSupabase();
+    const supabase = createPublicSupabase();
     const { data, error } = await supabase
       .from("yachts")
       .select("slug, updated_at");
@@ -32,7 +32,7 @@ async function fetchYachtSlugsAndDates(): Promise<SlugUpdatedAt[]> {
 
 async function fetchDestinationSlugsAndDates(): Promise<SlugUpdatedAt[]> {
   try {
-    const supabase = await createServerSupabase();
+    const supabase = createPublicSupabase();
     const { data, error } = await supabase
       .from("destinations")
       .select("slug, updated_at");

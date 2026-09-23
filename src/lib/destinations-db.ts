@@ -1,4 +1,4 @@
-import { createServerSupabase } from "./supabase/server";
+import { createPublicSupabase } from "./supabase/public";
 import type { Destination, DestinationCategory } from "@/types/common";
 import type { DestinationRow } from "./supabase/types";
 import { destinations as staticDestinations } from "@/data/destinations";
@@ -38,7 +38,7 @@ function mapDestination(d: DestinationRow): Destination {
  */
 export async function fetchAllDestinations(): Promise<Destination[]> {
   try {
-    const supabase = await createServerSupabase();
+    const supabase = createPublicSupabase();
 
     const { data: destinations, error } = await supabase
       .from("destinations")
@@ -70,7 +70,7 @@ export async function fetchDestinationBySlug(
 ): Promise<Destination | null> {
   const staticMatch = staticDestinations.find((d) => d.slug === slug) ?? null;
   try {
-    const supabase = await createServerSupabase();
+    const supabase = createPublicSupabase();
 
     const { data, error } = await supabase
       .from("destinations")
@@ -101,7 +101,7 @@ export async function fetchDestinationBySlug(
 export async function fetchFeaturedDestinations(): Promise<Destination[]> {
   const staticFeatured = staticDestinations.filter((d) => d.featured);
   try {
-    const supabase = await createServerSupabase();
+    const supabase = createPublicSupabase();
 
     const { data: destinations, error } = await supabase
       .from("destinations")

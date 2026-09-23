@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Mock the Supabase server client
+// Mock the public Supabase client
 const mockSelect = vi.fn();
 const mockOrder = vi.fn();
 const mockEq = vi.fn();
 const mockSingle = vi.fn();
 const mockFrom = vi.fn();
 
-vi.mock("@/lib/supabase/server", () => ({
-  createServerSupabase: vi.fn(async () => ({
+vi.mock("@/lib/supabase/public", () => ({
+  createPublicSupabase: vi.fn(() => ({
     from: mockFrom,
   })),
 }));
@@ -20,7 +20,7 @@ function setupChain(data: unknown[] | null, error: { message: string } | null = 
   mockOrder.mockReturnValue({ data, error });
   mockEq.mockReturnValue({
     order: mockOrder,
-    single: mockSingle,
+    maybeSingle: mockSingle,
     data,
     error,
   });
@@ -85,7 +85,7 @@ describe("yachts-db (retry + throw on persistent failure)", () => {
     it("returns null when yacht genuinely doesn't exist", async () => {
       mockFrom.mockReturnValue({ select: mockSelect });
       mockSelect.mockReturnValue({ eq: mockEq });
-      mockEq.mockReturnValue({ single: mockSingle });
+      mockEq.mockReturnValue({ maybeSingle: mockSingle });
       mockSingle.mockReturnValue({ data: null, error: null });
 
       const { fetchYachtBySlug } = await import("../yachts-db");
@@ -97,7 +97,7 @@ describe("yachts-db (retry + throw on persistent failure)", () => {
     it("throws on persistent Supabase error after retries", async () => {
       mockFrom.mockReturnValue({ select: mockSelect });
       mockSelect.mockReturnValue({ eq: mockEq });
-      mockEq.mockReturnValue({ single: mockSingle });
+      mockEq.mockReturnValue({ maybeSingle: mockSingle });
       mockSingle.mockReturnValue({ data: null, error: { message: "connection refused" } });
 
       const { fetchYachtBySlug } = await import("../yachts-db");
