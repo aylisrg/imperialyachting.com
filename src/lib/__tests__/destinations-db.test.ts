@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { destinations as staticDestinations } from "@/data/destinations";
 
-// Mock the Supabase server client
+// Mock the public Supabase client
 const mockSelect = vi.fn();
 const mockOrder = vi.fn();
 const mockEq = vi.fn();
 const mockSingle = vi.fn();
 const mockFrom = vi.fn();
 
-vi.mock("@/lib/supabase/server", () => ({
-  createServerSupabase: vi.fn(async () => ({
+vi.mock("@/lib/supabase/public", () => ({
+  createPublicSupabase: vi.fn(() => ({
     from: mockFrom,
   })),
 }));
