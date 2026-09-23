@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
 import {
   calculateQuote,
   resolveSeason,
@@ -13,9 +13,21 @@ import type { Extra } from "@/types/booking";
 // Fixtures
 // ---------------------------------------------------------------------------
 
-// Reference dates (Dubai local, UTC+4), chosen in the future relative to the
-// "current date" of this test environment so past_date checks don't trip
-// unrelated tests. Verified weekdays (UAE weekend = Fri/Sat):
+// Freeze "now" so the fixed reference dates below stay in the future and the
+// past_date check doesn't start failing once the calendar passes them.
+const FROZEN_NOW = new Date("2026-01-01T00:00:00+04:00");
+
+beforeAll(() => {
+  vi.useFakeTimers({ toFake: ["Date"] });
+  vi.setSystemTime(FROZEN_NOW);
+});
+
+afterAll(() => {
+  vi.useRealTimers();
+});
+
+// Reference dates (Dubai local, UTC+4), all after FROZEN_NOW so past_date
+// checks don't trip unrelated tests. Verified weekdays (UAE weekend = Fri/Sat):
 //   2026-12-10 Thu (weekday)
 //   2026-12-11 Fri (weekend)
 //   2026-12-12 Sat (weekend)
