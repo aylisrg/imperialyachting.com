@@ -18,6 +18,9 @@ const nextConfig: NextConfig = {
   // serverless function that streams them after password authentication.
   outputFileTracingIncludes: {
     "/api/documents/file/[slug]": ["./private/documents/**"],
+    // Sale materials shipped with the site (e.g. spec sheets), streamed only
+    // through signed links issued after the email gate.
+    "/api/sales/file": ["./private/sales/**"],
   },
   images: {
     formats: ["image/avif", "image/webp"],

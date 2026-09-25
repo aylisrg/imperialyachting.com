@@ -50,6 +50,12 @@ import {
   createCheckoutMeta,
 } from "./tools/create-checkout";
 import {
+  listYachtsForSale,
+  listYachtsForSaleInputSchema,
+  listYachtsForSaleOutputSchema,
+  listYachtsForSaleMeta,
+} from "./tools/list-yachts-for-sale";
+import {
   getBooking,
   getBookingInputSchema,
   getBookingOutputSchema,
@@ -234,6 +240,24 @@ export function registerImperialServer(server: McpServer): void {
         content: [{ type: "text", text }],
         structuredContent: structured,
         ...(isError ? { isError: true } : {}),
+      };
+    }
+  );
+
+  server.registerTool(
+    listYachtsForSaleMeta.name,
+    {
+      title: listYachtsForSaleMeta.title,
+      description: listYachtsForSaleMeta.description,
+      inputSchema: listYachtsForSaleInputSchema,
+      outputSchema: listYachtsForSaleOutputSchema,
+      annotations: listYachtsForSaleMeta.annotations,
+    },
+    async () => {
+      const { structured, text } = await listYachtsForSale();
+      return {
+        content: [{ type: "text", text }],
+        structuredContent: structured,
       };
     }
   );

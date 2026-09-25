@@ -299,3 +299,112 @@ export function bookingBalanceReminder(booking: BookingNotificationBase): EmailT
 
   return { subject, html, text };
 }
+
+export interface SaleDownloadEvent {
+  listingTitle: string;
+  listingUrl: string;
+  email: string;
+  isBroker: boolean;
+  company?: string | null;
+  /** Client a broker registered with this download. */
+  clientName?: string | null;
+  materials: Array<{ title: string; files: Array<{ name: string; url: string }> }>;
+  at: Date;
+  country?: string | null;
+  ip?: string | null;
+  referrer?: string | null;
+  /** How many times this email has taken materials for this listing before. */
+  previousDownloads?: number;
+}
+
+function saleDownloadRows(event: SaleDownloadEvent): Array<[string, string]> {
+  const rows: Array<[string, string]> = [
+    ["Yacht", event.listingTitle],
+    ["Email", event.email],
+    ["Who", event.isBroker ? "Broker" : "Buyer / private"],
+  ];
+  if (event.company) rows.push(["Company", event.company]);
+  if (event.clientName) rows.push(["Client registered", event.clientName]);
+  rows.push(
+    ["Materials", event.materials.map((m) => m.title).join(", ")],
+    ["When", formatDubai(event.at)]
+  );
+  if (event.previousDownloads) rows.push(["Earlier downloads", String(event.previousDownloads)]);
+  if (event.country) rows.push(["Country", event.country]);
+  if (event.referrer) rows.push(["Came from", event.referrer]);
+  return rows;
+}
+
+/** Owner-facing alert: someone downloaded a listing's materials. */
+export function saleDownloadAdmin(event: SaleDownloadEvent): EmailTemplate {
+  const who = event.isBroker ? "Broker" : "Buyer";
+  const subject = `${who} downloaded ${event.listingTitle}: ${event.email}`;
+  const rows = saleDownloadRows(event);
+
+  const html = wrapEmail(
+    `${rowsToHtml(rows)}
+    <p style="margin:0;">Reply to this email to write to them directly. <a href="${event.listingUrl}" style="color:${GOLD};">Open listing</a></p>`,
+    "Materials Downloaded"
+  );
+
+  const text = [
+    "Materials Downloaded",
+    "",
+    rowsToText(rows),
+    "",
+    `Listing: ${event.listingUrl}`,
+    "",
+    footerText(),
+  ].join("\n");
+
+  return { subject, html, text };
+}
+
+/**
+ * Requester-facing copy of the links (valid 7 days), plus — for a broker who
+ * registered a client — a timestamped confirmation of that registration.
+ */
+export function saleMaterialsRequester(event: SaleDownloadEvent): EmailTemplate {
+  const subject = `${event.listingTitle} — your materials`;
+
+  const registration = event.clientName
+    ? `<p style="margin:0 0 16px;padding:12px 16px;border:1px solid rgba(201,168,76,0.4);border-radius:8px;">Client registration confirmed: <strong style="color:${GOLD};">${escapeHtml(event.clientName)}</strong>, registered by ${escapeHtml(event.email)}${event.company ? ` (${escapeHtml(event.company)})` : ""} on ${escapeHtml(formatDubai(event.at))}.</p>`
+    : "";
+
+  const list = event.materials
+    .map(
+      (m) =>
+        `<p style="margin:0 0 6px;color:${WHITE};font-weight:bold;">${escapeHtml(m.title)}</p>
+        <p style="margin:0 0 14px;">${m.files
+          .map((f) => `<a href="${escapeHtml(f.url)}" style="color:${GOLD};">${escapeHtml(f.name)}</a>`)
+          .join("<br />")}</p>`
+    )
+    .join("");
+
+  const html = wrapEmail(
+    `${registration}
+    <p style="margin:0 0 16px;">Here are the materials for <a href="${event.listingUrl}" style="color:${GOLD};">${escapeHtml(event.listingTitle)}</a>. Links stay valid for 7 days; the listing page always has the latest version.</p>
+    ${list}
+    <p style="margin:0;">Viewings and sea trials by appointment — reply to this email or WhatsApp <a href="${SITE_CONFIG.whatsapp}" style="color:${GOLD};">${SITE_CONFIG.phone}</a>.</p>`,
+    event.listingTitle
+  );
+
+  const text = [
+    event.listingTitle,
+    "",
+    ...(event.clientName
+      ? [
+          `Client registration confirmed: ${event.clientName}, registered by ${event.email}${event.company ? ` (${event.company})` : ""} on ${formatDubai(event.at)}.`,
+          "",
+        ]
+      : []),
+    `Materials (links valid 7 days). Latest version always at ${event.listingUrl}`,
+    "",
+    ...event.materials.flatMap((m) => [m.title, ...m.files.map((f) => `- ${f.name}: ${f.url}`), ""]),
+    `Viewings by appointment: ${SITE_CONFIG.whatsapp}`,
+    "",
+    footerText(),
+  ].join("\n");
+
+  return { subject, html, text };
+}

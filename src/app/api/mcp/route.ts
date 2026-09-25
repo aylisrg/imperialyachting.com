@@ -22,6 +22,7 @@ const INSTRUCTIONS = [
   "All prices are in AED (United Arab Emirates Dirham). Hourly rates include a professional captain and crew, fuel for standard cruising routes, and soft drinks/water/ice.",
   "To help a client plan and book a charter: call `list_yachts` (filter by guest count or budget), then `get_yacht` for full pricing/specs on the top candidates, then `list_destinations` for itinerary ideas and `list_extras` for add-ons. Use `get_booking_terms` for the deposit rate, minimum charter hours, and cancellation policy.",
   "Booking flow: call `check_availability` to confirm a date/time is free, then `create_quote` (yacht, date, start hour, hours, guests, extras) for a priced, 30-minute quote, then `create_checkout` to generate a Stripe deposit link once the customer has explicitly confirmed the quote, and `get_booking` to check a booking's status afterwards.",
+  "Yachts for sale (owner-direct, Dubai): `list_yachts_for_sale` returns listings with the page URL where brokers and buyers download the spec sheet and photos.",
   "Never invent prices or availability; always call the tools. Do not call create_checkout without explicit customer confirmation of the quote.",
   "The `plan_charter` prompt walks through the full flow end-to-end, including quoting and checkout.",
   "Resources `imperial://terms`, `imperial://company`, and `imperial://faq` provide the full terms of service, company/contact details, and FAQ as reference material.",

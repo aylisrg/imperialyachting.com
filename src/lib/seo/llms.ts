@@ -3,6 +3,8 @@ import { getHourlyRate } from "@/lib/pricing";
 import { homeFAQ } from "@/data/faq";
 import type { Yacht } from "@/types/yacht";
 import type { Destination } from "@/types/common";
+import type { SaleListing } from "@/types/sale";
+import { formatSalePrice, SALE_STATUS_LABEL } from "@/lib/sales/merge";
 
 export interface LlmsExtra {
   name: string;
@@ -14,6 +16,8 @@ export interface LlmsInput {
   yachts: Yacht[];
   destinations: Destination[];
   extras?: LlmsExtra[];
+  /** Live yachts-for-sale listings; the section is omitted when empty. */
+  sales?: SaleListing[];
 }
 
 function yachtFromPrice(yacht: Yacht): string {
@@ -37,6 +41,50 @@ const BOOKING_SECTION = `## Booking & Payment
 - Minimum charter duration: 2 hours on weekdays, 4 hours on weekends.
 - Promotion: book 4 hours and receive a 5th hour free (4+1 bonus hour).
 - Reach us via WhatsApp (${SITE_CONFIG.whatsapp}) or email (${SITE_CONFIG.email}).`;
+
+function saleUrl(listing: SaleListing): string {
+  return `${SITE_CONFIG.url}/yachts-for-sale/${listing.slug}`;
+}
+
+function saleLine(listing: SaleListing): string {
+  return `- **${listing.title}** (${SALE_STATUS_LABEL[listing.status]}) — ${listing.summary} ${formatSalePrice(listing.price)}. [${saleUrl(listing)}](${saleUrl(listing)})`;
+}
+
+function salesSection(sales: SaleListing[] | undefined): string[] {
+  if (!sales || sales.length === 0) return [];
+  return [
+    "## Yachts for Sale",
+    "",
+    `Owner-direct sales from the Imperial Yachting fleet, lying Dubai Harbour. Brokers welcome; spec sheets and photo packs download instantly from each listing. Overview: ${SITE_CONFIG.url}/yachts-for-sale`,
+    "",
+    sales.map(saleLine).join("\n"),
+    "",
+  ];
+}
+
+function fullSalesSection(sales: SaleListing[] | undefined): string[] {
+  if (!sales || sales.length === 0) return [];
+  const blocks = sales.map((listing) => {
+    const parts = [
+      `### ${listing.title} — for sale`,
+      "",
+      listing.description || listing.summary,
+      "",
+      `- Status: ${SALE_STATUS_LABEL[listing.status]}`,
+      `- Asking price: ${formatSalePrice(listing.price)}`,
+      `- Lying: ${listing.lying}`,
+      `- Link: ${saleUrl(listing)}`,
+    ];
+    for (const section of listing.specSections) {
+      parts.push("", `**${section.title}:**`, "", section.items.map((i) => `- ${i.label}: ${i.value}`).join("\n"));
+    }
+    if (listing.highlights.length > 0) {
+      parts.push("", "**Highlights:**", "", listing.highlights.map((h) => `- ${h}`).join("\n"));
+    }
+    return parts.join("\n");
+  });
+  return ["## Yachts for Sale", "", blocks.join("\n\n"), ""];
+}
 
 function aiAgentsSection(): string {
   return `## For AI agents
@@ -81,7 +129,7 @@ function servicesSection(extras?: LlmsExtra[]): string {
  * H1 site name, one-line blockquote summary, then linked sections.
  */
 export function buildLlmsTxt(input: LlmsInput): string {
-  const { yachts, destinations, extras } = input;
+  const { yachts, destinations, extras, sales } = input;
 
   const sections = [
     `# ${SITE_CONFIG.name}`,
@@ -100,6 +148,7 @@ export function buildLlmsTxt(input: LlmsInput): string {
       ? destinations.map(destinationLine).join("\n")
       : "Destination information is temporarily unavailable — please contact us directly.",
     "",
+    ...salesSection(sales),
     servicesSection(extras),
     "",
     BOOKING_SECTION,
@@ -204,7 +253,7 @@ function faqSection(): string {
  * pricing tables, amenities, and FAQ content.
  */
 export function buildLlmsFullTxt(input: LlmsInput): string {
-  const { yachts, destinations, extras } = input;
+  const { yachts, destinations, extras, sales } = input;
 
   const sections = [
     `# ${SITE_CONFIG.name} — Full Reference`,
@@ -219,6 +268,7 @@ export function buildLlmsFullTxt(input: LlmsInput): string {
     "",
     fullDestinationsSection(destinations),
     "",
+    ...fullSalesSection(sales),
     servicesSection(extras),
     "",
     BOOKING_SECTION,

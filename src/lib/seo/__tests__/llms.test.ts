@@ -113,3 +113,22 @@ describe("buildLlmsFullTxt", () => {
     expect(out).toContain("Dubai Harbour Yacht Club");
   });
 });
+
+describe("yachts for sale in llms files", () => {
+  it("adds a Yachts for Sale section only when there are listings", async () => {
+    const { mergeSaleListing } = await import("@/lib/sales/merge");
+    const { saleRow } = await import("@/lib/sales/__tests__/fixtures");
+    const sales = [mergeSaleListing(saleRow(), [], null)];
+
+    const short = buildLlmsTxt({ yachts: fixtureYachts, destinations: [], sales });
+    expect(short).toContain("## Yachts for Sale");
+    expect(short).toContain("https://imperialyachting.com/yachts-for-sale/vandutch-40-van-dutch-connect");
+    expect(short).toContain("Price on application");
+
+    const full = buildLlmsFullTxt({ yachts: fixtureYachts, destinations: [], sales });
+    expect(full).toContain("### VanDutch 40 “Van Dutch Connect” — for sale");
+    expect(full).toContain("- Beam: 3.50 m");
+
+    expect(buildLlmsTxt({ yachts: fixtureYachts, destinations: [] })).not.toContain("Yachts for Sale");
+  });
+});
