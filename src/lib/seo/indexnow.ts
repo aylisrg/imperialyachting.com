@@ -77,3 +77,11 @@ export function destinationUrls(slug: string): string[] {
     `${SITE_CONFIG.url}/destinations`,
   ];
 }
+
+/** Absolute URLs to (re-)submit after a yacht-for-sale listing changes. */
+export function saleListingUrls(slug: string): string[] {
+  return [
+    `${SITE_CONFIG.url}/yachts-for-sale/${slug}`,
+    `${SITE_CONFIG.url}/yachts-for-sale`,
+  ];
+}

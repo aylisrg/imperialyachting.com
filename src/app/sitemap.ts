@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { fetchAllYachts } from "@/lib/yachts-db";
 import { fetchAllDestinations } from "@/lib/destinations-db";
 import { createPublicSupabase } from "@/lib/supabase/public";
+import { fetchSaleListings } from "@/lib/sales/listings-db";
 
 const BASE_URL = "https://imperialyachting.com";
 const FIXED_LEGAL_DATE = "2025-01-01";
@@ -85,5 +86,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: updatedAt ?? now,
   }));
 
-  return [...staticPages, ...yachtPages, ...destinationPages];
+  // Yachts for sale: not linked from the navigation, so the sitemap (plus
+  // llms.txt and IndexNow) is how crawlers discover the section.
+  const saleListings = await fetchSaleListings().catch(() => []);
+  const salePages = [
+    { url: `${BASE_URL}/yachts-for-sale`, changeFrequency: "weekly" as const, priority: 0.8, lastModified: now },
+    ...saleListings.map((listing) => ({
+      url: `${BASE_URL}/yachts-for-sale/${listing.slug}`,
+      changeFrequency: "weekly" as const,
+      priority: listing.status === "sold" ? 0.4 : 0.85,
+      lastModified: new Date(listing.updatedAt),
+      ...(listing.images.length > 0 ? { images: listing.images.slice(0, 10) } : {}),
+    })),
+  ];
+
+  return [...staticPages, ...yachtPages, ...destinationPages, ...salePages];
 }

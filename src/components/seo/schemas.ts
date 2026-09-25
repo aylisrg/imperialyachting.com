@@ -1,5 +1,6 @@
 import { SITE_CONFIG } from "@/lib/constants";
 import type { Yacht, SeasonPricing } from "@/types/yacht";
+import type { SaleListing } from "@/types/sale";
 import type { FAQItem, Destination, Testimonial } from "@/types/common";
 import { testimonials as allTestimonials } from "@/data/testimonials";
 
@@ -630,5 +631,68 @@ export function contactPageSchema() {
     name: `Contact ${SITE_CONFIG.name}`,
     url: `${SITE_CONFIG.url}/contact`,
     about: { "@id": `${SITE_CONFIG.url}/#localbusiness` },
+  };
+}
+
+const SALE_AVAILABILITY: Record<SaleListing["status"], string> = {
+  draft: "https://schema.org/PreOrder",
+  published: "https://schema.org/InStock",
+  under_offer: "https://schema.org/LimitedAvailability",
+  sold: "https://schema.org/SoldOut",
+};
+
+/**
+ * Product node for a yacht listed for sale. Every spec row is exposed as an
+ * `additionalProperty` so search engines and AI assistants can quote exact
+ * particulars. An `Offer` is only emitted when there is an asking price —
+ * "price on application" listings would otherwise produce an invalid Offer.
+ */
+export function saleListingSchema(listing: SaleListing) {
+  const url = `${SITE_CONFIG.url}/yachts-for-sale/${listing.slug}`;
+  const properties = listing.specSections.flatMap((section) =>
+    section.items.map((item) => ({
+      "@type": "PropertyValue",
+      name: item.label,
+      value: item.value,
+    }))
+  );
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${url}#product`,
+    name: `${listing.title} for sale`,
+    description: listing.summary,
+    url,
+    category: "Motor yacht",
+    itemCondition: "https://schema.org/UsedCondition",
+    ...(listing.builder
+      ? {
+          brand: { "@type": "Brand", name: listing.builder },
+          manufacturer: { "@type": "Organization", name: listing.builder },
+        }
+      : {}),
+    ...(listing.model ? { model: listing.model } : {}),
+    ...(listing.yearBuilt ? { productionDate: String(listing.yearBuilt) } : {}),
+    image: listing.images.slice(0, 10).map(absoluteUrl),
+    ...(properties.length > 0 ? { additionalProperty: properties } : {}),
+    ...(listing.price.amount !== null
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: listing.price.amount,
+            priceCurrency: listing.price.currency,
+            availability: SALE_AVAILABILITY[listing.status],
+            itemCondition: "https://schema.org/UsedCondition",
+            url,
+            seller: { "@id": `${SITE_CONFIG.url}/#organization` },
+            availableAtOrFrom: {
+              "@type": "Place",
+              name: listing.lying,
+              address: { "@type": "PostalAddress", addressLocality: "Dubai", addressCountry: "AE" },
+            },
+          },
+        }
+      : {}),
   };
 }

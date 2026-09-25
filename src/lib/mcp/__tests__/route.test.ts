@@ -11,6 +11,7 @@ const EXPECTED_TOOL_NAMES = [
   "create_quote",
   "create_checkout",
   "get_booking",
+  "list_yachts_for_sale",
 ];
 
 const READ_ONLY_TOOL_NAMES = new Set([
@@ -21,6 +22,7 @@ const READ_ONLY_TOOL_NAMES = new Set([
   "get_booking_terms",
   "check_availability",
   "get_booking",
+  "list_yachts_for_sale",
 ]);
 
 function jsonRpcRequest(body: unknown, headers: Record<string, string> = {}) {
@@ -61,7 +63,7 @@ describe("/api/mcp route", () => {
     expect(res.headers.get("access-control-expose-headers")).toContain("Mcp-Session-Id");
   });
 
-  it("lists all 9 tools with titles and annotations via tools/list", async () => {
+  it("lists all 10 tools with titles and annotations via tools/list", async () => {
     const { POST } = await import("@/app/api/mcp/route");
     const res = await POST(
       jsonRpcRequest({ jsonrpc: "2.0", id: 1, method: "tools/list", params: {} })

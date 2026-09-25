@@ -46,6 +46,10 @@ src/lib/yachts-db.ts, src/lib/pricing.ts, src/data/*  (данные и прай�
 | `create_quote`* | idempotent | Смета (яхта, дата, часы, гости, extras) → `quote_id`, разбивка стоимости, депозит, срок действия. |
 | `create_checkout`* | idempotent, open-world | `quote_id` + контакты клиента → hold брони + ссылка на Stripe Checkout. |
 | `get_booking`* | read-only | Статус брони по `booking_id`. |
+| `list_yachts_for_sale` | read-only | Яхты на продажу (owner-direct): модель, год, размер, статус, цена, ссылка на листинг с материалами. |
+
+Отдельный **приватный** MCP для управления разделом продаж — `/api/mcp/sales`
+(только с токеном `SALES_ADMIN_TOKEN`), см. `docs/YACHT_SALES_RU.md`.
 
 \* Booking-инструменты (`check_availability`, `create_quote`,
 `create_checkout`, `get_booking`) находятся в разработке (см.

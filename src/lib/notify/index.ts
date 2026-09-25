@@ -51,3 +51,5 @@ export async function notifyLead(lead: LeadLike | LeadRow): Promise<void> {
     sendTelegram(buildLeadTelegramMessage(lead), { parseMode: "Markdown" }),
   ]);
 }
+
+export { notifySaleDownload, salesNotifyEmail } from "./sales";
