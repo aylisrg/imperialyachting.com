@@ -10,6 +10,8 @@ import { notifySaleDownload } from "@/lib/notify";
 import { SITE_CONFIG } from "@/lib/constants";
 
 export const runtime = "nodejs";
+// First download of a changed gallery builds the photo ZIP; give it room.
+export const maxDuration = 60;
 
 const downloadSchema = z.object({
   slug: z.string().min(1).max(200),

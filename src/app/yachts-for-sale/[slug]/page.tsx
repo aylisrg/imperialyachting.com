@@ -21,7 +21,7 @@ import { fetchSaleListingBySlug, fetchSaleListings } from "@/lib/sales/listings-
 import { buildMaterialSummaries, fetchSaleMaterialRows } from "@/lib/sales/materials";
 import { formatSalePrice, SALE_STATUS_LABEL } from "@/lib/sales/merge";
 import { cn } from "@/lib/utils";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SALES_CONTACT, SITE_CONFIG } from "@/lib/constants";
 import type { SaleListing } from "@/types/sale";
 
 export const dynamicParams = true;
@@ -136,7 +136,7 @@ export default async function SaleListingPage({
   const facts = keyFacts(listing);
   const youtube = listing.videos.filter((v) => v.kind === "youtube").map((v) => v.url);
   const videoFiles = listing.videos.filter((v) => v.kind === "file");
-  const whatsapp = `${SITE_CONFIG.whatsapp}?text=${encodeURIComponent(
+  const whatsapp = `${SALES_CONTACT.whatsapp}?text=${encodeURIComponent(
     `Hi, I'm interested in ${listing.title} (for sale): ${url}`
   )}`;
   const paragraphs = listing.description.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);

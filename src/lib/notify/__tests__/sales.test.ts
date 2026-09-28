@@ -44,6 +44,16 @@ describe("sale download templates", () => {
     expect(t.text).toContain("Spec.pdf: https://x/spec?t=1&a=2");
     expect(saleMaterialsRequester({ ...event, clientName: null }).html).not.toContain("registration");
   });
+
+  it("uses the sales line, not the charter booking number", () => {
+    for (const t of [saleDownloadAdmin(event), saleMaterialsRequester(event)]) {
+      expect(t.html).toContain("+971-58-5272280");
+      expect(t.text).toContain("+971-58-5272280");
+      expect(t.html).not.toContain("8355939");
+      expect(t.text).not.toContain("8355939");
+    }
+    expect(saleMaterialsRequester(event).html).toContain("https://wa.me/971585272280");
+  });
 });
 
 describe("notifySaleDownload", () => {

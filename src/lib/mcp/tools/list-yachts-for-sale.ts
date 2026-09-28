@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { fetchSaleListings } from "@/lib/sales/listings-db";
 import { formatSalePrice, SALE_STATUS_LABEL } from "@/lib/sales/merge";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SALES_CONTACT, SITE_CONFIG } from "@/lib/constants";
 import { sanitizeText, sanitizeStringArray } from "../sanitize";
 import type { ToolAnnotations, ToolMeta } from "./types";
 
@@ -29,6 +29,7 @@ const saleSummarySchema = z.object({
 export const listYachtsForSaleOutputSchema = z.object({
   listings: z.array(saleSummarySchema),
   overviewUrl: z.string(),
+  salesContact: z.object({ phone: z.string(), whatsapp: z.string() }),
 });
 export type ListYachtsForSaleOutput = z.infer<typeof listYachtsForSaleOutputSchema>;
 
@@ -54,6 +55,7 @@ export async function listYachtsForSale(): Promise<{
   const listings = await fetchSaleListings();
   const structured: ListYachtsForSaleOutput = {
     overviewUrl: `${SITE_CONFIG.url}/yachts-for-sale`,
+    salesContact: { phone: SALES_CONTACT.phone, whatsapp: SALES_CONTACT.whatsapp },
     listings: listings.map((l) => ({
       slug: l.slug,
       title: sanitizeText(l.title, 200),
@@ -79,7 +81,7 @@ export async function listYachtsForSale(): Promise<{
       ? "No yachts are listed for sale right now."
       : structured.listings
           .map((l) => `${l.title} — ${l.status}, ${l.price}. ${l.summary} ${l.url}`)
-          .join("\n");
+          .join("\n") + `\nSales enquiries and viewings: WhatsApp ${SALES_CONTACT.phone}.`;
 
   return { structured, text };
 }

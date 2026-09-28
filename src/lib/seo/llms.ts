@@ -1,4 +1,4 @@
-import { SITE_CONFIG } from "@/lib/constants";
+import { SALES_CONTACT, SITE_CONFIG } from "@/lib/constants";
 import { getHourlyRate } from "@/lib/pricing";
 import { homeFAQ } from "@/data/faq";
 import type { Yacht } from "@/types/yacht";
@@ -57,6 +57,8 @@ function salesSection(sales: SaleListing[] | undefined): string[] {
     "",
     `Owner-direct sales from the Imperial Yachting fleet, lying Dubai Harbour. Brokers welcome; spec sheets and photo packs download instantly from each listing. Overview: ${SITE_CONFIG.url}/yachts-for-sale`,
     "",
+    `Sales enquiries and viewings: WhatsApp ${SALES_CONTACT.phone} (${SALES_CONTACT.whatsapp}).`,
+    "",
     sales.map(saleLine).join("\n"),
     "",
   ];
@@ -83,7 +85,14 @@ function fullSalesSection(sales: SaleListing[] | undefined): string[] {
     }
     return parts.join("\n");
   });
-  return ["## Yachts for Sale", "", blocks.join("\n\n"), ""];
+  return [
+    "## Yachts for Sale",
+    "",
+    `Sales enquiries and viewings: WhatsApp ${SALES_CONTACT.phone} (${SALES_CONTACT.whatsapp}).`,
+    "",
+    blocks.join("\n\n"),
+    "",
+  ];
 }
 
 function aiAgentsSection(): string {

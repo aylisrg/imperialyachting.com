@@ -41,6 +41,26 @@ export const SITE_CONFIG = {
   },
 } as const;
 
+/**
+ * Direct line for the yachts-for-sale section (buyers and brokers). Used
+ * instead of the charter booking number everywhere under /yachts-for-sale
+ * and in sales emails; the rest of the site keeps SITE_CONFIG.phone.
+ */
+export const SALES_CONTACT = {
+  phone: "+971-58-5272280",
+  whatsapp: "https://wa.me/971585272280",
+} as const;
+
+export const SALES_PATH_PREFIX = "/yachts-for-sale";
+
+/** Phone/WhatsApp to show for a route: the sales line on sales pages, the booking line elsewhere. */
+export function contactForPath(pathname: string | null | undefined): {
+  phone: string;
+  whatsapp: string;
+} {
+  return pathname?.startsWith(SALES_PATH_PREFIX) ? SALES_CONTACT : SITE_CONFIG;
+}
+
 export const DEPARTURE_POINT_SLUG = "dubai-harbour";
 
 export const NAV_LINKS = [
