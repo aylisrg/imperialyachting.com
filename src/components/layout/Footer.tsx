@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Phone,
   Mail,
@@ -11,11 +12,12 @@ import {
   Anchor,
 } from "lucide-react";
 import { Container } from "./Container";
-import { SITE_CONFIG, NAV_LINKS, SERVICE_NAV } from "@/lib/constants";
+import { SITE_CONFIG, NAV_LINKS, SERVICE_NAV, contactForPath } from "@/lib/constants";
 import { trackPhoneClick, trackEmailClick, trackWhatsAppClick } from "@/lib/analytics";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const contact = contactForPath(usePathname());
 
   return (
     <footer className="bg-navy-950 border-t border-white/5">
@@ -128,12 +130,12 @@ export function Footer() {
             <ul className="space-y-4">
               <li>
                 <a
-                  href={`tel:${SITE_CONFIG.phone}`}
+                  href={`tel:${contact.phone}`}
                   className="flex items-start gap-3 text-sm text-white/50 hover:text-gold-400 transition-colors"
                   onClick={() => trackPhoneClick("footer")}
                 >
                   <Phone className="w-4 h-4 mt-0.5 shrink-0" />
-                  {SITE_CONFIG.phone}
+                  {contact.phone}
                 </a>
               </li>
               <li>
@@ -159,7 +161,7 @@ export function Footer() {
             </ul>
             <div className="mt-6">
               <a
-                href={SITE_CONFIG.whatsapp}
+                href={contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-5 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 text-sm font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-gold-500/20"

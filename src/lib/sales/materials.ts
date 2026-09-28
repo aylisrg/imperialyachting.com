@@ -7,6 +7,7 @@ import type {
   SaleMaterialSummary,
 } from "@/types/sale";
 import { createFileToken } from "./file-token";
+import { getPackZipUrl } from "./pack-zip";
 
 export const SALE_MEDIA_BUCKET = "sale-media";
 export const SALE_MATERIALS_BUCKET = "sale-materials";
@@ -66,11 +67,11 @@ export function buildMaterialSummaries(
     items.push({
       id: PHOTO_PACK_ID,
       title: "Photo pack",
-      description: `${listing.images.length} photos, full resolution, no watermarks.`,
+      description: `${listing.images.length} photos, full resolution, no watermarks — one ZIP file.`,
       category: "photos",
       kind: "file",
       sizeBytes: null,
-      fileCount: listing.images.length,
+      fileCount: 1,
     });
   }
 
@@ -118,12 +119,44 @@ function absolute(url: string): string {
   return /^https?:\/\//i.test(url) ? url : `${SITE_CONFIG.url}${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
-function packFiles(listing: SaleListing, urls: string[], label: string, fallbackExt: string): SaleDownloadFile[] {
+function packSources(listing: SaleListing, urls: string[], label: string, fallbackExt: string) {
   const pad = Math.max(2, String(urls.length).length);
-  return urls.map((url, i) => {
-    const name = `${listing.slug}-${label}-${String(i + 1).padStart(pad, "0")}.${extensionOf(url, fallbackExt)}`;
-    return { name, url: withDownloadName(absolute(url), name), kind: "file" as const };
-  });
+  return urls.map((url, i) => ({
+    name: `${listing.slug}-${label}-${String(i + 1).padStart(pad, "0")}.${extensionOf(url, fallbackExt)}`,
+    url: absolute(url),
+  }));
+}
+
+function packFiles(listing: SaleListing, urls: string[], label: string, fallbackExt: string): SaleDownloadFile[] {
+  return packSources(listing, urls, label, fallbackExt).map((source) => ({
+    name: source.name,
+    url: withDownloadName(source.url, source.name),
+    kind: "file" as const,
+  }));
+}
+
+/**
+ * The photo pack as one ZIP (built once and cached in private storage). Falls
+ * back to individual photo downloads if the archive can't be produced.
+ */
+async function photoPackFiles(listing: SaleListing): Promise<SaleDownloadFile[]> {
+  if (isAdminSupabaseConfigured()) {
+    const name = `${listing.slug}-photos.zip`;
+    try {
+      const url = await getPackZipUrl({
+        bucket: SALE_MATERIALS_BUCKET,
+        slug: listing.slug,
+        kind: "photos",
+        sources: packSources(listing, listing.images, "photo", "jpg"),
+        downloadName: name,
+        ttlSeconds: DOWNLOAD_LINK_TTL_SECONDS,
+      });
+      return [{ name, url, kind: "file" }];
+    } catch (err) {
+      console.error(`[sales] photo ZIP for ${listing.slug} failed, sending single files:`, err);
+    }
+  }
+  return packFiles(listing, listing.images, "photo", "jpg");
 }
 
 async function materialFile(row: SaleMaterialRow, baseUrl: string): Promise<SaleDownloadFile | null> {
@@ -185,7 +218,7 @@ export async function resolveMaterials(
     resolved.push({
       id: PHOTO_PACK_ID,
       title: "Photo pack",
-      files: packFiles(listing, listing.images, "photo", "jpg"),
+      files: await photoPackFiles(listing),
     });
   }
 

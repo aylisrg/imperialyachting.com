@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS, SERVICE_NAV, SITE_CONFIG } from "@/lib/constants";
+import { NAV_LINKS, SERVICE_NAV, SITE_CONFIG, contactForPath } from "@/lib/constants";
 import { Container } from "./Container";
 import { trackPhoneClick, trackWhatsAppClick } from "@/lib/analytics";
 
@@ -14,6 +14,8 @@ export function Header() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const pathname = usePathname();
+  const contact = contactForPath(pathname);
+  const isSales = contact !== SITE_CONFIG;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -116,21 +118,21 @@ export function Header() {
             {/* CTA + Mobile toggle */}
             <div className="flex items-center gap-3">
               <a
-                href={`tel:${SITE_CONFIG.phone}`}
+                href={`tel:${contact.phone}`}
                 className="hidden sm:flex items-center gap-2 text-sm text-white/70 hover:text-gold-400 transition-colors"
                 onClick={() => trackPhoneClick("header")}
               >
                 <Phone className="w-4 h-4" />
-                <span className="hidden md:inline">{SITE_CONFIG.phone}</span>
+                <span className="hidden md:inline">{contact.phone}</span>
               </a>
               <a
-                href={SITE_CONFIG.whatsapp}
+                href={contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden sm:inline-flex items-center px-5 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 text-sm font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-gold-500/20"
                 onClick={() => trackWhatsAppClick("header")}
               >
-                Book Now
+                {isSales ? "Contact Sales" : "Book Now"}
               </a>
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
@@ -175,21 +177,21 @@ export function Header() {
           ))}
           <div className="mt-4 flex flex-col items-center gap-4">
             <a
-              href={SITE_CONFIG.whatsapp}
+              href={contact.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-3 bg-gold-500 hover:bg-gold-400 text-navy-950 font-semibold rounded-lg transition-all text-lg"
               tabIndex={isMobileOpen ? 0 : -1}
               onClick={() => trackWhatsAppClick("header_mobile")}
             >
-              Book Now
+              {isSales ? "Contact Sales" : "Book Now"}
             </a>
             <a
-              href={`tel:${SITE_CONFIG.phone}`}
+              href={`tel:${contact.phone}`}
               className="text-white/60 hover:text-gold-400 transition-colors"
               tabIndex={isMobileOpen ? 0 : -1}
             >
-              {SITE_CONFIG.phone}
+              {contact.phone}
             </a>
           </div>
         </div>

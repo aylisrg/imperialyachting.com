@@ -1,4 +1,4 @@
-import { SITE_CONFIG } from "@/lib/constants";
+import { SALES_CONTACT, SITE_CONFIG } from "@/lib/constants";
 import type { LeadRow } from "@/lib/supabase/types";
 
 export interface EmailTemplate {
@@ -40,7 +40,10 @@ function escapeHtml(s: string): string {
     .replace(/'/g, "&#39;");
 }
 
-function wrapEmail(bodyHtml: string, title: string): string {
+/** Phone shown in an email's footer: the booking line by default, the sales line for sales emails. */
+type ContactLine = { phone: string };
+
+function wrapEmail(bodyHtml: string, title: string, contact: ContactLine = SITE_CONFIG): string {
   return `<!DOCTYPE html>
 <html>
   <body style="margin:0;padding:0;background-color:${NAVY};font-family:Georgia,'Times New Roman',serif;">
@@ -61,7 +64,7 @@ function wrapEmail(bodyHtml: string, title: string): string {
             </tr>
             <tr>
               <td style="padding:20px 32px;border-top:1px solid rgba(201,168,76,0.25);color:${MUTED};font-size:12px;">
-                ${SITE_CONFIG.name} &middot; ${SITE_CONFIG.phone} &middot; ${SITE_CONFIG.email}<br />
+                ${SITE_CONFIG.name} &middot; ${contact.phone} &middot; ${SITE_CONFIG.email}<br />
                 ${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.area}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.country}
               </td>
             </tr>
@@ -73,8 +76,8 @@ function wrapEmail(bodyHtml: string, title: string): string {
 </html>`;
 }
 
-function footerText(): string {
-  return `${SITE_CONFIG.name} | ${SITE_CONFIG.phone} | ${SITE_CONFIG.email}\n${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.area}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.country}`;
+function footerText(contact: ContactLine = SITE_CONFIG): string {
+  return `${SITE_CONFIG.name} | ${contact.phone} | ${SITE_CONFIG.email}\n${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.area}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.country}`;
 }
 
 export interface LeadLike {
@@ -344,7 +347,8 @@ export function saleDownloadAdmin(event: SaleDownloadEvent): EmailTemplate {
   const html = wrapEmail(
     `${rowsToHtml(rows)}
     <p style="margin:0;">Reply to this email to write to them directly. <a href="${event.listingUrl}" style="color:${GOLD};">Open listing</a></p>`,
-    "Materials Downloaded"
+    "Materials Downloaded",
+    SALES_CONTACT
   );
 
   const text = [
@@ -354,7 +358,7 @@ export function saleDownloadAdmin(event: SaleDownloadEvent): EmailTemplate {
     "",
     `Listing: ${event.listingUrl}`,
     "",
-    footerText(),
+    footerText(SALES_CONTACT),
   ].join("\n");
 
   return { subject, html, text };
@@ -385,8 +389,9 @@ export function saleMaterialsRequester(event: SaleDownloadEvent): EmailTemplate 
     `${registration}
     <p style="margin:0 0 16px;">Here are the materials for <a href="${event.listingUrl}" style="color:${GOLD};">${escapeHtml(event.listingTitle)}</a>. Links stay valid for 7 days; the listing page always has the latest version.</p>
     ${list}
-    <p style="margin:0;">Viewings and sea trials by appointment — reply to this email or WhatsApp <a href="${SITE_CONFIG.whatsapp}" style="color:${GOLD};">${SITE_CONFIG.phone}</a>.</p>`,
-    event.listingTitle
+    <p style="margin:0;">Viewings and sea trials by appointment — reply to this email or WhatsApp <a href="${SALES_CONTACT.whatsapp}" style="color:${GOLD};">${SALES_CONTACT.phone}</a>.</p>`,
+    event.listingTitle,
+    SALES_CONTACT
   );
 
   const text = [
@@ -401,9 +406,9 @@ export function saleMaterialsRequester(event: SaleDownloadEvent): EmailTemplate 
     `Materials (links valid 7 days). Latest version always at ${event.listingUrl}`,
     "",
     ...event.materials.flatMap((m) => [m.title, ...m.files.map((f) => `- ${f.name}: ${f.url}`), ""]),
-    `Viewings by appointment: ${SITE_CONFIG.whatsapp}`,
+    `Viewings by appointment — WhatsApp ${SALES_CONTACT.phone}: ${SALES_CONTACT.whatsapp}`,
     "",
-    footerText(),
+    footerText(SALES_CONTACT),
   ].join("\n");
 
   return { subject, html, text };

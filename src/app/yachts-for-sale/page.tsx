@@ -15,7 +15,7 @@ import {
 import { fetchSaleListings } from "@/lib/sales/listings-db";
 import { formatSalePrice, SALE_STATUS_LABEL } from "@/lib/sales/merge";
 import { cn } from "@/lib/utils";
-import { SITE_CONFIG } from "@/lib/constants";
+import { SALES_CONTACT, SITE_CONFIG } from "@/lib/constants";
 import {
   BROKER_STEPS,
   BUYING_GUIDE,
@@ -95,7 +95,7 @@ export default async function YachtsForSalePage() {
           {listings.length === 0 ? (
             <p className="rounded-2xl border border-white/10 p-8 text-white/50">
               New listings are being prepared. Message us on{" "}
-              <a href={SITE_CONFIG.whatsapp} className="text-gold-400 hover:underline">
+              <a href={SALES_CONTACT.whatsapp} className="text-gold-400 hover:underline">
                 WhatsApp
               </a>{" "}
               for the current stock.

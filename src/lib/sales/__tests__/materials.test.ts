@@ -9,6 +9,11 @@ vi.mock("@/lib/supabase/admin", () => ({
   }),
 }));
 
+const getPackZipUrl = vi.fn();
+vi.mock("@/lib/sales/pack-zip", () => ({
+  getPackZipUrl: (...args: unknown[]) => getPackZipUrl(...args),
+}));
+
 import {
   buildMaterialSummaries,
   PHOTO_PACK_ID,
@@ -48,6 +53,8 @@ const listing = mergeSaleListing(
 beforeEach(() => {
   process.env.SALES_FILE_SECRET = "test-secret";
   createSignedUrl.mockReset();
+  getPackZipUrl.mockReset();
+  getPackZipUrl.mockRejectedValue(new Error("zip unavailable"));
 });
 
 describe("buildMaterialSummaries", () => {
@@ -59,7 +66,7 @@ describe("buildMaterialSummaries", () => {
 
     expect(items.map((i) => i.id)).toEqual(["mat-1", "mat-2", PHOTO_PACK_ID, VIDEO_PACK_ID]);
     expect(items[1].kind).toBe("link");
-    expect(items[2]).toMatchObject({ fileCount: 2, description: expect.stringContaining("2 photos") });
+    expect(items[2]).toMatchObject({ fileCount: 1, description: expect.stringContaining("2 photos") });
     expect(JSON.stringify(items)).not.toContain("drive.google.com");
     expect(JSON.stringify(items)).not.toContain("technical-specification.pdf");
   });
@@ -88,6 +95,21 @@ describe("resolveMaterials", () => {
       "vandutch-40-van-dutch-connect-photo-02.webp",
     ]);
     expect(photos[0].url).toContain("download=vandutch-40-van-dutch-connect-photo-01.jpg");
+  });
+
+  it("serves the photo pack as one ZIP when the archive can be built", async () => {
+    getPackZipUrl.mockResolvedValue("https://signed/photos.zip");
+    const resolved = await resolveMaterials(listing, [], [PHOTO_PACK_ID]);
+
+    expect(resolved[0].files).toEqual([
+      { name: "vandutch-40-van-dutch-connect-photos.zip", url: "https://signed/photos.zip", kind: "file" },
+    ]);
+    const call = getPackZipUrl.mock.calls[0][0];
+    expect(call).toMatchObject({ bucket: "sale-materials", kind: "photos", slug: "vandutch-40-van-dutch-connect" });
+    expect(call.sources.map((s: { name: string }) => s.name)).toEqual([
+      "vandutch-40-van-dutch-connect-photo-01.jpg",
+      "vandutch-40-van-dutch-connect-photo-02.webp",
+    ]);
   });
 
   it("signs private storage objects and drops the ones that fail", async () => {
