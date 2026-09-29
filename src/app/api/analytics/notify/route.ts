@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createAdminSupabase } from "@/lib/supabase/admin";
 import { sendTelegramNotification } from "@/lib/analytics/telegram-notifier";
 import { verifyBearer } from "@/lib/api/auth";
 import type { AnalyticsReport, Hypothesis } from "@/lib/analytics/types";
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "report_id is required" }, { status: 400 });
   }
 
-  const supabase = await createServerSupabase();
+  const supabase = createAdminSupabase();
 
   const { data: report, error: reportError } = await supabase
     .from("analytics_reports")
