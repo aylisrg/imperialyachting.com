@@ -108,7 +108,7 @@ const sections: { title: string; content: Paragraph[] }[] = [
     content: [
       "If you have any questions or concerns about this privacy policy or our data practices, please contact us:",
       `${SITE_CONFIG.legalName}`,
-      "Office No4-592, AL KHABEESI BLDG, Al Khabeesi, Deira, Dubai, UAE",
+      `${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.area}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.country}`,
       `Email: ${SITE_CONFIG.email}`,
       `Phone: ${SITE_CONFIG.phone}`,
     ],
