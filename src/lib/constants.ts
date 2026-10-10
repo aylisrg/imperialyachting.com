@@ -61,11 +61,25 @@ export function contactForPath(pathname: string | null | undefined): {
   return pathname?.startsWith(SALES_PATH_PREFIX) ? SALES_CONTACT : SITE_CONFIG;
 }
 
+/**
+ * Speedboat Transfer — water taxi on a Van Dutch. Orders go to the Telegram bot, whose
+ * menu button and /start reply open the ordering mini app; guests without Telegram write
+ * to the booking manager on WhatsApp. Price: 1,000 AED + 5% VAT per hour.
+ */
+export const SPEEDBOAT_TRANSFER = {
+  path: "/services/speedboat-transfer",
+  termsPath: "/services/speedboat-transfer/terms",
+  orderUrl: "https://t.me/iy_speedboat_transfer_bot?start=site",
+  pricePerHourAed: 1050,
+  maxGuests: 10,
+} as const;
+
 export const DEPARTURE_POINT_SLUG = "dubai-harbour";
 
 export const NAV_LINKS = [
   { label: "Fleet", href: "/fleet" },
   { label: "Services", href: "/services" },
+  { label: "Speedboat Transfer", href: "/services/speedboat-transfer", isNew: true },
   { label: "Destinations", href: "/destinations" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
@@ -77,4 +91,5 @@ export const SERVICE_NAV = [
   { label: "Yacht Management", href: "/services/yacht-management" },
   { label: "Cinematography", href: "/services/cinematography" },
   { label: "Brandwave", href: "/services/brandwave" },
+  { label: "Speedboat Transfer", href: "/services/speedboat-transfer" },
 ] as const;
