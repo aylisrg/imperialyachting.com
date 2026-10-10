@@ -46,10 +46,10 @@ export function Header() {
           <nav className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group">
-              <span className="font-heading text-xl sm:text-2xl font-bold tracking-tight text-white group-hover:text-gold-400 transition-colors">
+              <span className="font-heading text-xl sm:text-2xl lg:text-xl xl:text-2xl font-bold tracking-tight text-white group-hover:text-gold-400 transition-colors">
                 IMPERIAL
               </span>
-              <span className="font-heading text-xl sm:text-2xl font-semibold tracking-wider text-gold-500">
+              <span className="font-heading text-xl sm:text-2xl lg:text-xl xl:text-2xl font-semibold tracking-wider text-gold-500">
                 YACHTING
               </span>
             </Link>
@@ -67,7 +67,7 @@ export function Header() {
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                        "flex items-center gap-1 px-3 xl:px-4 py-2 text-sm font-medium transition-colors rounded-lg",
                         pathname.startsWith("/services")
                           ? "text-gold-400"
                           : "text-white/80 hover:text-white hover:bg-white/5"
@@ -103,7 +103,7 @@ export function Header() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                      "px-3 xl:px-4 py-2 text-sm font-medium transition-colors rounded-lg",
                       pathname === link.href || pathname.startsWith(link.href + "/")
                         ? "text-gold-400"
                         : "text-white/80 hover:text-white hover:bg-white/5"
@@ -123,13 +123,13 @@ export function Header() {
                 onClick={() => trackPhoneClick("header")}
               >
                 <Phone className="w-4 h-4" />
-                <span className="hidden md:inline">{contact.phone}</span>
+                <span className="hidden md:inline lg:hidden xl:inline">{contact.phone}</span>
               </a>
               <a
                 href={contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center px-5 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 text-sm font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-gold-500/20"
+                className="hidden sm:inline-flex items-center whitespace-nowrap px-5 py-2.5 bg-gold-500 hover:bg-gold-400 text-navy-950 text-sm font-semibold rounded-lg transition-all hover:shadow-lg hover:shadow-gold-500/20"
                 onClick={() => trackWhatsAppClick("header")}
               >
                 {isSales ? "Contact Sales" : "Book Now"}

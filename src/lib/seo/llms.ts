@@ -110,7 +110,8 @@ function contactSection(): string {
 - Email: ${SITE_CONFIG.email}
 - WhatsApp: ${SITE_CONFIG.whatsapp}
 - Address: ${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.area}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.country}
-- Departure marina: ${SITE_CONFIG.harbour.name}, ${SITE_CONFIG.harbour.area}, ${SITE_CONFIG.harbour.city}`;
+- Departure marina: ${SITE_CONFIG.harbour.name}, ${SITE_CONFIG.harbour.area}, ${SITE_CONFIG.harbour.city}
+- Company documents (trade license ${SITE_CONFIG.license}, Ejari, registration; PDFs after email sign-in): ${SITE_CONFIG.url}/documents`;
 }
 
 function servicesSection(extras?: LlmsExtra[]): string {
