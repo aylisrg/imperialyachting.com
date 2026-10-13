@@ -130,7 +130,7 @@ export default function HomePage() {
 
       <section className="par" id="partners">
         <div className="v">
-          <HomeVideo clip="ilia-harbour" alt="Dubai Harbour" />
+          <HomeVideo clip="harbour-sunset" alt="Dubai Harbour at sunset" />
           <div className="shade" />
         </div>
         <div className="c">
