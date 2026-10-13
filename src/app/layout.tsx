@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Syne, Inter, Playfair_Display } from "next/font/google";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { SiteShell } from "@/components/layout/SiteShell";
 import "./globals.css";
@@ -179,7 +178,6 @@ export default function RootLayout({
         <Script id="gtag-init" strategy="afterInteractive">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${SITE_CONFIG.googleAnalyticsId}');`}
         </Script>
-        <SpeedInsights />
       </body>
     </html>
   );

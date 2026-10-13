@@ -9,6 +9,8 @@ try {
 }
 
 const nextConfig: NextConfig = {
+  // Self-hosted on a VPS (Docker): emit .next/standalone with a minimal server.
+  output: "standalone",
   poweredByHeader: false,
   compress: true,
   experimental: {
