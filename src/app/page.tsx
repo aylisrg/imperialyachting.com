@@ -9,6 +9,7 @@ import { HOME_FLEET, HOME_HERO_CLIP, builtRefit } from "@/data/home";
 import { HomeVideo } from "@/components/home/HomeVideo";
 import { HomeChrome } from "@/components/home/HomeChrome";
 import { HomeMotion } from "@/components/home/HomeMotion";
+import "@/components/home/tokens.css";
 import "@/components/home/home.css";
 
 // Display serif for the home redesign (issue #46). Self-hosted by next/font, scoped to this route.
@@ -107,7 +108,7 @@ export default function HomePage() {
           <div className="intro">
             <div className="cap"><span className="ix">03</span>&nbsp;&nbsp; The fleet</div>
             <h2 className="serif">Three<br />hulls.<br /><i>One crew.</i></h2>
-            <div className="cap" style={{ color: "#6B5B44" }}>Scroll</div>
+            <div className="cap" style={{ color: "var(--earth)" }}>Scroll</div>
           </div>
           {HOME_FLEET.map((y) => (
             <div className="panel" key={y.slug} data-slug={y.slug}>
@@ -129,7 +130,7 @@ export default function HomePage() {
 
       <section className="par" id="partners">
         <div className="v">
-          <HomeVideo clip="moneta-golden" alt="Moneta at golden hour" />
+          <HomeVideo clip="ilia-harbour" alt="Dubai Harbour" />
           <div className="shade" />
         </div>
         <div className="c">
