@@ -1,4 +1,4 @@
-# Imperial Yachting. Дизайн-код
+# Wake: дизайн-код Imperial Yachting
 
 Основа: утверждённый live-концепт `../live/index.html`. Токены: `tokens.css`, `tokens.json`. Визуальный гайд: `design-code.html`.
 
