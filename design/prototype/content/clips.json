@@ -1,0 +1,62 @@
+[
+  {
+    "id": "hero-vd40-speed",
+    "source": "G6ZYeRO0t8Q",
+    "start": 99.0,
+    "duration": 7.5,
+    "role": "hero",
+    "crop": "1180:664:0:208",
+    "poster": "clips/hero-vd40-speed.jpg"
+  },
+  {
+    "id": "moneta-golden",
+    "source": "G6ZYeRO0t8Q",
+    "start": 140.5,
+    "duration": 6.0,
+    "role": "fleet",
+    "crop": null,
+    "poster": "clips/moneta-golden.jpg"
+  },
+  {
+    "id": "vd40-aerial",
+    "source": "G6ZYeRO0t8Q",
+    "start": 10.6,
+    "duration": 4.8,
+    "role": "fleet",
+    "crop": null,
+    "poster": "clips/vd40-aerial.jpg"
+  },
+  {
+    "id": "evo43-run",
+    "source": "rI6c7cYhdQ0",
+    "start": 116.2,
+    "duration": 4.0,
+    "role": "fleet",
+    "crop": null,
+    "poster": "clips/evo43-run.jpg"
+  },
+  {
+    "id": "ilia-harbour",
+    "source": "G6ZYeRO0t8Q",
+    "start": 61.4,
+    "duration": 5.5,
+    "role": "people",
+    "crop": null,
+    "poster": "clips/ilia-harbour.jpg",
+    "people": [
+      "ilia"
+    ]
+  },
+  {
+    "id": "ilia-onboard",
+    "source": "rI6c7cYhdQ0",
+    "start": 108.8,
+    "duration": 3.0,
+    "role": "people",
+    "crop": null,
+    "poster": "clips/ilia-onboard.jpg",
+    "people": [
+      "ilia"
+    ]
+  }
+]
