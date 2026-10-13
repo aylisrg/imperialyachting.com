@@ -6,7 +6,9 @@
     "duration": 7.5,
     "role": "hero",
     "crop": "1180:664:0:208",
-    "poster": "clips/hero-vd40-speed.jpg"
+    "poster": "clips/hero-vd40-speed.jpg",
+    "final": true,
+    "decision": "Ilia 2026-10-13: hero H1 final"
   },
   {
     "id": "moneta-golden",
@@ -75,7 +77,9 @@
     "duration": 3.9,
     "role": "section",
     "crop": null,
-    "poster": "clips/vd40-skyline.jpg"
+    "poster": "clips/vd40-skyline.jpg",
+    "guests": true,
+    "decision": "Ilia 2026-10-13: guests in frame allowed (N2)"
   },
   {
     "id": "route-skyline",
