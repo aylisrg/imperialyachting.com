@@ -10,6 +10,8 @@ try {
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // PMS client (careers) opens a websocket — keep it out of the bundle.
+  serverExternalPackages: ["@hcengineering/api-client"],
   compress: true,
   experimental: {
     optimizePackageImports: ["lucide-react"],
