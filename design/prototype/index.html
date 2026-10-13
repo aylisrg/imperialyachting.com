@@ -53,8 +53,8 @@ nav ul{display:flex;gap:40px;list-style:none}
 .panel .info .k{color:#6B5B44}.panel .info .val{font-family:'Cormorant Garamond',serif;font-size:30px;margin-top:6px}
 .panel .no{position:absolute;left:28px;top:24px;color:var(--bone);z-index:2}
 /* partners */
-.crew{position:relative;background:var(--sea);padding:120px 56px;display:grid;grid-template-columns:1.35fr 1fr;gap:24px;align-items:end}
-.crew .a,.crew .b{position:relative;overflow:hidden}.crew .a{aspect-ratio:4/5}.crew .b{aspect-ratio:4/3}.crew .b video{object-position:50% 20%}
+.crew{position:relative;background:var(--sea);padding:120px 56px;display:grid;grid-template-columns:1.35fr 1fr .8fr;gap:24px;align-items:end}
+.crew .a,.crew .b,.crew .c{position:relative;overflow:hidden}.crew .a,.crew .c{aspect-ratio:4/5}.crew .c video{object-position:50% 25%}.crew .b{aspect-ratio:4/3}.crew .c{aspect-ratio:4/5}.crew .b video{object-position:50% 20%}
 .crew video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .crew .t{grid-column:1/-1;display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:24px}
 .crew h2{font-size:96px;line-height:.9}.crew p{font-size:17px;line-height:1.6;max-width:420px}
@@ -107,7 +107,7 @@ nav.solid{mix-blend-mode:normal;background:var(--sea);height:64px;border-bottom:
  .panel .info{position:relative;height:auto;grid-template-columns:1fr 1fr;row-gap:18px;padding:22px 20px 0;border-top:0}
  .panel .info h3{grid-column:1/3;font-size:44px}
  .panel .no{left:20px}
- .crew{grid-template-columns:1fr;padding:88px 20px;gap:16px}.crew .t{flex-direction:column;align-items:start;gap:20px}.crew h2{font-size:56px}.crew p{font-size:15px}.crew .b{aspect-ratio:4/3}
+ .crew{grid-template-columns:1fr;padding:88px 20px;gap:16px}.crew .t{flex-direction:column;align-items:start;gap:20px}.crew h2{font-size:56px}.crew p{font-size:15px}.crew .b{aspect-ratio:4/3}.crew .c{aspect-ratio:4/5}
  .par .c{left:20px;right:20px;bottom:110px}.par h2{font-size:64px;margin:20px 0 24px}.par p{font-size:15px}
  .facts{padding:56px 20px 110px}.facts .g{grid-template-columns:1fr;gap:20px}.facts .big{font-size:19.5vw;margin-top:56px}
 }
@@ -127,7 +127,8 @@ nav.solid{mix-blend-mode:normal;background:var(--sea);height:64px;border-bottom:
 
 <section class="crew"><div class="t"><h2 class="serif">On board.<br><i>Every time.</i></h2><p>The people who own the boats are on them. From the berth at Dubai Harbour.</p></div>
 <div><div class="a"><video data-v="ilia-harbour" muted loop playsinline></video></div><div class="cap s">Ilia &nbsp;/&nbsp; Dubai Harbour</div></div>
-<div><div class="b"><video data-v="ilia-onboard" muted loop playsinline></video></div><div class="cap s">Aboard the Evo 43</div></div></section>
+<div><div class="b"><video data-v="ilia-onboard" muted loop playsinline></video></div><div class="cap s">Aboard the Evo 43</div></div>
+<div><div class="c"><video data-v="misha-onboard" muted loop playsinline></video></div><div class="cap s">Misha &nbsp;/&nbsp; Dubai Harbour</div></div></section>
 <section class="svc"><div class="bg"><div class="b0"><video data-v="evo43-run" muted loop playsinline></video></div><div class="b1" style="opacity:0"><video data-v="moneta-golden" muted loop playsinline></video></div></div><div class="shade"></div>
 <div class="head cap"><span class="ix">02</span>&nbsp;&nbsp; Services</div>
 <div class="list">

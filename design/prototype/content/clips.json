@@ -103,5 +103,17 @@
     "role": "section",
     "crop": null,
     "poster": "clips/route-canal.jpg"
+  },
+  {
+    "id": "misha-onboard",
+    "source": "tVrWaXqxwI0",
+    "start": 276.0,
+    "duration": 5.0,
+    "role": "people",
+    "crop": "900:1125:330:0",
+    "poster": "clips/misha-onboard.jpg",
+    "people": [
+      "misha"
+    ]
   }
 ]
