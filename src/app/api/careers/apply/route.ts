@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/api/rateLimit";
 import { jsonError } from "@/lib/api/errors";
-import { createApplication, isPmsConfigured } from "@/lib/careers/pms";
+import { createApplication, getVacancy, isPmsConfigured } from "@/lib/careers/pms";
 
 export const runtime = "nodejs";
 
@@ -25,7 +25,7 @@ function json<T>(v: FormDataEntryValue | null, fallback: T): T {
 /**
  * POST /api/careers/apply — application form of the Careers section.
  * Rate-limited per IP; the candidate, the application, the answers and the CV go
- * straight to PMS (recruiting). Nothing is stored on the site.
+ * straight to PMS through its site API. Nothing is stored on the site.
  */
 export async function POST(request: Request) {
   const ip = getClientIp(request);
@@ -59,32 +59,36 @@ export async function POST(request: Request) {
   const ext = (cv.name.split(".").pop() || "").toLowerCase();
   if (!CV_TYPES[ext]) return jsonError(400, "invalid_cv", "Use PDF, DOC or DOCX.");
 
-  const answers = json<Record<string, Record<string, string>>>(form.get("answers"), {});
-  const clean: Record<string, Record<string, string>> = {};
-  for (const [p, qs] of Object.entries(answers).slice(0, 10)) {
-    if (!/^[a-z0-9-]{8,40}$/i.test(p) || typeof qs !== "object" || !qs) continue;
-    clean[p] = {};
-    for (const [q, a] of Object.entries(qs).slice(0, 30)) if (/^\d{1,2}$/.test(q)) clean[p][q] = String(a).slice(0, 3000);
+  // answers come keyed by questionnaire id and question index; PMS wants them by name
+  const given = json<Record<string, Record<string, string>>>(form.get("answers"), {});
+  const answers: { anketa: string; vopros: string; otvet: string }[] = [];
+  if (vacancyId) {
+    const v = await getVacancy(vacancyId).catch(() => null);
+    if (!v) return jsonError(404, "not_found", "This position is no longer open.");
+    for (const p of v.polls)
+      for (const q of p.questions) {
+        const ans = String(given[p.id]?.[q.id] ?? "").trim().slice(0, 3000);
+        if (ans) answers.push({ anketa: p.name, vopros: q.text, otvet: ans });
+      }
   }
   const openAnswers = json<{ question: string; answer: string }[]>(form.get("openAnswers"), [])
     .slice(0, 5)
     .map((x) => ({ question: String(x?.question ?? "").slice(0, 200), answer: String(x?.answer ?? "").slice(0, 3000) }));
 
+  const start = str(form.get("start"), 60), link = str(form.get("l"), 300);
+  const message = [
+    `Отклик с сайта imperialyachting.com${vacancyId ? "" : " — без вакансии («Don't see your position?»)"}.`,
+    field ? `Направление: ${field}` : "",
+    `Виза ОАЭ: ${visa}`,
+    start ? `Когда может выйти: ${start}` : "",
+    link ? `LinkedIn / портфолио: ${link}` : "",
+    ...openAnswers.map((x) => `${x.question}\n${x.answer}`),
+  ]
+    .filter(Boolean)
+    .join("\n");
+
   try {
-    await createApplication({
-      vacancyId,
-      name,
-      email,
-      phone,
-      city: str(form.get("c"), 120),
-      visa,
-      start: str(form.get("start"), 60),
-      link: str(form.get("l"), 300),
-      field,
-      answers: clean,
-      openAnswers,
-      cv: { name: cv.name.slice(0, 150), type: CV_TYPES[ext], data: Buffer.from(await cv.arrayBuffer()) },
-    });
+    await createApplication({ vacancyId, name, email, phone, city: str(form.get("c"), 120), message, answers, cv });
   } catch (e) {
     console.error("careers/apply: PMS write failed", e);
     return jsonError(502, "pms_failed", "Your application was not sent. Please try again.");

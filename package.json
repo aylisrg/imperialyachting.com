@@ -14,7 +14,6 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
     "@google-analytics/data": "^5.2.1",
-    "@hcengineering/api-client": "^0.7.423",
     "@hookform/resolvers": "^5.2.2",
     "@modelcontextprotocol/server": "^2.0.0",
     "@supabase/ssr": "^0.8.0",
