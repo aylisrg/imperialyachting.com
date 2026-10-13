@@ -20,8 +20,8 @@ enc() { # $1 width  $2 codec-args...  $3 ext
    -map "[v]" "$@" "$OUT/$NAME-$W.$EXT"
 }
 for W in 1920 960; do
-  enc $W mp4 -c:v libx264 -profile:v main -preset slow -crf 26 -movflags +faststart
-  enc $W webm -c:v libvpx-vp9 -b:v 0 -crf 38 -deadline good -cpu-used 4 -row-mt 1
+  enc $W mp4 -c:v libx264 -profile:v main -preset slow -crf ${CRF_MP4:-26} -movflags +faststart
+  enc $W webm -c:v libvpx-vp9 -b:v 0 -crf ${CRF_WEBM:-38} -deadline good -cpu-used 4 -row-mt 1
 done
 ffmpeg -nostdin -v error -y -ss "$(python3 -c "print($START+$XF+$POFF)")" -i "$SRC" -frames:v 1 -vf "${PRE}scale=1920:-2:flags=lanczos,eq=saturation=1.1" -q:v 4 "$OUT/$NAME.jpg"
 python3 - "$ROOT/content/clips.json" "$NAME" "$ID" "$START" "$DUR" "$ROLE" "$CROP" <<'PY'
