@@ -64,3 +64,8 @@ footer{padding:56px var(--g);display:flex;justify-content:space-between;flex-wra
 }
 .spec4{grid-template-columns:repeat(4,1fr)}
 @media(max-width:768px){.spec4{grid-template-columns:1fr 1fr}.spec b{font-size:24px}}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:48px var(--g)}
+.dcard .media{aspect-ratio:4/5;overflow:hidden;margin-bottom:20px}.dcard h3{font-size:44px;margin:8px 0 12px}.dcard p{color:var(--mute);max-width:340px}
+.dcard.dd{border:1px solid var(--copper);padding:40px;display:flex;flex-direction:column;justify-content:flex-end;gap:16px}
+.steps.s3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:768px){.dgrid,.steps.s3{grid-template-columns:1fr}.dcard h3{font-size:36px}}
