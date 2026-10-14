@@ -103,6 +103,56 @@
 .iyp .w-reel figcaption b{font-family:var(--font-serif);font-size:var(--fs-spec);font-weight:300;line-height:1.1}
 @media (max-width:1100px){.iyp .w-reels{grid-template-columns:1fr 1fr}}
 @media (max-width:768px){.iyp .w-reels{grid-template-columns:1fr}}
+/* fleet */
+.iyp .w-yacht{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--s-6);padding:var(--s-6) 0;border-top:1px solid var(--line-dark);align-items:end}
+.iyp .w-yacht>.w-media{display:block}
+.iyp .w-yacht .promo{position:absolute;z-index:2;left:var(--s-3);top:var(--s-3);background:var(--copper);color:var(--sea);padding:6px 10px}
+.iyp .w-yacht h2{font-size:var(--fs-h2-st);line-height:.95;margin:14px 0 12px}
+.iyp .w-yacht .tag{color:var(--copper);font-size:var(--fs-sm)}
+.iyp .w-yacht .desc{color:var(--mute);margin:14px 0 28px;max-width:480px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.iyp .w-spec{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line-dark)}
+.iyp .w-spec.s4{grid-template-columns:repeat(4,1fr)}.iyp .w-spec.s6{grid-template-columns:repeat(6,1fr)}
+.iyp .w-spec>div{padding:16px 16px 16px 0;border-bottom:1px solid var(--line-dark)}
+.iyp .light .w-spec,.iyp .light .w-spec>div{border-color:var(--line-light)}
+.iyp .w-spec b{display:block;font-family:var(--font-serif);font-weight:300;font-size:var(--fs-spec);line-height:1.15;margin-top:4px}
+.iyp .w-spec small{font-family:var(--font-sans);font-size:var(--fs-cap);color:var(--mute);margin-left:4px}
+.iyp .w-acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:var(--s-4)}
+.iyp .w-empty{padding:var(--s-7) 0;color:var(--mute);text-align:center}
+.iyp .w-table{width:100%;border-collapse:collapse;font-size:var(--fs-body)}
+.iyp .w-table-wrap{overflow-x:auto}
+.iyp .w-table th{font-size:var(--fs-cap);letter-spacing:var(--ls-cap);text-transform:uppercase;font-weight:400;color:var(--mute);text-align:right;padding:14px 12px;border-bottom:1px solid var(--line-dark)}
+.iyp .w-table th:first-child,.iyp .w-table th:nth-child(2),.iyp .w-table td:first-child,.iyp .w-table td:nth-child(2){text-align:left}
+.iyp .w-table td{padding:16px 12px;border-bottom:1px solid var(--line-dark-soft);text-align:right;white-space:nowrap}
+.iyp .w-table td:first-child{font-family:var(--font-serif);font-size:var(--fs-logo)}
+.iyp .w-table .b2b{color:var(--copper)}
+.iyp .w-chips{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-light)}
+.iyp .w-chips>div{padding:18px 18px 18px 0;border-bottom:1px solid var(--line-light);font-size:var(--fs-sm)}
+@media (max-width:768px){
+ .iyp .w-yacht{grid-template-columns:1fr;gap:var(--s-4);padding:var(--s-5) 0}
+ .iyp .w-spec.s4,.iyp .w-spec.s6{grid-template-columns:1fr 1fr}
+ .iyp .w-chips{grid-template-columns:1fr 1fr}
+}
+/* contact */
+.iyp .w-chans{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line-dark)}
+.iyp .w-chan{padding:var(--s-4) var(--s-4) 0 0;display:flex;flex-direction:column;gap:var(--s-2)}
+.iyp .w-chan b{font-size:var(--fs-chan);font-weight:300;line-height:1.1;word-break:break-word}
+.iyp .w-chan:hover b{color:var(--copper)}
+.iyp .w-chan .d{color:var(--mute)}
+.iyp .w-facts p{margin-top:var(--s-1);font-size:var(--fs-sm)}
+.iyp .w-map iframe{display:block;filter:grayscale(.35)}
+.iyp .w-map{align-self:end;display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-3);border-top:1px solid var(--line-light);padding-top:28px}
+.iyp .w-hero .note{color:var(--copper)}
+/* ContactForm (behaviour unchanged) restyled to the Wake look, on the light section as in the mockup */
+.iyp .w-form form{background:none;border:0;border-radius:0;padding:0;box-shadow:none}
+.iyp .w-form input,.iyp .w-form select,.iyp .w-form textarea{background:transparent;border:0;border-bottom:1px solid var(--sea);border-radius:0;color:var(--sea);font-family:var(--font-sans);font-size:var(--fs-body)}
+.iyp .w-form input::placeholder,.iyp .w-form textarea::placeholder{color:var(--earth)}
+.iyp .w-form input:focus,.iyp .w-form select:focus,.iyp .w-form textarea:focus{border-bottom-color:var(--copper);box-shadow:none;outline:none}
+.iyp .w-form select option{background:var(--bone);color:var(--sea)}
+.iyp .w-form label{font-size:var(--fs-cap);letter-spacing:var(--ls-cap);text-transform:uppercase;color:var(--sea)}
+.iyp .w-form p,.iyp .w-form span{color:inherit}
+.iyp .w-form button[type=submit]{border-radius:0;background:var(--sea);color:var(--bone);letter-spacing:var(--ls-cap);text-transform:uppercase;font-size:var(--fs-cap);font-weight:var(--fw-sans-medium)}
+.iyp .w-form button[type=submit]:hover{background:var(--copper);color:var(--sea)}
+@media (max-width:768px){.iyp .w-chans{grid-template-columns:1fr}.iyp .w-chan{padding-bottom:var(--s-4);border-bottom:1px solid var(--line-dark-soft)}}
 /* utility classes replacing inline styles */
 .iyp .w-after{margin-top:var(--s-6)}
 .iyp .w-fine{margin-top:var(--s-3);font-size:var(--fs-body)}
@@ -113,3 +163,9 @@
 .iyp .w-sand{color:var(--sand)}
 .iyp .w-gap{margin-top:var(--s-3)}
 .iyp .w-gap-l{margin-top:var(--s-5)}
+.iyp .w-pre{white-space:pre-line}
+.iyp .w-pad-t{padding-top:var(--s-5)}
+.iyp .w-narrow{max-width:672px;margin:0 auto}
+.iyp .w-cover{object-fit:cover}
+.iyp .w-hours li{justify-content:space-between}.iyp .w-hours b{font-weight:var(--fw-sans-medium)}
+.iyp .w-map iframe{border:0}
