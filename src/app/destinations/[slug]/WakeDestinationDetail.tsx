@@ -51,7 +51,7 @@ export function WakeDestinationDetail({ destination: d, related }: { destination
 
       {related.length ? (
         <WakeSection>
-          <WakeHead title={<>More<br />routes.</>}>Every route starts at Dubai Harbour.</WakeHead>
+          <WakeHead title={<>More<br />routes.</>}>Routes start from Dubai Harbour Yacht Club or Marasi Bay.</WakeHead>
           <div className="w-dgrid">
             {related.map((r) => (
               <Link className="w-dcard" href={`/destinations/${r.slug}`} key={r.slug}>

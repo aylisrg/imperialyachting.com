@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_CONFIG.name}`,
   },
   description:
-    "Charter luxury yachts in Dubai from AED 2,500/hr. Imperial Yachting owns & operates a premium fleet at Dubai Harbour — all-inclusive crew, fuel & amenities. Book today.",
+    "Charter luxury yachts in Dubai from AED 2,500/hr. Imperial Yachting owns & operates a premium fleet at Dubai Harbour and Marasi Bay — all-inclusive crew, fuel & amenities. Book today.",
   keywords: [
     "yacht charter Dubai",
     "luxury yacht rental Dubai",
@@ -102,7 +102,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     title: `${SITE_CONFIG.name} — Luxury Yacht Charter in Dubai`,
     description:
-      "Charter luxury yachts in Dubai from AED 2,500/hr. We own & operate a premium fleet at Dubai Harbour — all-inclusive crew, fuel & amenities.",
+      "Charter luxury yachts in Dubai from AED 2,500/hr. We own & operate a premium fleet at Dubai Harbour and Marasi Bay — all-inclusive crew, fuel & amenities.",
     images: [
       {
         url: "/og-image.jpg",
@@ -117,7 +117,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${SITE_CONFIG.name} — Luxury Yacht Charter in Dubai`,
     description:
-      "Charter luxury yachts in Dubai from AED 2,500/hr. Premium fleet at Dubai Harbour — all-inclusive crew, fuel & amenities.",
+      "Charter luxury yachts in Dubai from AED 2,500/hr. Premium fleet at Dubai Harbour and Marasi Bay — all-inclusive crew, fuel & amenities.",
     images: [
       {
         url: "/og-image.jpg",
