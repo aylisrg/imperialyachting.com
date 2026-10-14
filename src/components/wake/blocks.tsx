@@ -36,10 +36,10 @@ export function WakeSection({ tone, className, id, children }: {
   return <section id={id} className={["w-sec", tone, className].filter(Boolean).join(" ")}>{children}</section>;
 }
 
-export function WakeMedia({ clip, alt, className }: { clip: string; alt: string; className?: string }) {
+export function WakeMedia({ clip, alt, className, eager }: { clip: string; alt: string; className?: string; eager?: boolean }) {
   return (
     <div className={["w-media", className].filter(Boolean).join(" ")}>
-      <HomeVideo clip={clip} alt={alt} sizes="(max-width:768px) 100vw, 50vw" />
+      <HomeVideo clip={clip} alt={alt} sizes="(max-width:768px) 100vw, 50vw" eager={eager} />
     </div>
   );
 }

@@ -170,3 +170,5 @@
 .iyp .w-hours li{justify-content:space-between}.iyp .w-hours b{font-weight:var(--fw-sans-medium)}
 .iyp .w-map iframe{border:0}
 .iyp .about-person + .about-person{margin-top:var(--s-6)}
+/* about crew tiles: the poster is loaded eagerly so the tile is never blank on 360, and framed on the face */
+.iyp .about-crew img,.iyp .about-crew video{object-position:50% 25%}
