@@ -5,7 +5,7 @@ import { NAMED_PARTNERS, type NamedPartner } from "./partners";
 import { fleetLines } from "./lines";
 
 // Layout: Wake redesign (issue #46, design/pages/partners @ c0f9dc1). New page.
-// No partners are invented: the list below stays an empty state until a
+// No partners are invented: the partners block is hidden entirely until a
 // partner agrees to be named (./partners.ts). Fleet lines come from the fleet data.
 
 const WHO = [
@@ -50,17 +50,12 @@ export function PartnersContent({ partners = NAMED_PARTNERS }: { partners?: read
         </div>
       </WakeSection>
 
-      <WakeSection id="partners-list">
-        <WakeHead title={<>Our<br />partners.</>}>Companies we work with, named with their agreement.</WakeHead>
-        {partners.length ? (
+      {partners.length ? (
+        <WakeSection id="partners-list">
+          <WakeHead title={<>Our<br />partners.</>}>Companies we work with, named with their agreement.</WakeHead>
           <WakeList items={partners.map((p) => (p.url ? <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer">{p.name}</a> : p.name))} dark />
-        ) : (
-          <div className="w-empty">
-            <p>We will list partners here once they agree to be named. Want to be one of them?</p>
-            <p><a className="btn o" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">Request terms</a></p>
-          </div>
-        )}
-      </WakeSection>
+        </WakeSection>
+      ) : null}
 
       <WakeSection tone="sand">
         <div className="w-facts cap">

@@ -14,9 +14,10 @@ describe("/partners (Wake redesign, new page)", () => {
     expect(fs.readFileSync(path.resolve(__dirname, "../../../components/home/HomeChrome.tsx"), "utf8")).toContain('href: "/partners"');
   });
 
-  it("names no partners until they agree, and shows an empty state", () => {
+  it("names no partners until they agree, and then shows no partners block at all", () => {
     expect(NAMED_PARTNERS).toEqual([]);
-    expect(src).toContain("once they agree to be named");
+    expect(src).toMatch(/partners\.length \? \(\s*<WakeSection id="partners-list">/);
+    expect(src).not.toMatch(/once they agree to be named|No partners/);
   });
 
   it("uses only manifest clips", () => {
