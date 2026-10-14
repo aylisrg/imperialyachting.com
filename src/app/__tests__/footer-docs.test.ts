@@ -11,6 +11,11 @@ describe("Docs link in the redesign", () => {
     expect(footer).toContain('<Link href="/documents">Docs</Link>');
   });
 
+  it("is in the inner pages' footer (WakePage)", () => {
+    const footer = read("src/components/wake/WakePage.tsx").match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? "";
+    expect(footer).toContain('<Link href="/documents">Docs</Link>');
+  });
+
   it("is not in the redesign's top menu", () => {
     expect(read("src/components/home/HomeChrome.tsx")).not.toContain("/documents");
   });

@@ -31,8 +31,6 @@ export function GoogleReviewCTA() {
                     <Star key={i} className="w-6 h-6 fill-gold-400 text-gold-400" />
                   ))}
                 </div>
-                <p className="text-2xl font-bold text-navy-950 font-heading">5.0</p>
-                <p className="text-xs text-navy-950/40 -mt-1">Based on 6 reviews</p>
               </div>
 
               {/* Divider */}

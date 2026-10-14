@@ -7,7 +7,8 @@ import { SITE_CONFIG } from "@/lib/constants";
 const LINKS = [
   { label: "Fleet", href: "/fleet" },
   { label: "Services", href: "/services" },
-  { label: "Partners", href: "#partners" },
+  { label: "Destinations", href: "/destinations" },
+  { label: "Partners", href: "/#partners" },
   { label: "Journal", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];

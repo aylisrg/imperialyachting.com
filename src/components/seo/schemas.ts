@@ -67,8 +67,6 @@ export function reviewSchemas(items: Testimonial[] = allTestimonials) {
  * catalog) so there is exactly one LocalBusiness `@id` to reference.
  */
 export function localBusinessSchema() {
-  const reviewCount = Math.max(allTestimonials.length, 6);
-
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -167,13 +165,6 @@ export function localBusinessSchema() {
           },
         },
       ],
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: 5.0,
-      reviewCount,
-      bestRating: 5,
-      worstRating: 1,
     },
     review: reviewSchemas(),
     hasMap: "https://maps.google.com/?q=Dubai+Harbour+Yacht+Club",
