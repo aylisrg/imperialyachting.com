@@ -12,6 +12,7 @@ export const WAKE_ROUTES: readonly string[] = [
   "/services/cinematography",
   "/services/brandwave",
   "/fleet",
+  "/contact",
 ];
 
 /** Dynamic route prefixes (e.g. "/fleet/" for yacht pages). */
