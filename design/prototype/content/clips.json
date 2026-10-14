@@ -1,0 +1,123 @@
+[
+  {
+    "id": "hero-vd40-speed",
+    "source": "G6ZYeRO0t8Q",
+    "start": 99.0,
+    "duration": 7.5,
+    "role": "hero",
+    "crop": "1180:664:0:208",
+    "poster": "clips/hero-vd40-speed.jpg",
+    "final": true,
+    "decision": "Ilia 2026-10-13: hero H1 final"
+  },
+  {
+    "id": "moneta-golden",
+    "source": "G6ZYeRO0t8Q",
+    "start": 140.5,
+    "duration": 6.0,
+    "role": "fleet",
+    "crop": null,
+    "poster": "clips/moneta-golden.jpg"
+  },
+  {
+    "id": "vd40-aerial",
+    "source": "G6ZYeRO0t8Q",
+    "start": 10.6,
+    "duration": 4.8,
+    "role": "fleet",
+    "crop": null,
+    "poster": "clips/vd40-aerial.jpg"
+  },
+  {
+    "id": "evo43-run",
+    "source": "rI6c7cYhdQ0",
+    "start": 116.2,
+    "duration": 4.0,
+    "role": "fleet",
+    "crop": null,
+    "poster": "clips/evo43-run.jpg"
+  },
+  {
+    "id": "ilia-harbour",
+    "source": "G6ZYeRO0t8Q",
+    "start": 61.4,
+    "duration": 5.5,
+    "role": "people",
+    "crop": null,
+    "poster": "clips/ilia-harbour.jpg",
+    "people": [
+      "ilia"
+    ]
+  },
+  {
+    "id": "ilia-onboard",
+    "source": "rI6c7cYhdQ0",
+    "start": 108.8,
+    "duration": 3.0,
+    "role": "people",
+    "crop": null,
+    "poster": "clips/ilia-onboard.jpg",
+    "people": [
+      "ilia"
+    ]
+  },
+  {
+    "id": "harbour-traffic",
+    "source": "BrkXuwaERj4",
+    "start": 19.5,
+    "duration": 4.5,
+    "role": "section",
+    "crop": null,
+    "poster": "clips/harbour-traffic.jpg"
+  },
+  {
+    "id": "vd40-skyline",
+    "source": "tVrWaXqxwI0",
+    "start": 360.9,
+    "duration": 3.9,
+    "role": "section",
+    "crop": null,
+    "poster": "clips/vd40-skyline.jpg",
+    "guests": true,
+    "decision": "Ilia 2026-10-13: guests in frame allowed (N2)"
+  },
+  {
+    "id": "route-skyline",
+    "source": "tVrWaXqxwI0",
+    "start": 649.2,
+    "duration": 6.0,
+    "role": "section",
+    "crop": null,
+    "poster": "clips/route-skyline.jpg"
+  },
+  {
+    "id": "harbour-sunset",
+    "source": "BrkXuwaERj4",
+    "start": 3.5,
+    "duration": 5.0,
+    "role": "section",
+    "crop": null,
+    "poster": "clips/harbour-sunset.jpg"
+  },
+  {
+    "id": "route-canal",
+    "source": "tVrWaXqxwI0",
+    "start": 630.8,
+    "duration": 7.0,
+    "role": "section",
+    "crop": null,
+    "poster": "clips/route-canal.jpg"
+  },
+  {
+    "id": "misha-onboard",
+    "source": "tVrWaXqxwI0",
+    "start": 276.0,
+    "duration": 5.0,
+    "role": "people",
+    "crop": "900:1125:330:0",
+    "poster": "clips/misha-onboard.jpg",
+    "people": [
+      "misha"
+    ]
+  }
+]
