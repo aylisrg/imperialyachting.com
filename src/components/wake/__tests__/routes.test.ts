@@ -1,0 +1,15 @@
+import { describe, it, expect } from "vitest";
+import { isWakeRoute } from "../routes";
+
+describe("isWakeRoute", () => {
+  it("covers the home page and the redesigned service pages", () => {
+    for (const p of ["/", "/services", "/services/", "/services/charter", "/services/speedboat-transfer", "/services/yacht-management", "/services/cinematography", "/services/brandwave"]) {
+      expect(isWakeRoute(p), p).toBe(true);
+    }
+  });
+  it("keeps legal and admin pages on the legacy shell", () => {
+    for (const p of ["/services/speedboat-transfer/terms", "/admin", "/terms", "/blog", "/about"]) {
+      expect(isWakeRoute(p), p).toBe(false);
+    }
+  });
+});

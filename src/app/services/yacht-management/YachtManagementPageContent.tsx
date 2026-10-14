@@ -1,379 +1,109 @@
-"use client";
-
-import {
-  TrendingUp,
-  Wrench,
-  Users,
-  Ship,
-  BarChart3,
-  Calendar,
-  GraduationCap,
-  Megaphone,
-  MapPin,
-  Handshake,
-  ClipboardCheck,
-  Rocket,
-  Phone,
-  Mail,
-} from "lucide-react";
-import { Container } from "@/components/layout/Container";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Reveal } from "@/components/ui/Reveal";
-import { FAQAccordion } from "@/components/shared/FAQAccordion";
+import Link from "next/link";
 import { managementFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
+import { WakePage } from "@/components/wake/WakePage";
+import { WakeCta, WakeFaq, WakeHead, WakeHero, WakeMedia, WakeSection, WakeSteps } from "@/components/wake/blocks";
+
+// Layout: Wake redesign (issue #46, design/pages/services-management @ c0f9dc1). Copy unchanged.
 
 const valueProps = [
-  {
-    icon: TrendingUp,
-    title: "Revenue Generation",
-    description:
-      "Maximize your yacht's earning potential through our optimized charter management, dynamic pricing, and extensive B2B booking network.",
-  },
-  {
-    icon: Wrench,
-    title: "Full Maintenance",
-    description:
-      "Comprehensive maintenance scheduling and oversight, ensuring your vessel is always in peak condition and ready for charter.",
-  },
-  {
-    icon: Users,
-    title: "Crew Management",
-    description:
-      "Professional crew recruitment, training, and management. We handle everything from hiring to ongoing performance standards.",
-  },
+  { title: "Revenue Generation", description: "Maximize your yacht's earning potential through our optimized charter management, dynamic pricing, and extensive B2B booking network." },
+  { title: "Full Maintenance", description: "Comprehensive maintenance scheduling and oversight, ensuring your vessel is always in peak condition and ready for charter." },
+  { title: "Crew Management", description: "Professional crew recruitment, training, and management. We handle everything from hiring to ongoing performance standards." },
 ];
 
 const managementServices = [
-  {
-    icon: Ship,
-    title: "Charter Management",
-    description:
-      "End-to-end charter operations including booking management, guest coordination, and itinerary planning to keep your yacht booked and profitable.",
-  },
-  {
-    icon: BarChart3,
-    title: "Accounting & Reporting",
-    description:
-      "Transparent financial reporting with monthly statements, expense tracking, and revenue analytics so you always know how your asset performs.",
-  },
-  {
-    icon: Calendar,
-    title: "Maintenance Scheduling",
-    description:
-      "Proactive maintenance planning including annual surveys, engine servicing, hull cleaning, and equipment inspections to protect your investment.",
-  },
-  {
-    icon: GraduationCap,
-    title: "Crew Hiring & Training",
-    description:
-      "Recruitment of experienced, licensed crew members with ongoing training in safety, hospitality, and vessel-specific operations.",
-  },
-  {
-    icon: Megaphone,
-    title: "Marketing & Listings",
-    description:
-      "Professional photography, multi-platform listing management, social media marketing, and SEO to drive charter demand year-round.",
-  },
-  {
-    icon: MapPin,
-    title: "Berth Management",
-    description:
-      "Securing and managing premium berth locations at Dubai Harbour and handling all marina coordination and port authority requirements.",
-  },
+  { title: "Charter Management", description: "End-to-end charter operations including booking management, guest coordination, and itinerary planning to keep your yacht booked and profitable." },
+  { title: "Accounting & Reporting", description: "Transparent financial reporting with monthly statements, expense tracking, and revenue analytics so you always know how your asset performs." },
+  { title: "Maintenance Scheduling", description: "Proactive maintenance planning including annual surveys, engine servicing, hull cleaning, and equipment inspections to protect your investment." },
+  { title: "Crew Hiring & Training", description: "Recruitment of experienced, licensed crew members with ongoing training in safety, hospitality, and vessel-specific operations." },
+  { title: "Marketing & Listings", description: "Professional photography, multi-platform listing management, social media marketing, and SEO to drive charter demand year-round." },
+  { title: "Berth Management", description: "Securing and managing premium berth locations at Dubai Harbour and handling all marina coordination and port authority requirements." },
 ];
 
 const processSteps = [
-  {
-    number: 1,
-    title: "Consultation",
-    description:
-      "We assess your yacht, understand your goals, and outline a tailored management strategy.",
-    icon: Handshake,
-  },
-  {
-    number: 2,
-    title: "Onboarding",
-    description:
-      "Vessel inspection, crew setup, marketing materials, and listing activation across all channels.",
-    icon: ClipboardCheck,
-  },
-  {
-    number: 3,
-    title: "Operations",
-    description:
-      "Full-service management with regular reporting, optimized scheduling, and ongoing maintenance.",
-    icon: Calendar,
-  },
-  {
-    number: 4,
-    title: "Growth",
-    description:
-      "Continuous optimization of pricing, marketing, and operations to maximize your returns.",
-    icon: Rocket,
-  },
+  { title: "Consultation", description: "We assess your yacht, understand your goals, and outline a tailored management strategy." },
+  { title: "Onboarding", description: "Vessel inspection, crew setup, marketing materials, and listing activation across all channels." },
+  { title: "Operations", description: "Full-service management with regular reporting, optimized scheduling, and ongoing maintenance." },
+  { title: "Growth", description: "Continuous optimization of pricing, marketing, and operations to maximize your returns." },
+];
+
+const stats = [
+  { label: "Yachts we manage", value: "40-60ft" },
+  { label: "Dubai charter season", value: "Oct-Apr" },
+  { label: "Owner statement", value: "Monthly" },
 ];
 
 export function YachtManagementPageContent() {
   return (
-    <>
-      {/* Hero */}
-      <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-navy-950">
-          <div className="absolute inset-0 bg-gradient-to-b from-navy-800/50 via-transparent to-transparent" />
-          <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gold-500/[0.05] rounded-full blur-[120px] -translate-y-1/3 -translate-x-1/4" />
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-sea-500/[0.04] rounded-full blur-[100px] translate-y-1/3 translate-x-1/4" />
+    <WakePage>
+      <WakeHero
+        clip="moneta-golden"
+        alt="Moneta, Monte Carlo 6, at golden hour"
+        crumb="Home / Services / Yacht Management"
+        title={<>Maximize your<br /><i>yacht&apos;s potential</i></>}
+        lead="Comprehensive fleet management for yacht owners in Dubai. From charter revenue optimization to crew and maintenance, we handle everything."
+      >
+        <div className="acts">
+          <Link className="btn" href="/contact">Schedule a Consultation</Link>
+          <a className="btn o" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
         </div>
+      </WakeHero>
 
-        <Container className="relative z-10 text-center">
-          <div className="animate-hero-1">
-            <Badge variant="gold">Yacht Management</Badge>
+      <WakeSection>
+        <WakeHead title={<>Why partner<br />with us.</>}>
+          Three pillars of professional yacht management that protect and grow your investment.
+        </WakeHead>
+        <WakeSteps items={valueProps} cols={3} />
+      </WakeSection>
+
+      <WakeSection tone="light">
+        <WakeHead title={<>Management<br />services.</>}>
+          A detailed breakdown of what our full-service yacht management includes.
+        </WakeHead>
+        <WakeSteps items={managementServices} cols={3} />
+      </WakeSection>
+
+      <WakeSection>
+        <div className="w-split-media">
+          <div>
+            <span className="cap" style={{ color: "var(--copper)" }}>Revenue Potential</span>
+            <h2 className="serif" style={{ fontSize: "var(--fs-h3)", lineHeight: 1, margin: "16px 0 24px" }}>
+              Turn your yacht into a performing asset
+            </h2>
+            <p className="w-prose">
+              What your yacht earns comes down to three things: her size, her condition, and how many weeks you keep
+              for yourself. We won&apos;t quote you an average, because an average is a number about somebody
+              else&apos;s boat. Tell us the vessel and the dates you want to hold, and we&apos;ll put the charter
+              calendar and the running costs into a <span style={{ color: "var(--copper)" }}>written projection</span>{" "}
+              before you sign anything. Pricing across the season is our job. The arithmetic stays yours to check.
+            </p>
+            <div className="w-stats">
+              {stats.map((s) => (
+                <div key={s.label}><b>{s.value}</b><span className="cap">{s.label}</span></div>
+              ))}
+            </div>
           </div>
-
-          <h1
-            className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-4xl mx-auto animate-hero-2"
-          >
-            Maximize Your{" "}
-            <span className="text-gold-gradient">Yacht&apos;s Potential</span>
-          </h1>
-
-          <p
-            className="mt-6 text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed animate-hero-3"
-          >
-            Comprehensive fleet management for yacht owners in Dubai. From
-            charter revenue optimization to crew and maintenance, we handle
-            everything.
-          </p>
-
-          <div
-            className="mt-8 flex flex-wrap items-center justify-center gap-4 animate-hero-4"
-          >
-            <Button variant="primary" size="lg" href="/contact">
-              Schedule a Consultation
-            </Button>
-            <Button variant="secondary" size="lg" href={SITE_CONFIG.whatsapp}>
-              WhatsApp Us
-            </Button>
-          </div>
-        </Container>
-      </section>
-
-      {/* Value Proposition */}
-      <section className="py-24 sm:py-32 bg-navy-900">
-        <Container>
-          <SectionHeading
-            title="Why Partner With Us"
-            subtitle="Three pillars of professional yacht management that protect and grow your investment."
-            align="center"
-          />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {valueProps.map((prop, i) => {
-              const Icon = prop.icon;
-              return (
-                <Reveal
-                  key={prop.title}
-                  delay={i * 100}
-                  className="glass-card rounded-2xl p-8 sm:p-10 text-center hover:border-gold-500/30 transition-all duration-500"
-                >
-                  <div className="mx-auto w-16 h-16 rounded-2xl bg-gold-500/10 flex items-center justify-center mb-6">
-                    <Icon className="w-8 h-8 text-gold-400" />
-                  </div>
-                  <h3 className="font-heading text-xl font-bold text-white">
-                    {prop.title}
-                  </h3>
-                  <p className="mt-3 text-white/50 leading-relaxed">
-                    {prop.description}
-                  </p>
-                </Reveal>
-              );
-            })}
-          </div>
-        </Container>
-      </section>
-
-      {/* Services Breakdown */}
-      <section className="py-24 sm:py-32 bg-navy-950">
-        <Container>
-          <SectionHeading
-            title="Management Services"
-            subtitle="A detailed breakdown of what our full-service yacht management includes."
-            align="center"
-          />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {managementServices.map((service, i) => {
-              const Icon = service.icon;
-              return (
-                <Reveal
-                  key={service.title}
-                  delay={i * 100}
-                  className="glass-card rounded-xl p-6 hover:border-gold-500/20 transition-all duration-500"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gold-500/10 flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-gold-400" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading text-base font-bold text-white">
-                        {service.title}
-                      </h3>
-                      <p className="mt-2 text-sm text-white/50 leading-relaxed">
-                        {service.description}
-                      </p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
-        </Container>
-      </section>
-
-      {/* Revenue Potential */}
-      <section className="py-24 sm:py-32 bg-navy-900">
-        <Container>
-          <div className="max-w-3xl mx-auto text-center">
-            <Reveal>
-              <Badge variant="gold">Revenue Potential</Badge>
-
-              <h2 className="mt-6 font-heading text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                Turn Your Yacht Into a Performing Asset
-              </h2>
-
-              <p className="mt-6 text-white/50 leading-relaxed text-lg">
-                What your yacht earns comes down to three things: her size, her
-                condition, and how many weeks you keep for yourself. We
-                won&apos;t quote you an average, because an average is a number
-                about somebody else&apos;s boat. Tell us the vessel and the dates
-                you want to hold, and we&apos;ll put the charter calendar and the
-                running costs into a{" "}
-                <span className="text-gold-400 font-semibold">
-                  written projection
-                </span>{" "}
-                before you sign anything. Pricing across the season is our job.
-                The arithmetic stays yours to check.
-              </p>
-
-              <div className="mt-10 grid grid-cols-3 gap-6">
-                {[
-                  { label: "Yachts we manage", value: "40-60ft" },
-                  { label: "Dubai charter season", value: "Oct-Apr" },
-                  { label: "Owner statement", value: "Monthly" },
-                ].map((stat, i) => (
-                  <Reveal key={stat.label} delay={i * 100}>
-                    <p className="font-heading text-2xl sm:text-3xl font-bold text-gold-400">
-                      {stat.value}
-                    </p>
-                    <p className="mt-1 text-sm text-white/40">{stat.label}</p>
-                  </Reveal>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </Container>
-      </section>
-
-      {/* How We Work */}
-      <section className="py-24 sm:py-32 bg-navy-950">
-        <Container>
-          <SectionHeading
-            title="How We Work"
-            subtitle="From initial consultation to ongoing growth optimization."
-            align="center"
-          />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
-            {processSteps.map((step, i) => {
-              const StepIcon = step.icon;
-              return (
-                <Reveal
-                  key={step.number}
-                  delay={i * 100}
-                  className="text-center"
-                >
-                  <div className="relative mx-auto w-16 h-16 rounded-full bg-navy-800 border-2 border-gold-500/30 flex items-center justify-center mb-5">
-                    <StepIcon className="w-6 h-6 text-gold-400" />
-                    <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-gold-500 text-navy-950 text-xs font-bold flex items-center justify-center">
-                      {step.number}
-                    </span>
-                  </div>
-                  <h3 className="font-heading text-lg font-bold text-white">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-white/50 leading-relaxed">
-                    {step.description}
-                  </p>
-                </Reveal>
-              );
-            })}
-          </div>
-        </Container>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-24 sm:py-32 bg-navy-900">
-        <Container>
-          <SectionHeading
-            title="Management FAQ"
-            subtitle="Common questions about our yacht management services."
-            align="center"
-          />
-
-          <div className="max-w-3xl mx-auto">
-            <FAQAccordion items={managementFAQ} />
-          </div>
-        </Container>
-      </section>
-
-      {/* CTA */}
-      <section className="relative py-24 sm:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-navy-800">
-          <div className="absolute inset-0 bg-gradient-to-br from-gold-500/[0.06] via-transparent to-gold-400/[0.03]" />
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold-500/[0.04] rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3" />
+          <WakeMedia clip="ilia-harbour" alt="Imperial Yachting team at Dubai Harbour" className="tall" />
         </div>
+      </WakeSection>
 
-        <Container className="relative z-10 text-center">
-          <div className="gold-line mx-auto mb-8" />
+      <WakeSection tone="light">
+        <WakeHead title={<>How we<br />work.</>}>From initial consultation to ongoing growth optimization.</WakeHead>
+        <WakeSteps items={processSteps} />
+      </WakeSection>
 
-          <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight max-w-3xl mx-auto">
-            Schedule a Consultation
-          </h2>
+      <WakeFaq title={<>Management<br />FAQ.</>} lead="Common questions about our yacht management services." items={managementFAQ} />
 
-          <p className="mt-5 text-lg text-white/50 max-w-xl mx-auto leading-relaxed">
-            Let us show you how Imperial Yachting can maximize your yacht&apos;s
-            potential in Dubai&apos;s charter market.
-          </p>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Button variant="primary" size="lg" href="/contact">
-              Get in Touch
-            </Button>
-            <Button variant="secondary" size="lg" href={SITE_CONFIG.whatsapp}>
-              WhatsApp Us
-            </Button>
-          </div>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-white/40">
-            <a
-              href={`tel:${SITE_CONFIG.phone}`}
-              className="flex items-center gap-2 hover:text-gold-400 transition-colors"
-            >
-              <Phone className="w-4 h-4" />
-              {SITE_CONFIG.phone}
-            </a>
-            <a
-              href={`mailto:${SITE_CONFIG.email}`}
-              className="flex items-center gap-2 hover:text-gold-400 transition-colors"
-            >
-              <Mail className="w-4 h-4" />
-              {SITE_CONFIG.email}
-            </a>
-          </div>
-        </Container>
-      </section>
-    </>
+      <WakeCta clip="vd40-aerial" alt="Van Dutch 40 from above" title={<>Schedule a<br />consultation.</>}>
+        <Link className="btn" href="/contact">Get in Touch</Link>
+        <a className="btn o" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+        <p className="sub">Let us show you how Imperial Yachting can maximize your yacht&apos;s potential in Dubai&apos;s charter market.</p>
+        <p className="contacts cap">
+          <a href={`tel:${SITE_CONFIG.phone}`}>{SITE_CONFIG.phone}</a>
+          <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a>
+        </p>
+      </WakeCta>
+    </WakePage>
   );
 }
