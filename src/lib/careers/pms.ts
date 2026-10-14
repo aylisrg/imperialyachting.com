@@ -3,9 +3,9 @@
  * https://pms.sazanoff.ru/sayt-iy/ (wiki «Боты/BRO империи/API вакансий сайта IY»).
  * The site holds only SAYT_IY_API_KEY — never a PMS account key.
  *
- * Nothing is copied or cached: every page view asks PMS, so a vacancy disappears
- * from the site the moment its publication on the platform «Сайт imperialyachting.com»
- * is removed or its "until" date passes.
+ * Nothing is copied or cached: every page view asks PMS. The API itself returns only
+ * vacancies published on the platform «Сайт imperialyachting.com» whose "until" date
+ * has not passed — removed or expired publication, and the vacancy is gone.
  */
 
 const API = (process.env.SAYT_IY_API_URL || "https://pms.sazanoff.ru/sayt-iy").replace(/\/$/, "");
@@ -67,16 +67,6 @@ function splitList(s: unknown): string[] {
     .map((x) => x.charAt(0).toUpperCase() + x.slice(1));
 }
 
-/** Published on the site platform and the "until" date has not passed. */
-function isPublished(v: Doc): boolean {
-  if (v.opublikovana !== true && !v.opublikovana_do) return false;
-  if (!v.opublikovana_do) return true;
-  const d = new Date(v.opublikovana_do);
-  if (Number.isNaN(d.getTime())) return false;
-  const now = new Date();
-  return d.getTime() >= Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-}
-
 function toQuestion(q: Doc, i: number): Question {
   const options: string[] = Array.isArray(q.varianty) ? q.varianty.map(String) : [];
   const isRating = options.length === 10 && options.every((o, k) => o === String(k + 1));
@@ -99,7 +89,7 @@ function toVacancy(v: Doc): VacancyFull {
     salary: String(v.oklad ?? ""),
     conditions: splitList(v.usloviya),
     requirements: splitList(v.obyazatelno),
-    until: v.opublikovana_do ? String(v.opublikovana_do).slice(0, 10) : null,
+    until: null,
     body: String(v.polnoe_opisanie ?? ""),
     polls: (Array.isArray(ankety) ? ankety : [])
       .map((a: Doc, k: number) => ({
@@ -117,7 +107,6 @@ export async function listVacancies(): Promise<Vacancy[]> {
   if (!r.ok) throw new Error(`PMS site API: HTTP ${r.status}`);
   const j = (await r.json()) as { vakansii?: Doc[] };
   return (j.vakansii || [])
-    .filter(isPublished)
     .map((v): Vacancy => {
       const full = toVacancy(v);
       return { id: full.id, title: full.title, summary: full.summary, location: full.location, salary: full.salary, conditions: full.conditions, requirements: full.requirements, until: full.until };
@@ -131,7 +120,7 @@ export async function getVacancy(id: string): Promise<VacancyFull | null> {
   if (r.status === 404) return null;
   if (!r.ok) throw new Error(`PMS site API: HTTP ${r.status}`);
   const v = (await r.json()) as Doc;
-  return isPublished(v) ? toVacancy(v) : null;
+  return toVacancy(v);
 }
 
 export interface ApplicationInput {
@@ -146,6 +135,7 @@ export interface ApplicationInput {
 }
 
 export async function createApplication(a: ApplicationInput): Promise<string | null> {
+  // no vacancy — open application: PMS files it under «Открытая заявка» or as a candidate only
   const parts = a.name.trim().split(/\s+/);
   const form = new FormData();
   if (a.vacancyId) form.set("vakansiya", a.vacancyId);
@@ -160,5 +150,5 @@ export async function createApplication(a: ApplicationInput): Promise<string | n
   const r = await call("/otklik", { method: "POST", body: form });
   const j = (await r.json().catch(() => ({}))) as Doc;
   if (!r.ok || !j.ok) throw new Error(`PMS site API: HTTP ${r.status} ${j.oshibka ?? ""}`);
-  return j.otklik ? String(j.otklik) : null;
+  return j.otklik ? String(j.otklik) : j.kandidat ? String(j.kandidat) : null;
 }
