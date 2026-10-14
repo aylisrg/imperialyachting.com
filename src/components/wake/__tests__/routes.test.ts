@@ -3,7 +3,7 @@ import { isWakeRoute } from "../routes";
 
 describe("isWakeRoute", () => {
   it("covers the home page and the redesigned service pages", () => {
-    for (const p of ["/", "/services", "/services/", "/services/charter", "/services/speedboat-transfer", "/services/yacht-management", "/services/cinematography", "/services/brandwave", "/fleet", "/fleet/van-dutch-40", "/fleet/monte-carlo-6/", "/contact", "/about", "/destinations", "/destinations/palm-jumeirah", "/destinations/dock-and-dine-dubai", "/blog", "/blog/some-post"]) {
+    for (const p of ["/", "/services", "/services/", "/services/charter", "/services/speedboat-transfer", "/services/yacht-management", "/services/cinematography", "/services/brandwave", "/fleet", "/fleet/van-dutch-40", "/fleet/monte-carlo-6/", "/contact", "/about", "/destinations", "/destinations/palm-jumeirah", "/destinations/dock-and-dine-dubai", "/blog", "/blog/some-post", "/partners"]) {
       expect(isWakeRoute(p), p).toBe(true);
     }
   });
