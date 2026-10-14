@@ -106,3 +106,32 @@
 .iyp .w-reel figcaption b{font-family:var(--font-serif);font-size:30px;font-weight:300;line-height:1.1}
 @media (max-width:1100px){.iyp .w-reels{grid-template-columns:1fr 1fr}}
 @media (max-width:768px){.iyp .w-reels{grid-template-columns:1fr}}
+/* fleet */
+.iyp .w-yacht{display:grid;grid-template-columns:1.4fr 1fr;gap:56px;padding:56px 0;border-top:1px solid var(--line-dark);align-items:end}
+.iyp .w-yacht>.w-media{display:block}
+.iyp .w-yacht .promo{position:absolute;z-index:2;left:16px;top:16px;background:var(--copper);color:var(--sea);padding:6px 10px}
+.iyp .w-yacht h2{font-size:96px;line-height:.95;margin:14px 0 12px}
+.iyp .w-yacht .tag{color:var(--copper);font-size:15px}
+.iyp .w-yacht .desc{color:var(--mute);margin:14px 0 28px;max-width:480px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.iyp .w-spec{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line-dark)}
+.iyp .w-spec.s4{grid-template-columns:repeat(4,1fr)}.iyp .w-spec.s6{grid-template-columns:repeat(6,1fr)}
+.iyp .w-spec>div{padding:16px 16px 16px 0;border-bottom:1px solid var(--line-dark)}
+.iyp .light .w-spec,.iyp .light .w-spec>div{border-color:var(--line-light)}
+.iyp .w-spec b{display:block;font-family:var(--font-serif);font-weight:300;font-size:var(--fs-spec);line-height:1.15;margin-top:4px}
+.iyp .w-spec small{font-family:var(--font-sans);font-size:13px;color:var(--mute);margin-left:4px}
+.iyp .w-acts{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.iyp .w-empty{padding:64px 0;color:var(--mute);text-align:center}
+.iyp .w-table{width:100%;border-collapse:collapse;font-size:14px}
+.iyp .w-table-wrap{overflow-x:auto}
+.iyp .w-table th{font-size:var(--fs-cap);letter-spacing:var(--ls-cap);text-transform:uppercase;font-weight:400;color:var(--mute);text-align:right;padding:14px 12px;border-bottom:1px solid var(--line-dark)}
+.iyp .w-table th:first-child,.iyp .w-table th:nth-child(2),.iyp .w-table td:first-child,.iyp .w-table td:nth-child(2){text-align:left}
+.iyp .w-table td{padding:16px 12px;border-bottom:1px solid var(--line-dark-soft);text-align:right;white-space:nowrap}
+.iyp .w-table td:first-child{font-family:var(--font-serif);font-size:22px}
+.iyp .w-table .b2b{color:var(--copper)}
+.iyp .w-chips{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-light)}
+.iyp .w-chips>div{padding:18px 18px 18px 0;border-bottom:1px solid var(--line-light);font-size:15px}
+@media (max-width:768px){
+ .iyp .w-yacht{grid-template-columns:1fr;gap:20px;padding:40px 0}.iyp .w-yacht h2{font-size:56px}
+ .iyp .w-spec.s4,.iyp .w-spec.s6{grid-template-columns:1fr 1fr}.iyp .w-spec b{font-size:24px}
+ .iyp .w-chips{grid-template-columns:1fr 1fr}
+}
