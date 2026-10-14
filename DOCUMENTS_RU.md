@@ -27,7 +27,7 @@
 
 ## 2. Что нужно для работы
 
-1. **Запустить миграцию** `supabase/migrations/011_document_access.sql`
+1. **Запустить миграцию** `supabase/migrations/013_document_access.sql`
    (Supabase → SQL Editor → вставить → Run). Без неё вход работает, но почты
    не сохраняются.
 2. **Resend** (`RESEND_API_KEY`, `BOOKING_FROM_EMAIL`) — уже используется для

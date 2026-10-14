@@ -1,5 +1,5 @@
 -- ============================================================
--- Migration 011: Docs portal — email magic-link access
+-- Migration 013: Docs portal — email magic-link access
 -- Run this in Supabase SQL Editor: Dashboard → SQL Editor → New Query
 --
 -- /documents used to sit behind one shared password. Visitors now enter

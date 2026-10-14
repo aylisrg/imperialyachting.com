@@ -67,7 +67,7 @@ export function Header() {
                     <Link
                       href={link.href}
                       className={cn(
-                        "flex items-center gap-1 px-3 xl:px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                        "flex items-center gap-1 px-2.5 xl:px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors rounded-lg",
                         pathname.startsWith("/services")
                           ? "text-gold-400"
                           : "text-white/80 hover:text-white hover:bg-white/5"
@@ -103,7 +103,7 @@ export function Header() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "px-3 xl:px-4 py-2 text-sm font-medium transition-colors rounded-lg",
+                      "px-2.5 xl:px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors rounded-lg",
                       pathname === link.href || pathname.startsWith(link.href + "/")
                         ? "text-gold-400"
                         : "text-white/80 hover:text-white hover:bg-white/5"
@@ -119,7 +119,7 @@ export function Header() {
             <div className="flex items-center gap-3">
               <a
                 href={`tel:${contact.phone}`}
-                className="hidden sm:flex items-center gap-2 text-sm text-white/70 hover:text-gold-400 transition-colors"
+                className="hidden sm:flex items-center gap-2 whitespace-nowrap text-sm text-white/70 hover:text-gold-400 transition-colors"
                 onClick={() => trackPhoneClick("header")}
               >
                 <Phone className="w-4 h-4" />
@@ -173,6 +173,11 @@ export function Header() {
               tabIndex={isMobileOpen ? 0 : -1}
             >
               {link.label}
+              {"isNew" in link && link.isNew && (
+                <span className="ml-3 align-middle px-2 py-0.5 rounded-full bg-gold-500 text-navy-950 text-[10px] font-bold tracking-wider uppercase">
+                  New
+                </span>
+              )}
             </Link>
           ))}
           <div className="mt-4 flex flex-col items-center gap-4">

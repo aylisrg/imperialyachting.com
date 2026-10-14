@@ -5,6 +5,7 @@ import dynamicImport from "next/dynamic";
 import { Hero } from "@/components/sections/Hero";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { GoogleReviewCTA } from "@/components/sections/GoogleReviewCTA";
+import { SpeedboatTransferPromo } from "@/components/sections/SpeedboatTransferPromo";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
   organizationSchema,
@@ -67,6 +68,7 @@ export default async function HomePage() {
 
       <Hero />
       <TrustBar />
+      <SpeedboatTransferPromo />
 
       <Suspense fallback={<div className="py-24 sm:py-32" />}>
         <FleetPreview yachts={fleetPreviewData} />

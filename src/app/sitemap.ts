@@ -60,6 +60,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/services/yacht-management`, changeFrequency: "monthly" as const, priority: 0.85, lastModified: now },
     { url: `${BASE_URL}/services/cinematography`, changeFrequency: "monthly" as const, priority: 0.7, lastModified: now },
     { url: `${BASE_URL}/services/brandwave`, changeFrequency: "monthly" as const, priority: 0.7, lastModified: now },
+    { url: `${BASE_URL}/services/speedboat-transfer`, changeFrequency: "monthly" as const, priority: 0.85, lastModified: now },
+    { url: `${BASE_URL}/services/speedboat-transfer/terms`, changeFrequency: "yearly" as const, priority: 0.3, lastModified: now },
     { url: `${BASE_URL}/about`, changeFrequency: "monthly" as const, priority: 0.7, lastModified: now },
     { url: `${BASE_URL}/destinations`, changeFrequency: "weekly" as const, priority: 0.8, lastModified: now },
     { url: `${BASE_URL}/destinations/dock-and-dine-dubai`, changeFrequency: "monthly" as const, priority: 0.75, lastModified: now },
