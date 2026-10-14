@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { CLIP_IDS, SERVER_VIDEO_FILES, clipFiles, isClipId, missingOnServer } from "../clips";
 import { HOME_FLEET, HOME_HERO_CLIP } from "../home";
+import { FLEET_CLIPS } from "@/components/wake/fleetClips";
 
 const ROOT = path.resolve(__dirname, "../../..");
 
@@ -35,6 +36,7 @@ describe("clip manifest", () => {
   it("covers every clip the data names", () => {
     expect(isClipId(HOME_HERO_CLIP)).toBe(true);
     for (const y of HOME_FLEET) expect(isClipId(y.clip), y.clip).toBe(true);
+    for (const c of Object.values(FLEET_CLIPS)) for (const id of Object.values(c)) expect(isClipId(id), id).toBe(true);
   });
 
   it("covers every clip=\"…\" / clip: \"…\" literal in src", () => {
