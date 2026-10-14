@@ -8,6 +8,12 @@ try {
   // Supabase URL not configured
 }
 
+if (!process.env.NEXT_PUBLIC_CLIP_BASE_URL?.trim()) {
+  console.warn(
+    "[build] WARNING: NEXT_PUBLIC_CLIP_BASE_URL is not set; video clips are disabled and pages show posters only.",
+  );
+}
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,

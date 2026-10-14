@@ -33,7 +33,7 @@ export function HomeVideo({ clip, alt, hero = false, sizes = "100vw" }: Props) {
 
   useEffect(() => {
     const v = ref.current;
-    if (!v || !videoAllowed()) return;
+    if (!v || !HOME_CLIP_BASE || !videoAllowed()) return;
     if (hero) {
       // Hero clip starts after the page has loaded so it never competes with LCP;
       // the poster image is shown until then.
@@ -84,6 +84,7 @@ export function HomeVideo({ clip, alt, hero = false, sizes = "100vw" }: Props) {
         fetchPriority={hero ? "high" : undefined}
         loading={hero ? "eager" : "lazy"}
       />
+      {HOME_CLIP_BASE && (
       <video
         ref={ref}
         className={playing ? "on" : undefined}
@@ -102,6 +103,7 @@ export function HomeVideo({ clip, alt, hero = false, sizes = "100vw" }: Props) {
           </>
         )}
       </video>
+      )}
     </div>
   );
 }
