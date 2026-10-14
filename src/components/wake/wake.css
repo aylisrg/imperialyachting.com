@@ -182,8 +182,11 @@
 /* about crew tiles: the poster is loaded eagerly so the tile is never blank on 360, and framed on the face */
 .iyp .about-crew img,.iyp .about-crew video{object-position:50% 25%}
 .iyp .w-dcard .w-media.w-video-thumb{position:relative;aspect-ratio:16/9;overflow:hidden}
-.iyp .w-post{max-width:760px}
+.iyp .w-post{max-width:var(--mw-post)}
 .iyp .w-post h2{font-size:var(--fs-h3-sm);line-height:1.05;margin:var(--s-6) 0 var(--s-3)}
 .iyp .w-post p{font-size:var(--fs-lead);margin-top:var(--s-3)}
 .iyp .w-post ul{margin-top:var(--s-3);padding-left:1.2em}
-.iyp .w-post li{margin-top:8px}
+.iyp .w-post li{margin-top:var(--s-1)}
+/* post hero: article titles are long, so the H1 steps down a size (fits the hero on 360) */
+.iyp .w-hero.post h1{font-size:var(--fs-h2-st)}
+@media (max-width:768px){.iyp .w-hero.post h1{font-size:var(--fs-h3-sm)}}

@@ -20,6 +20,22 @@ export function postClip(slug: string): ClipId {
   return POST_CLIPS[slug] ?? POST_FALLBACK_CLIP;
 }
 
+/**
+ * The closing CTA clip of a post page. Design review #46: it must not repeat
+ * the post's own hero clip or any related-post card, so it is the first
+ * candidate the page does not already play.
+ */
+export const POST_CTA_CLIPS: readonly { clip: ClipId; alt: string }[] = [
+  { clip: "route-canal", alt: "Dubai Water Canal from the water" },
+  { clip: "vd40-skyline", alt: "Van Dutch 40 with the Dubai Marina skyline" },
+  { clip: "hero-vd40-speed", alt: "Van Dutch 40 at speed" },
+];
+
+export function postCtaClip(slug: string, relatedSlugs: readonly string[]): { clip: ClipId; alt: string } {
+  const used = new Set([postClip(slug), ...relatedSlugs.map(postClip)]);
+  return POST_CTA_CLIPS.find((c) => !used.has(c.clip)) ?? POST_CTA_CLIPS[0];
+}
+
 export function formatPostDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
 }
