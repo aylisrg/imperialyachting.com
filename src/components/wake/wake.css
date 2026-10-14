@@ -169,3 +169,4 @@
 .iyp .w-cover{object-fit:cover}
 .iyp .w-hours li{justify-content:space-between}.iyp .w-hours b{font-weight:var(--fw-sans-medium)}
 .iyp .w-map iframe{border:0}
+.iyp .about-person + .about-person{margin-top:var(--s-6)}
