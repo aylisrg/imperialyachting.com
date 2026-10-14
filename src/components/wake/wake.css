@@ -184,3 +184,9 @@
 .iyp .w-table th{text-align:left;font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:12px;padding:12px 16px 12px 0;border-bottom:1px solid var(--line-light)}
 .iyp .w-table td{padding:12px 16px 12px 0;border-bottom:1px solid var(--line-light);vertical-align:top}
 .iyp .w-table td:first-child{font-weight:500;white-space:nowrap}
+.iyp .w-dcard .w-media.w-video-thumb{position:relative;aspect-ratio:16/9;overflow:hidden}
+.iyp .w-post{max-width:760px}
+.iyp .w-post h2{font-size:var(--fs-h3-sm);line-height:1.05;margin:var(--s-6) 0 var(--s-3)}
+.iyp .w-post p{font-size:var(--fs-lead);margin-top:var(--s-3)}
+.iyp .w-post ul{margin-top:var(--s-3);padding-left:1.2em}
+.iyp .w-post li{margin-top:8px}
