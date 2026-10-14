@@ -135,7 +135,7 @@ cmd_deploy() {
   printf 'services:\n  web:\n    image: %s:%s\n' "$IMAGE" "$name" > "$dir/release.override.yml"
 
   log "building image $IMAGE:$name"
-  compose "$dir" build --build-arg GIT_SHA="$full_sha" web >/dev/null || { rm -rf "$dir"; die "build failed, prod untouched"; }
+  GIT_SHA="$full_sha" compose "$dir" build --build-arg GIT_SHA="$full_sha" web >/dev/null || { rm -rf "$dir"; die "build failed, prod untouched"; }
 
   local prev; prev="$(readlink "$CURRENT" 2>/dev/null || true)"
   if [ -z "$prev" ] || [ ! -d "$prev" ]; then

@@ -15,6 +15,8 @@
 # persistent volume there so it survives redeploys (see docker-compose.yml).
 
 ARG NODE_VERSION=20-bookworm-slim
+# Full git SHA of the release (deploy/vps-deploy.sh passes --build-arg GIT_SHA).
+ARG GIT_SHA=
 
 FROM node:${NODE_VERSION} AS deps
 WORKDIR /app
@@ -38,6 +40,9 @@ RUN npm run build
 
 FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
+# ARG must be redeclared per stage; /api/health reports it as "commit".
+ARG GIT_SHA
+ENV GIT_SHA=$GIT_SHA
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3000 \
