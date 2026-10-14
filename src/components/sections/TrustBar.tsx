@@ -4,8 +4,6 @@ import { companyInfo } from "@/data/company";
 
 const stats = [
   { value: String(companyInfo.stats.fleetSize), label: "Fleet Size" },
-  { value: companyInfo.stats.happyClients, label: "Happy Clients" },
-  { value: companyInfo.stats.charterHours, label: "Charter Hours" },
   { value: String(companyInfo.stats.yearsInBusiness), label: "Years of Excellence" },
 ];
 

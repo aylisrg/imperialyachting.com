@@ -9,7 +9,7 @@ export const homeFAQ: FAQItem[] = [
   {
     question: "Where do Imperial Yachting yachts depart from?",
     answer:
-      "All Imperial Yachting vessels are berthed at Dubai Harbour Yacht Club, one of Dubai's newest and most prestigious marinas located between Palm Jumeirah and Bluewaters Island. The marina offers convenient parking and easy access for guests. Dubai Harbour is ideally positioned for cruises along the Palm Jumeirah, Dubai Marina skyline, Ain Dubai, and the World Islands.",
+      "The Van Dutch 40 and the Monte Carlo 6 are berthed at Dubai Harbour Yacht Club, one of Dubai's newest and most prestigious marinas located between Palm Jumeirah and Bluewaters Island. The EVO 43 is berthed at Marasi Bay. The marina offers convenient parking and easy access for guests. Dubai Harbour is ideally positioned for cruises along the Palm Jumeirah, Dubai Marina skyline, Ain Dubai, and the World Islands.",
   },
   {
     question: "What is included in a yacht charter with Imperial Yachting?",

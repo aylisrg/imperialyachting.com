@@ -7,14 +7,14 @@ import { DockAndDineContent } from "./DockAndDineContent";
 const PAGE_URL = `${SITE_CONFIG.url}/destinations/dock-and-dine-dubai`;
 
 export const metadata: Metadata = {
-  title: "Dock & Dine Dubai — Free Yacht Mooring at 20 Marinas",
+  title: "Dock & Dine Dubai — Yacht-to-Table Mooring at Waterfront Marinas",
   description:
-    "Discover Dubai's Dock & Dine initiative: free short-term mooring at 20 marinas for waterfront dining. Full marina list, contacts, and how to book your yacht-to-table experience.",
+    "Discover Dubai's Dock & Dine initiative: short-term yacht mooring at participating marinas for waterfront dining. How it works and who to contact.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
-    title: `Dock & Dine Dubai — Free Yacht Mooring | ${SITE_CONFIG.name}`,
+    title: `Dock & Dine Dubai — Yacht-to-Table | ${SITE_CONFIG.name}`,
     description:
-      "Free yacht mooring at 20 Dubai marinas for waterfront dining. See the complete list of participating marinas, restaurants, and contacts.",
+      "Yacht mooring at participating Dubai marinas for waterfront dining. How it works and who to contact.",
     url: PAGE_URL,
     type: "article",
     siteName: SITE_CONFIG.name,
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dock & Dine Dubai — Free Yacht Mooring at 20 Marinas",
+    title: "Dock & Dine Dubai — Yacht-to-Table Mooring at Waterfront Marinas",
     description:
-      "Free short-term mooring at 20 Dubai marinas for waterfront dining. Full guide with contacts.",
+      "Short-term yacht mooring at participating Dubai marinas for waterfront dining. Guide and contacts.",
     images: ["/og-image.jpg"],
   },
 };
@@ -42,9 +42,9 @@ export default function DockAndDinePage() {
       <JsonLd
         data={articleSchema({
           headline:
-            "Dock & Dine Dubai — Free Yacht Mooring at 20 Waterfront Marinas",
+            "Dock & Dine Dubai — Yacht-to-Table Mooring at Waterfront Marinas",
           description:
-            "Complete guide to Dubai's Dock & Dine initiative: free short-term mooring at 20 marinas for waterfront dining, launched by Dubai Maritime Authority and Department of Economy and Tourism.",
+            "Guide to Dubai's Dock & Dine initiative by Dubai Maritime Authority and the Department of Economy and Tourism: short-term yacht mooring at participating marinas for waterfront dining.",
           datePublished: "2025-09-01",
           dateModified: "2025-09-01",
           author: SITE_CONFIG.name,
