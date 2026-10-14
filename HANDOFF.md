@@ -12,15 +12,17 @@
 ## 2. Открытые PR
 | PR | Статус | Что | Что блокирует |
 |---|---|---|---|
-| #43 | draft | Docs: доступ по magic-link на почту, миграция `013_document_access.sql` | Ждёт БД на VPS. Нужен SMTP/почта на целевом хосте |
+| #43 | draft | Docs: доступ по magic-link на почту, миграция `013_document_access.sql` | Мерджить только после переезда на VPS (#44 Q2). Нужен SMTP/почта на целевом хосте |
 | #47 | draft | Self-host на VPS: standalone + Docker, `deploy/` (vps-deploy.sh, nginx-videos.conf, nginx-preview.conf), убран `@vercel/speed-insights` | Меняет не только deploy/ (next.config, layout, Dockerfile, package.json). Ждёт PASS от QA |
 | #53 | draft | Миграция `011_fix_moneta_capacity_builder.sql` (Moneta: 18 гостей, Monte Carlo Yachts) | Применить на БД VPS после бэкапа |
 | #55 | draft | `deploy/supabase/`: self-hosted Supabase (план в #54) | Живой запуск стека не делался. Должен подтянуть main после #47 |
 | #56 | ready, MERGEABLE | Папка `design/` (гайды, макеты, ревью, постеры) | **Мерджить только squash**: в истории ветки ~99 МБ видео прототипа |
-| #58 | draft, MERGEABLE | Destinations (#46) | Ревью QA/дизайна |
-| #59 | draft | Blog (#46), стек на #58 | Мерджить после #58 |
-| #60 | draft | Partners (#46), стек на #59, блок партнёров скрыт | После #59; список партнёров от владельца |
-| #61 | draft | Guard клипов: без `NEXT_PUBLIC_CLIP_BASE_URL` только постеры | Перед мержем выставить переменную (раздел 5) |
+| #58 | draft, MERGEABLE (head 60b994b, база main) | Destinations (#46) | Ревью QA/дизайна. Rebase не нужен, force-push не делать |
+| #59 | draft, MERGEABLE (head 40806b6) | Blog (#46), стек на #58 | После #58 |
+| #60 | draft, MERGEABLE (head a00d215) | Partners (#46), стек на #59, блок партнёров скрыт | После #59; список партнёров от владельца |
+| #61 | draft | Guard клипов: без `NEXT_PUBLIC_CLIP_BASE_URL` сборка пишет WARNING в лог, сайт показывает только постеры | Перед мержем выставить переменную (раздел 5) |
+Стек редизайна: #58, затем #59, затем #60, обычный merge (не squash), по порядку. После каждого мержа следующий PR перенацелить на main.
+
 | #42 | open | Privacy policy: Stripe, международные передачи, адрес офиса | Не разбирался, статус не проверен |
 
 ## 3. Инфраструктура
@@ -83,6 +85,10 @@
 11. Бэкап (root crontab, 14 дней):
     `30 3 * * * /srv/imperialyachting/infra/deploy/supabase/backup.sh >> /srv/imperialyachting/backups/backup.log 2>&1`
 12. Откат: `bash deploy/supabase/supabase-setup.sh app-env-rollback preview|prod` и деплой той же командой. Откат релиза: `bash deploy/vps-deploy.sh [--preview] rollback`.
+
+Прочее:
+- Полный `next build` требует живой Supabase: `/fleet` пререндерится из БД (`revalidate = 3600`).
+- `/api/health` с `destinations: 0` значит пустую таблицу `public.destinations`, не ошибку кода: страницы берут статичный `src/data/destinations.ts` (https://github.com/aylisrg/imperialyachting.com/issues/54#issuecomment-6161358268). `data-copy.sh` заполнит таблицу, только если она не пуста в облаке (не проверено). Сида destinations в миграциях нет.
 
 Риски из README #55: после переключения все админы входят заново (magic link на почту); ссылки `*.supabase.co` перечисляет `data-copy.sh` в конце вывода, заменить их на `https://db.imperialyachting.com` отдельным SQL после смоука превью; первый деплой без релизов не откатывается автоматически (см. `deploy/README.md`).
 
