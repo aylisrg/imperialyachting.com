@@ -3,7 +3,7 @@ export const SITE_CONFIG = {
   legalName: "IMPERIAL CHARTER YACHTING SERVICES L.L.C",
   tagline: "Dubai's Premier Yacht Charter & Management",
   description:
-    "Imperial Yachting offers luxury yacht charter, management, and crewed experiences in Dubai. Explore our owned fleet of premium motor yachts at Dubai Harbour.",
+    "Imperial Yachting offers luxury yacht charter, management, and crewed experiences in Dubai. Explore our owned fleet of premium motor yachts at Dubai Harbour and Marasi Bay.",
   url: "https://imperialyachting.com",
   phone: "+971-52-8355939",
   email: "booking@imperialyachting.com",

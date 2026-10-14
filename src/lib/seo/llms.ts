@@ -55,7 +55,7 @@ function salesSection(sales: SaleListing[] | undefined): string[] {
   return [
     "## Yachts for Sale",
     "",
-    `Owner-direct sales from the Imperial Yachting fleet, lying Dubai Harbour. Brokers welcome; spec sheets and photo packs download instantly from each listing. Overview: ${SITE_CONFIG.url}/yachts-for-sale`,
+    `Owner-direct sales from the Imperial Yachting fleet. Brokers welcome; spec sheets and photo packs download instantly from each listing. Overview: ${SITE_CONFIG.url}/yachts-for-sale`,
     "",
     `Sales enquiries and viewings: WhatsApp ${SALES_CONTACT.phone} (${SALES_CONTACT.whatsapp}).`,
     "",

@@ -8,7 +8,15 @@ try {
   // Supabase URL not configured
 }
 
+if (!process.env.NEXT_PUBLIC_CLIP_BASE_URL?.trim()) {
+  console.warn(
+    "[build] WARNING: NEXT_PUBLIC_CLIP_BASE_URL is not set; video clips are disabled and pages show posters only.",
+  );
+}
+
 const nextConfig: NextConfig = {
+  // Self-hosted on a VPS (Docker): emit .next/standalone with a minimal server.
+  output: "standalone",
   poweredByHeader: false,
   compress: true,
   experimental: {
