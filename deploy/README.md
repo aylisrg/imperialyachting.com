@@ -43,3 +43,8 @@
 6. Видео: `bash deploy/vps-deploy.sh --preview videos-check`
 
 Откат превью: `bash deploy/vps-deploy.sh --preview rollback`. Без `--preview` все команды работают с продом как раньше.
+
+### Превью: образ, кроны, общие данные
+- Превью собирается в свой образ `imperialyachting-preview` (переменная `IY_IMAGE`). Prune и rollback превью трогают только свои релизы и теги, прод не задевают.
+- Внутри контейнера кронов нет: нет node-cron и фоновых setInterval на сервере. Кроны дёргают снаружи GitHub Actions (`booking-cron.yml`: expire-holds каждые 15 минут и balance-reminders в 06:00 UTC; `analytics-weekly.yml`; `ads-daily.yml`) по секрету `SITE_URL`, то есть только прод. `vercel.json` crons работают только на Vercel. Поэтому на превью кроны сами не запускаются, флаг вроде `DISABLE_CRON` не нужен (код такой флаг и не поддерживает). Не меняйте `SITE_URL` на new и не вызывайте `/api/cron/*` на превью руками.
+- Если `.env.production` превью это ссылка на продовый, превью работает с той же базой Supabase и тем же Stripe, что и прод. Заявки, брони, оплаты и письма с превью настоящие. Тестировать только на тестовом контакте. Для изоляции дайте превью свой env с тестовыми ключами Stripe.

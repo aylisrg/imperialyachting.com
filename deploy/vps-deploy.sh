@@ -14,10 +14,10 @@ set -- "${ARGS[@]+"${ARGS[@]}"}"
 IY_ENV="${IY_ENV:-prod}"
 if [ "$IY_ENV" = "preview" ]; then
   D_BASE=/srv/imperialyachting-preview; D_PROJECT=imperialyachting-preview
-  D_PORT=3001; D_SITE=https://new.imperialyachting.com
+  D_PORT=3001; D_SITE=https://new.imperialyachting.com; D_IMAGE=imperialyachting-preview
 else
   D_BASE=/srv/imperialyachting; D_PROJECT=imperialyachting
-  D_PORT=3000; D_SITE=https://imperialyachting.com
+  D_PORT=3000; D_SITE=https://imperialyachting.com; D_IMAGE=imperialyachting
 fi
 
 BASE="${IY_BASE:-$D_BASE}"
@@ -27,7 +27,7 @@ CURRENT="$BASE/current"
 REPO="${IY_REPO:-https://github.com/aylisrg/imperialyachting.com.git}"
 PROJECT="${IY_PROJECT:-$D_PROJECT}"
 export IY_PORT="${IY_PORT:-$D_PORT}"   # used by docker-compose.yml ports
-IMAGE="${IY_IMAGE:-imperialyachting}"
+IMAGE="${IY_IMAGE:-$D_IMAGE}"   # prune/rollback only touch tags of this image
 HEALTH_URL="${IY_HEALTH_URL:-http://127.0.0.1:$IY_PORT/api/health}"
 SITE_URL="${IY_SITE_URL:-$D_SITE}"
 KEEP="${IY_KEEP:-5}"
