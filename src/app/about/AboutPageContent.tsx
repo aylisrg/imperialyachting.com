@@ -38,16 +38,6 @@ const stats = [
     label: "Owned Yachts",
   },
   {
-    icon: Users,
-    value: companyInfo.stats.happyClients,
-    label: "Happy Clients",
-  },
-  {
-    icon: Clock,
-    value: companyInfo.stats.charterHours,
-    label: "Charter Hours",
-  },
-  {
     icon: Award,
     value: `Since ${companyInfo.founded}`,
     label: "Established",

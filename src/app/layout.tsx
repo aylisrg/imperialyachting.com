@@ -166,7 +166,6 @@ export default function RootLayout({
           <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
         )}
         <link rel="dns-prefetch" href="https://wa.me" />
-        <link rel="preload" as="image" href="/media/hero/hero-poster.jpg" type="image/jpeg" />
       </head>
       <body
         className={`${syne.variable} ${inter.variable} ${playfair.variable} antialiased`}
@@ -174,9 +173,9 @@ export default function RootLayout({
         <SiteShell>{children}</SiteShell>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${SITE_CONFIG.googleAnalyticsId}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="gtag-init" strategy="afterInteractive">
+        <Script id="gtag-init" strategy="lazyOnload">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${SITE_CONFIG.googleAnalyticsId}');`}
         </Script>
         <SpeedInsights />
