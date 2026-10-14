@@ -1,0 +1,24 @@
+/* Imperial Yachting design tokens, copied from design/tokens.css (branch design/design-code), scoped to .iyh. */
+.iyh{
+  --sea:#08202A; --teal:#0E5A61; --sand:#E8D9BF; --copper:#D08A4E; --light:#F3EADB; --bone:var(--light);
+  --mute:#A9C3C2; --earth:#6B5B44; --mist:#DCE7E6;
+  --shade-hero:rgba(8,32,42,.22); --shade-section:rgba(8,32,42,.52); --shade-partners:rgba(14,90,97,.35);
+  --line-dark:rgba(243,234,219,.25); --line-dark-soft:rgba(243,234,219,.12); --line-light:rgba(8,32,42,.2);
+  --font-serif:var(--font-cormorant),'Cormorant Garamond',Georgia,serif; --font-sans:var(--font-inter),Inter,system-ui,sans-serif;
+  --fw-serif:300; --fw-sans:400; --fw-sans-medium:500;
+  --ls-serif:-.02em; --ls-cap:.2em; --ls-logo:.34em;
+  --fs-cap:11px; --fs-body:14px; --fs-lead:17px; --fs-index:18px; --fs-logo:22px; --fs-spec:30px;
+  --fs-h3:52px; --fs-h3-svc:72px; --fs-h2:120px; --fs-h2-xl:150px; --fs-display:19vw; --fs-manifesto:9vw;
+  --s-1:6px; --s-2:10px; --s-3:18px; --s-4:24px; --s-5:40px; --s-6:56px; --s-7:72px; --s-8:104px; --s-9:140px;
+  --fs-h2-st:96px; --fs-h3-sm:44px; --fs-quote:32px; --fs-price-sm:34px; --fs-stat:56px; --fs-sm:15px; --fs-chan:40px;
+  --shade-hero-top:rgba(8,32,42,.15); --shade-hero-bottom:rgba(8,32,42,.6); --shade-cta:rgba(14,90,97,.45);
+  --gutter:56px; --nav-h:84px; --nav-h-solid:64px;
+  --radius:0; --radius-pill:999px;
+  --ease-menu:cubic-bezier(.7,0,.2,1); --dur-menu:.7s; --dur-nav:.4s; --dur-reveal:1.4s;
+}
+@media (max-width:768px){.iyh{
+  --gutter:20px; --nav-h:64px; --fs-display:27vw; --fs-manifesto:19vw; --fs-h2:64px; --fs-h2-xl:64px;
+  --fs-h3:44px; --fs-h3-svc:36px; --fs-lead:15px;
+  --fs-h2-st:52px; --fs-h3-sm:32px; --fs-quote:24px; --fs-stat:44px; --fs-chan:28px;
+}}
+@media (prefers-reduced-motion:reduce){.iyh{--dur-menu:0s;--dur-nav:0s;--dur-reveal:0s}}

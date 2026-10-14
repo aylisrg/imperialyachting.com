@@ -42,3 +42,4 @@ yarn-error.log*
 next-env.d.ts
 design/prototype/clips/*.mp4
 design/prototype/clips/*.webm
+/public/videos/

@@ -64,7 +64,7 @@ export const listYachtsMeta: ToolMeta = {
   name: "list_yachts",
   title: "List Yachts",
   description:
-    "List Imperial Yachting's owned fleet of motor yachts available for charter from Dubai Harbour, Dubai. " +
+    "List Imperial Yachting's owned fleet of motor yachts available for charter from Dubai Harbour and Marasi Bay, Dubai. " +
     "Prices are in AED per hour and include a professional crew, fuel for standard cruising routes, and soft drinks. " +
     "Use `guests` to filter by party size and `maxHourlyRate` to filter by budget. " +
     "Weekend minimum-hours apply on Friday and Saturday in the UAE. " +
