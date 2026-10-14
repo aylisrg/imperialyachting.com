@@ -51,9 +51,23 @@ export interface Vacancy {
   until: string | null;
 }
 
+export interface Photo {
+  id: string;
+  name: string;
+}
+
 export interface VacancyFull extends Vacancy {
   body: string;
   polls: Poll[];
+  photos: Photo[];
+}
+
+const PHOTO_ID = /^[a-z0-9]{8,40}$/i;
+
+function toPhotos(foto: unknown): Photo[] {
+  return (Array.isArray(foto) ? foto : [])
+    .filter((f: Doc) => PHOTO_ID.test(String(f?.id ?? "")) && String(f?.tip ?? "").startsWith("image/"))
+    .map((f: Doc) => ({ id: String(f.id), name: String(f.nazvanie ?? "").replace(/\.[a-z0-9]+$/i, "") }));
 }
 
 function splitList(s: unknown): string[] {
@@ -99,6 +113,7 @@ function toVacancy(v: Doc): VacancyFull {
         questions: (Array.isArray(a.voprosy) ? a.voprosy : []).map(toQuestion),
       }))
       .filter((p: Poll) => p.questions.length),
+    photos: toPhotos(v.foto),
   };
 }
 
@@ -151,4 +166,16 @@ export async function createApplication(a: ApplicationInput): Promise<string | n
   const j = (await r.json().catch(() => ({}))) as Doc;
   if (!r.ok || !j.ok) throw new Error(`PMS site API: HTTP ${r.status} ${j.oshibka ?? ""}`);
   return j.otklik ? String(j.otklik) : j.kandidat ? String(j.kandidat) : null;
+}
+
+/** Фото опубликованной вакансии: только те, что служба отдаёт в списке вакансий сайта. */
+export async function getPhoto(id: string): Promise<Response | null> {
+  if (!PHOTO_ID.test(id)) return null;
+  const r = await call("/vakansii");
+  if (!r.ok) return null;
+  const data = (await r.json()) as Doc;
+  const list: Doc[] = Array.isArray(data) ? data : data.vakansii || [];
+  if (!list.some((v) => toPhotos(v.foto).some((f) => f.id === id))) return null;
+  const f = await call(`/foto/${id}`);
+  return f.ok ? f : null;
 }

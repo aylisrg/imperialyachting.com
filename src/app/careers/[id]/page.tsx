@@ -71,6 +71,14 @@ export default async function VacancyPage({ params }: Props) {
               <h2>About the role</h2>
               {v.summary && <p>{v.summary}</p>}
               {v.body && <Body md={v.body} title={v.title} />}
+              {v.photos.length > 0 && (
+                <div className="ph">
+                  {v.photos.map((f) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={f.id} src={`/api/careers/foto/${f.id}`} alt={f.name || v.title} loading="lazy" />
+                  ))}
+                </div>
+              )}
             </section>
             {v.requirements.length > 0 && (
               <section id="reqs">

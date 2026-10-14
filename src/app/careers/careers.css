@@ -64,6 +64,9 @@
 .cr .vb ul{list-style:none;display:grid;gap:12px}
 .cr .vb li{position:relative;padding-left:28px;color:rgba(255,255,255,.8);font-size:17px;line-height:1.55}
 .cr .vb li:before{content:"";position:absolute;left:4px;top:.55em;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.cr .ph{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.cr .ph img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;border:1px solid var(--ln2);display:block}
+@media(max-width:600px){.cr .ph{grid-template-columns:1fr}}
 .cr .offer{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .cr .offer div{background:var(--sec);border:1px solid var(--ln2);border-radius:10px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;color:rgba(255,255,255,.85);line-height:1.45}
 .cr .offer svg{color:var(--gold);margin-top:2px}
