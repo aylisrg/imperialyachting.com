@@ -52,7 +52,7 @@ export function CharterPageContent() {
           {charterTypes.map((t, i) => (
             <div className="w-opt" key={t.title}>
               <span className="ix">{String(i + 1).padStart(2, "0")}</span>
-              <span className="cap" style={{ color: "var(--mute)" }}>{t.duration}</span>
+              <span className="cap w-mute">{t.duration}</span>
               <h3 className="serif">{t.title}</h3>
               <p>{t.description}</p>
               <div className="cap from">Starting from<b>{t.priceFrom}</b></div>
@@ -71,7 +71,7 @@ export function CharterPageContent() {
         </div>
       </WakeSection>
 
-      <WakeBand clip="ilia-onboard" alt="Guests on board a charter off Dubai" />
+      <WakeBand clip="vd40-skyline" alt="Guests on board the Van Dutch 40, Dubai Marina skyline" />
 
       <WakeSection>
         <WakeHead title={<>Popular<br />routes.</>}>Iconic Dubai destinations accessible from our Dubai Harbour berth.</WakeHead>
@@ -85,7 +85,7 @@ export function CharterPageContent() {
 
       <WakeFaq title={<>Charter<br />FAQ.</>} lead="Common questions about our yacht charter services." items={charterFAQ} />
 
-      <WakeCta clip="vd40-aerial" alt="Van Dutch 40 from above" title={<>Book your<br />charter today.</>}>
+      <WakeCta clip="harbour-sunset" alt="Dubai Harbour at sunset" title={<>Book your<br />charter today.</>}>
         <a className="btn" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
         <Link className="btn o" href="/contact">Send Inquiry</Link>
         <p className="sub">
