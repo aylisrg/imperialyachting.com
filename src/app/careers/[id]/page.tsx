@@ -132,7 +132,7 @@ export default async function VacancyPage({ params }: Props) {
           <h2>
             Still thinking? <span style={{ color: "var(--gold)" }}>Join the crew.</span>
           </h2>
-          <p>It takes five minutes. We read every application and reply within two working days.</p>
+          <p>It takes five minutes. We read every application.</p>
           <Link className="btn" href={apply}>
             Apply now
           </Link>

@@ -174,7 +174,7 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
             ) : (
               "We received your details and answers."
             )}{" "}
-            We will write to you within two working days.
+            We will write to you if it fits.
           </p>
           <div className="steps">
             <div>
@@ -377,7 +377,7 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
               <button type="submit" className="btn" disabled={busy}>
                 {busy ? "Sending…" : "Send application"}
               </button>
-              <span style={{ fontSize: 13, color: "var(--mu2)" }}>We reply within two working days.</span>
+              <span style={{ fontSize: 13, color: "var(--mu2)" }}>We read every application.</span>
             </div>
             {fail && <p className="fail">{fail}</p>}
           </form>
