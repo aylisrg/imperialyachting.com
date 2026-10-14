@@ -15,6 +15,8 @@ if (!process.env.NEXT_PUBLIC_CLIP_BASE_URL?.trim()) {
 }
 
 const nextConfig: NextConfig = {
+  // Self-hosted on a VPS (Docker): emit .next/standalone with a minimal server.
+  output: "standalone",
   poweredByHeader: false,
   compress: true,
   experimental: {

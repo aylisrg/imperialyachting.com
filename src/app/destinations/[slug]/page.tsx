@@ -9,7 +9,7 @@ import {
 import { SITE_CONFIG, DEPARTURE_POINT_SLUG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { destinationSchema, breadcrumbSchema } from "@/components/seo/schemas";
-import { DestinationDetailClient } from "./DestinationDetailClient";
+import { WakeDestinationDetail } from "./WakeDestinationDetail";
 
 export const dynamicParams = true;
 
@@ -100,7 +100,7 @@ export default async function DestinationDetailPage({
           { name: destination.name, url: `/destinations/${destination.slug}` },
         ])}
       />
-      <DestinationDetailClient
+      <WakeDestinationDetail
         destination={destination}
         related={related}
       />

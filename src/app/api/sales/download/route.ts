@@ -8,6 +8,7 @@ import { fetchSaleListingBySlug } from "@/lib/sales/listings-db";
 import { fetchSaleMaterialRows, resolveMaterials } from "@/lib/sales/materials";
 import { notifySaleDownload } from "@/lib/notify";
 import { SITE_CONFIG } from "@/lib/constants";
+import { getRequestCountry } from "@/lib/geo/country";
 
 export const runtime = "nodejs";
 // First download of a changed gallery builds the photo ZIP; give it room.
@@ -69,7 +70,7 @@ export async function POST(request: Request) {
   const company = isBroker ? data.company || null : null;
   const clientName = isBroker ? data.clientName || null : null;
   const referrer = request.headers.get("referer");
-  const country = request.headers.get("x-vercel-ip-country");
+  const country = getRequestCountry(request.headers);
 
   let previousDownloads = 0;
   if (isAdminSupabaseConfigured()) {

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationSchema, breadcrumbSchema, personSchema } from "@/components/seo/schemas";
-import { companyInfo } from "@/data/company";
 import { AboutPageContent } from "./AboutPageContent";
+import { aboutCrew } from "./crew";
 
 export const metadata: Metadata = {
   title: "About Imperial Yachting — Dubai Yacht Charter Company",
@@ -35,7 +35,7 @@ export default function AboutPage() {
           { name: "About Imperial Yachting", url: "/about" },
         ])}
       />
-      {companyInfo.team.map((member) => (
+      {aboutCrew.map((member) => (
         <JsonLd key={member.name} data={personSchema(member)} />
       ))}
       <AboutPageContent />
