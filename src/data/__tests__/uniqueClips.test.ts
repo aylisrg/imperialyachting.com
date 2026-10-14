@@ -11,6 +11,7 @@ const PAGES = [
   "src/app/about/AboutPageContent.tsx",
   "src/app/destinations/dock-and-dine-dubai/DockAndDineContent.tsx",
   "src/app/blog/WakeBlog.tsx",
+  "src/app/partners/PartnersContent.tsx",
 ];
 
 function literalClips(file: string): string[] {
