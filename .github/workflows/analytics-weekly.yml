@@ -13,6 +13,27 @@ jobs:
     timeout-minutes: 5
 
     steps:
+      - name: Verify required secrets
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          ANALYTICS_CRON_SECRET: ${{ secrets.ANALYTICS_CRON_SECRET }}
+        run: |
+          missing=0
+          for name in SITE_URL ANALYTICS_CRON_SECRET; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository secret $name is empty or not set — the analytics pipeline cannot run. Add it in Settings → Secrets and variables → Actions."
+              missing=1
+            fi
+          done
+          case "$SITE_URL" in
+            "" | http://* | https://*) ;;
+            *)
+              echo "::error::Secret SITE_URL must be an absolute URL including the scheme, e.g. https://imperialyachting.com"
+              missing=1
+              ;;
+          esac
+          [ "$missing" = "0" ] || exit 1
+
       - name: Trigger analytics pipeline
         run: |
           response=$(curl -s -w "\n%{http_code}" -X POST \
