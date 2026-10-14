@@ -2,11 +2,11 @@ import { HomeVideo } from "@/components/home/HomeVideo";
 
 /** Building blocks for Wake inner pages (design/pages/pages.css @ c0f9dc1). */
 
-export function WakeHero({ clip, alt, crumb, title, lead, children, short = true }: {
-  clip: string; alt: string; crumb: string; title: React.ReactNode; lead?: React.ReactNode; children?: React.ReactNode; short?: boolean;
+export function WakeHero({ clip, alt, crumb, title, lead, children, short = true, className }: {
+  clip: string; alt: string; crumb: string; title: React.ReactNode; lead?: React.ReactNode; children?: React.ReactNode; short?: boolean; className?: string;
 }) {
   return (
-    <header className={short ? "w-hero short" : "w-hero"}>
+    <header className={["w-hero", short && "short", className].filter(Boolean).join(" ")}>
       <HomeVideo clip={clip} alt={alt} hero />
       <div className="shade" />
       <span className="crumb cap">{crumb}</span>
@@ -36,10 +36,10 @@ export function WakeSection({ tone, className, id, children }: {
   return <section id={id} className={["w-sec", tone, className].filter(Boolean).join(" ")}>{children}</section>;
 }
 
-export function WakeMedia({ clip, alt, className }: { clip: string; alt: string; className?: string }) {
+export function WakeMedia({ clip, alt, className, eager }: { clip: string; alt: string; className?: string; eager?: boolean }) {
   return (
     <div className={["w-media", className].filter(Boolean).join(" ")}>
-      <HomeVideo clip={clip} alt={alt} sizes="(max-width:768px) 100vw, 50vw" />
+      <HomeVideo clip={clip} alt={alt} sizes="(max-width:768px) 100vw, 50vw" eager={eager} />
     </div>
   );
 }

@@ -14,7 +14,7 @@ export function AboutPageContent() {
   const facts = [
     { label: "Owned yachts", value: String(HOME_FLEET.length) },
     { label: "Established", value: String(companyInfo.founded) },
-    { label: "Home berth", value: "Dubai Harbour" },
+    { label: "Home berth", value: "Dubai Harbour · Marasi Bay" },
     { label: "Licence", value: SITE_CONFIG.license },
   ];
   const legal = [
@@ -50,7 +50,7 @@ export function AboutPageContent() {
               <p className="w-prose">{m.bio}</p>
               {m.linkedin ? <p><a className="cap" href={m.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></p> : null}
             </div>
-            <WakeMedia clip={ABOUT_CREW_CLIPS[m.name]} alt={`${m.name} on board`} />
+            <WakeMedia clip={ABOUT_CREW_CLIPS[m.name]} alt={`${m.name} on board`} className="about-crew" eager />
           </div>
         ))}
       </WakeSection>

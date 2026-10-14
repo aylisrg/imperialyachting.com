@@ -7,7 +7,7 @@ import type { ClipId } from "@/data/clips";
  * fallback, so a new route never renders without media.
  */
 export const DESTINATION_CLIPS: Record<string, { card: ClipId; hero: ClipId; band: ClipId }> = {
-  "dubai-harbour": { card: "harbour-sunset", hero: "harbour-sunset", band: "harbour-traffic" },
+  "dubai-harbour": { card: "harbour-sunset", hero: "harbour-sunset", band: "vd40-aerial" },
   "palm-jumeirah": { card: "moneta-golden", hero: "moneta-golden", band: "vd40-aerial" },
   "dubai-marina": { card: "vd40-skyline", hero: "vd40-skyline", band: "route-skyline" },
   "world-islands": { card: "evo43-run", hero: "evo43-run", band: "route-canal" },

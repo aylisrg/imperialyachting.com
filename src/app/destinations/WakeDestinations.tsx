@@ -14,8 +14,8 @@ export function WakeDestinations({ destinations }: { destinations: Destination[]
   return (
     <WakePage>
       <WakeHero
-        clip="moneta-golden"
-        alt="Moneta cruising off Dubai at golden hour"
+        clip="route-canal"
+        alt="Dubai Water Canal from the water"
         crumb="Home / Destinations"
         title={<>Where<br />we go.</>}
         lead="Discover Dubai's best yacht cruise routes departing from Dubai Harbour."
