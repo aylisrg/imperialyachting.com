@@ -62,3 +62,24 @@ describe("routeCountTitle", async () => {
     expect(routeCountTitle(12)).toBe("12 routes.");
   });
 });
+
+describe("destination clips never repeat on one page (design review #46)", () => {
+  const dupes = (xs: string[]) => xs.filter((c, i) => xs.indexOf(c) !== i);
+  const slugs = Object.keys(DESTINATION_CLIPS);
+  const indexSrc = fs.readFileSync(path.resolve(__dirname, "../WakeDestinations.tsx"), "utf8");
+  const detailSrc = fs.readFileSync(path.resolve(__dirname, "../[slug]/WakeDestinationDetail.tsx"), "utf8");
+  const literal = (src: string) => [...src.matchAll(/clip="([a-z0-9-]+)"/g)].map((m) => m[1]);
+
+  it("/destinations: hero, cards and CTA are all different clips", () => {
+    const clips = [...literal(indexSrc), ...slugs.map((s) => destinationClips(s).card)];
+    expect(dupes(clips)).toEqual([]);
+  });
+
+  for (const slug of slugs) {
+    it(`/destinations/${slug}: hero, band, related cards and CTA are all different clips`, () => {
+      const c = destinationClips(slug);
+      const related = slugs.filter((s) => s !== slug).map((s) => destinationClips(s).card);
+      expect(dupes([c.hero, c.band, ...related, ...literal(detailSrc)])).toEqual([]);
+    });
+  }
+});

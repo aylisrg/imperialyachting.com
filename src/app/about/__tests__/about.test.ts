@@ -21,6 +21,14 @@ describe("/about (Wake redesign)", () => {
     for (const m of src.matchAll(/clip="([a-z0-9-]+)"/g)) expect(isClipId(m[1]), m[1]).toBe(true);
   });
 
+  it("names the real berth: Evo 43 lies at Marasi Bay, not only Dubai Harbour", () => {
+    expect(src).toContain('"Dubai Harbour · Marasi Bay"');
+  });
+
+  it("loads the crew posters eagerly so the tiles are never blank on mobile", () => {
+    expect(src).toMatch(/className="about-crew" eager/);
+  });
+
   it("carries no placeholder partners or invented figures", () => {
     expect(src).not.toMatch(/Partner Logo|1,200\+|5,000\+/);
   });
