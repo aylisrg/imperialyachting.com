@@ -146,7 +146,7 @@ export default function HomePage() {
       <footer className="facts">
         <div className="g">
           <div><span className="cap">Legal entity</span><p>Imperial Charter Yachting Services L.L.C</p></div>
-          <div><span className="cap">Trade licence</span><p>No. 960574</p></div>
+          <div><span className="cap">Trade licence</span><p>No. 960574 &nbsp;/&nbsp; <Link href="/documents">Docs</Link></p></div>
           <div><span className="cap">Berth</span><p>Dubai Harbour Yacht Club</p></div>
           <div><span className="cap">Desk</span><p><a href={`tel:${SITE_CONFIG.phone}`}>+971 52 835 5939</a> &nbsp;/&nbsp; <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a></p></div>
         </div>
