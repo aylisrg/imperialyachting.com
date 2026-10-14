@@ -27,7 +27,7 @@ const processSteps = [
   { title: "Inquire", description: "Share your dates, group size, and preferences." },
   { title: "Customize", description: "We recommend the perfect yacht and itinerary." },
   { title: "Confirm", description: "Secure your booking with a simple confirmation." },
-  { title: "Experience", description: "Board at Dubai Harbour and enjoy your cruise." },
+  { title: "Experience", description: "Board at Dubai Harbour or Marasi Bay and enjoy your cruise." },
 ];
 
 export function CharterPageContent() {
@@ -38,7 +38,7 @@ export function CharterPageContent() {
         alt="Moneta, Monte Carlo 6, at golden hour"
         crumb="Home / Services / Yacht Charter"
         title={<>Unforgettable yacht<br /><i>experiences in Dubai</i></>}
-        lead="All-inclusive, crewed luxury yacht charters on our privately owned fleet. Sunset cruises, celebrations, and corporate events departing from Dubai Harbour."
+        lead="All-inclusive, crewed luxury yacht charters on our privately owned fleet. Sunset cruises, celebrations, and corporate events departing from Dubai Harbour and Marasi Bay."
       >
         <div className="acts">
           <a className="btn" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">Book via WhatsApp</a>
@@ -74,7 +74,7 @@ export function CharterPageContent() {
       <WakeBand clip="vd40-skyline" alt="Guests on board the Van Dutch 40, Dubai Marina skyline" />
 
       <WakeSection>
-        <WakeHead title={<>Popular<br />routes.</>}>Iconic Dubai destinations accessible from our Dubai Harbour berth.</WakeHead>
+        <WakeHead title={<>Popular<br />routes.</>}>Iconic Dubai destinations accessible from our berths at Dubai Harbour and Marasi Bay.</WakeHead>
         <WakeSteps items={destinations} />
       </WakeSection>
 

@@ -231,7 +231,7 @@ export default async function BlogPostPage({
             Ready to book your own Dubai yacht charter?
           </h2>
           <p className="mt-5 text-lg text-white/50 max-w-xl mx-auto leading-relaxed">
-            Browse our owned fleet at Dubai Harbour and get a same-day
+            Browse our owned fleet at Dubai Harbour and Marasi Bay and get a same-day
             response from our charter team.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
