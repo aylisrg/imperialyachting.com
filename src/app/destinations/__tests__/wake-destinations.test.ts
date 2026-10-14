@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 import { destinations } from "@/data/destinations";
-import { MARINAS } from "@/data/dockAndDine";
 import { isClipId } from "@/data/clips";
 import { isWakeRoute } from "@/components/wake/routes";
 import { DESTINATION_CLIPS, DESTINATION_FALLBACK, destinationClips } from "@/components/wake/destinationClips";
@@ -27,9 +26,12 @@ describe("Destinations (Wake redesign)", () => {
     }
   });
 
-  it("Dock & Dine keeps the full directory of 20 marinas", () => {
-    expect(MARINAS).toHaveLength(20);
-    expect(new Set(MARINAS.map((m) => m.name)).size).toBe(20);
+  it("Dock & Dine states no dates, counts, time limits or marina directory", () => {
+    for (const f of ["dock-and-dine-dubai/DockAndDineContent.tsx", "dock-and-dine-dubai/page.tsx"]) {
+      const text = read(f).replace(/datePublished: "[^"]*"|dateModified: "[^"]*"|width: \d+|height: \d+/g, "");
+      expect(text, f).not.toMatch(/\b20\b|2025|September|one hour|\d+\s*(?:min|minutes|hours?)\b|<table/i);
+    }
+    expect(read("dock-and-dine-dubai/DockAndDineContent.tsx")).toContain("+971 800 8855");
   });
 });
 
