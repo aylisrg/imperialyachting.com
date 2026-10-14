@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbSchema, collectionPageSchema } from "@/components/seo/schemas";
-import { DestinationsPageClient } from "@/components/pages/DestinationsPageClient";
+import { WakeDestinations } from "./WakeDestinations";
 import { fetchAllDestinations } from "@/lib/destinations-db";
 
 export const metadata: Metadata = {
@@ -51,7 +51,7 @@ export default async function DestinationsPage() {
           })),
         })}
       />
-      <DestinationsPageClient destinations={destinations} />
+      <WakeDestinations destinations={destinations} />
     </>
   );
 }
