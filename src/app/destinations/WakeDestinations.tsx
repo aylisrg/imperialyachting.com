@@ -23,7 +23,7 @@ export function WakeDestinations({ destinations }: { destinations: Destination[]
 
       <WakeSection>
         <WakeHead title={routeCountTitle(destinations.length)}>
-          Every route starts at our home berth, Dubai Harbour.
+          Routes start from Dubai Harbour Yacht Club (Van Dutch 40, Monte Carlo 6) or Marasi Bay (EVO 43).
         </WakeHead>
         <div className="w-dgrid">
           {destinations.map((d, i) => (
