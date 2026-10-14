@@ -30,7 +30,7 @@ export default function FleetError({
           </h1>
           <p className="mt-4 text-lg text-white/60 leading-relaxed">
             We&apos;re having trouble loading our fleet right now. This is
-            usually a temporary issue — please try again in a moment.
+            usually a temporary issue, please try again in a moment.
           </p>
 
           {process.env.NODE_ENV === "development" && (

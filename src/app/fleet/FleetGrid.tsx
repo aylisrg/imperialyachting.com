@@ -45,15 +45,15 @@ export function FleetGrid({ yachts }: FleetGridProps) {
           <article className="w-yacht" key={y.slug}>
             <Link href={`/fleet/${y.slug}`} className="w-media" onClick={() => trackYachtClick(y.slug, "fleet_card")} aria-label={y.name}>
               {clips ? (
-                <WakeMedia clip={clips.card} alt={`${y.name} — Imperial Yachting`} />
+                <WakeMedia clip={clips.card} alt={`${y.name}, Imperial Yachting`} />
               ) : y.heroImage ? (
-                <Image src={y.heroImage} alt={`${y.name} — Imperial Yachting`} fill sizes="(max-width:768px) 100vw, 58vw" style={{ objectFit: "cover" }} />
+                <Image src={y.heroImage} alt={`${y.name}, Imperial Yachting`} fill sizes="(max-width:768px) 100vw, 58vw" className="w-cover" />
               ) : null}
               {y.lowestPrice?.unit === "/hr" && <span className="promo cap">4+1 FREE</span>}
             </Link>
             <div>
               <span className="ix">{String(i + 1).padStart(2, "0")}</span>{" "}
-              <span className="cap" style={{ color: "var(--mute)" }}>{y.builder}</span>
+              <span className="cap w-mute">{y.builder}</span>
               <h2 className="serif"><Link href={`/fleet/${y.slug}`} onClick={() => trackYachtClick(y.slug, "fleet_card")}>{y.name}</Link></h2>
               <p className="tag">{y.tagline}</p>
               <p className="desc">{y.description}</p>

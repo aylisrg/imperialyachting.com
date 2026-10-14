@@ -4,12 +4,12 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { WakePage } from "@/components/wake/WakePage";
 import { WakeCta, WakeHead, WakeHero, WakeMedia, WakeSection, WakeSteps } from "@/components/wake/blocks";
 
-// Clip per service row (design/pages/services @ c0f9dc1).
+// Clip per service row (design/pages/services @ c0f9dc1); no clip repeats on the page.
 const CLIPS: Record<string, string> = {
   "/services/charter": "vd40-aerial",
   "/services/yacht-management": "moneta-golden",
-  "/services/cinematography": "evo43-run",
-  "/services/brandwave": "ilia-harbour",
+  "/services/cinematography": "route-skyline",
+  "/services/brandwave": "route-canal",
 };
 
 const processSteps = [
@@ -57,7 +57,7 @@ export function ServicesPageContent() {
         <WakeSteps items={processSteps} />
       </WakeSection>
 
-      <WakeCta clip="moneta-golden" alt="Moneta at golden hour" title={<>Ready to get<br />started?</>}>
+      <WakeCta clip="harbour-sunset" alt="Dubai Harbour at sunset" title={<>Ready to get<br />started?</>}>
         <a className="btn" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
         <Link className="btn o" href="/contact">Send Inquiry</Link>
       </WakeCta>

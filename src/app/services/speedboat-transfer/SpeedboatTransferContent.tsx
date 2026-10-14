@@ -77,11 +77,11 @@ export function SpeedboatTransferContent() {
       <WakeSection id="price">
         <div className="w-split-media">
           <div>
-            <span className="cap" style={{ color: "var(--copper)" }}>When and how much</span>
+            <span className="cap w-kicker">When and how much</span>
             <p className="w-price serif">{price} AED</p>
-            <p className="cap" style={{ color: "var(--sand)" }}>per hour · VAT included</p>
-            <p style={{ marginTop: 16, color: "var(--mute)" }}>The minimum is one hour.</p>
-            <div style={{ marginTop: 40 }}><WakeList dark items={priceFacts} /></div>
+            <p className="cap w-sand">per hour · VAT included</p>
+            <p className="w-mute w-gap">The minimum is one hour.</p>
+            <div className="w-gap-l"><WakeList dark items={priceFacts} /></div>
           </div>
           <WakeMedia clip="vd40-aerial" alt="Van Dutch 40 from above" className="tall" />
         </div>
@@ -94,9 +94,9 @@ export function SpeedboatTransferContent() {
           it is settled.
         </WakeHead>
         <WakeSteps items={steps} />
-        <div style={{ marginTop: 56 }}>
+        <div className="w-after">
           <a className="btn" href={SPEEDBOAT_TRANSFER.orderUrl} target="_blank" rel="noopener noreferrer">Order in Telegram</a>
-          <p style={{ marginTop: 16, fontSize: 13 }}>
+          <p className="w-fine">
             Opens the ordering app in Telegram. No Telegram?{" "}
             <a className="lnk" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">Write to the manager on WhatsApp</a>
             {" · "}
@@ -109,14 +109,14 @@ export function SpeedboatTransferContent() {
         <div className="w-split">
           <WakeSplitTitle ix="02" title={<>If plans<br />change.</>} />
           <div>
-            <p style={{ fontSize: 17 }}>
+            <p className="w-lead">
               Cancel more than 48 hours before the start and you get everything back. Between 24 and 48 hours, 50%.
               Less than 24 hours, or if you do not show up, nothing, unless we re-sell your slot, in which case we
               refund you in full. If we cancel because of weather, safety or the boat, you choose between a full
               refund and a new date. Refunds go to the card you paid with within 2 business days; your bank may show
               them after 5 to 10.
             </p>
-            <p style={{ marginTop: 24 }}>
+            <p className="w-gap">
               Full terms:{" "}
               <Link className="lnk" href={SPEEDBOAT_TRANSFER.termsPath}>Terms of Service</Link>
             </p>

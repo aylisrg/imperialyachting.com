@@ -43,18 +43,18 @@ export async function generateMetadata({
     };
   }
 
-  const description = `Charter the ${yacht.name} in Dubai — ${yacht.tagline}. ${yacht.length.feet}ft ${yacht.builder}, up to ${yacht.capacity} guests. Book with Imperial Yachting at Dubai Harbour.`;
+  const description = `Charter the ${yacht.name} in Dubai: ${yacht.tagline}. ${yacht.length.feet}ft ${yacht.builder}, up to ${yacht.capacity} guests. Book with Imperial Yachting at Dubai Harbour.`;
   const pageUrl = `${SITE_CONFIG.url}/fleet/${yacht.slug}`;
   const heroImage = yacht.heroImage || yacht.images[0];
 
   return {
-    title: `${yacht.name} — ${yacht.tagline}`,
+    title: `${yacht.name}: ${yacht.tagline}`,
     description,
     alternates: {
       canonical: pageUrl,
     },
     openGraph: {
-      title: `${yacht.name} — ${yacht.tagline} | Imperial Yachting`,
+      title: `${yacht.name}: ${yacht.tagline} | Imperial Yachting`,
       description,
       url: pageUrl,
       type: "website",
@@ -64,22 +64,22 @@ export async function generateMetadata({
           url: heroImage,
           width: 1200,
           height: 630,
-          alt: `${yacht.name} — Luxury Yacht Charter Dubai | Imperial Yachting`,
+          alt: `${yacht.name}: Luxury Yacht Charter Dubai | Imperial Yachting`,
         },
         ...yacht.images.slice(0, 3).map((img) => ({
           url: img,
-          alt: `${yacht.name} — Imperial Yachting`,
+          alt: `${yacht.name}: Imperial Yachting`,
         })),
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${yacht.name} — ${yacht.tagline}`,
+      title: `${yacht.name}: ${yacht.tagline}`,
       description,
       images: [
         {
           url: heroImage,
-          alt: `${yacht.name} — Luxury Yacht Charter Dubai`,
+          alt: `${yacht.name}: Luxury Yacht Charter Dubai`,
         },
       ],
     },
@@ -139,7 +139,7 @@ export default async function YachtDetailPage({
         {clips ? (
           <WakeHero
             clip={clips.hero}
-            alt={`${yacht.name} — Imperial Yachting`}
+            alt={`${yacht.name}, Imperial Yachting`}
             crumb={crumb}
             short={false}
             title={yacht.name}
@@ -151,7 +151,7 @@ export default async function YachtDetailPage({
           <header className="w-hero short">
             {heroImage && (
               <div className="media">
-                <Image src={heroImage} alt={`${yacht.name} — Imperial Yachting`} fill priority sizes="100vw" style={{ objectFit: "cover" }} />
+                <Image src={heroImage} alt={`${yacht.name}, Imperial Yachting`} fill priority sizes="100vw" className="w-cover" />
               </div>
             )}
             <div className="shade" />
@@ -180,9 +180,9 @@ export default async function YachtDetailPage({
               <p>Discover what makes this vessel exceptional.</p>
             </WakeSplitTitle>
             <div>
-              <p className="w-prose" style={{ whiteSpace: "pre-line" }}>{yacht.description}</p>
+              <p className="w-prose w-pre">{yacht.description}</p>
               {lowestPrice && (
-                <div className="w-opt" style={{ paddingTop: 32 }}>
+                <div className="w-opt w-pad-t">
                   <div className="cap from">Charter from<b>AED {lowestPrice.amount.toLocaleString("en-US")} <small>{lowestPrice.unit}</small></b></div>
                 </div>
               )}
@@ -257,7 +257,7 @@ export default async function YachtDetailPage({
                   {yacht.pricing.map((season) => (
                     <tr key={season.season}>
                       <td>{season.season}</td>
-                      <td style={{ color: "var(--mute)" }}>{season.period}</td>
+                      <td className="w-mute">{season.period}</td>
                       {showHourly && <td>{formatPrice(season.hourly)}</td>}
                       <td>{formatPrice(season.daily)}</td>
                       <td>{formatPrice(season.weekly)}</td>
@@ -276,7 +276,7 @@ export default async function YachtDetailPage({
               </table>
             </div>
             {(yacht.dailyRules || yacht.weeklyRules) && (
-              <div className="w-opts o2" style={{ marginTop: 56 }}>
+              <div className="w-opts o2 w-after">
                 {yacht.dailyRules && <CharterRulesCard title="Daily Charter" rules={yacht.dailyRules} />}
                 {yacht.weeklyRules && <CharterRulesCard title="Weekly Charter" rules={yacht.weeklyRules} />}
               </div>
@@ -286,7 +286,7 @@ export default async function YachtDetailPage({
 
         {hourlyRate !== null && (
           <WakeSection>
-            <div className="iyh-legacy" style={{ maxWidth: 672, margin: "0 auto" }}>
+            <div className="iyh-legacy w-narrow">
               <PriceConstructor
                 yachtSlug={yacht.slug}
                 yachtName={yacht.name}
@@ -314,11 +314,10 @@ export default async function YachtDetailPage({
         <WakeSection tone="sand">
           <div className="w-split">
             <div>
-              <span className="cap">★★★★★ &nbsp;5.0 · 6 reviews</span>
-              <h2 className="serif" style={{ fontSize: "var(--fs-h3)", lineHeight: 1, marginTop: 12 }}>Chartered with us before?</h2>
+              <h2 className="serif w-h3">Chartered with us before?</h2>
             </div>
             <div>
-              <p style={{ fontSize: 17, marginBottom: 24 }}>A quick Google review helps other guests find us.</p>
+              <p className="w-lead">A quick Google review helps other guests find us.</p>
               <a className="btn" href={SITE_CONFIG.googleReviewUrl} target="_blank" rel="noopener noreferrer">Leave a Review</a>
             </div>
           </div>
@@ -326,7 +325,7 @@ export default async function YachtDetailPage({
 
         <WakeFaq title={<>Frequently asked<br />questions.</>} lead="Common questions about our fleet and charter options." items={buildYachtFAQ(yacht)} />
 
-        <WakeCta clip={clips?.card ?? "harbour-sunset"} alt={`${yacht.name} — Imperial Yachting`} title={<>Interested in the<br />{yacht.name}?</>}>
+        <WakeCta clip={clips?.cta ?? "harbour-sunset"} alt="Imperial Yachting on the water off Dubai" title={<>Interested in the<br />{yacht.name}?</>}>
           <a className="btn" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
           <Link className="btn o" href="/contact">Send Inquiry</Link>
           <p className="sub">Get in touch with our charter team for availability, custom itineraries, and special event packages.</p>

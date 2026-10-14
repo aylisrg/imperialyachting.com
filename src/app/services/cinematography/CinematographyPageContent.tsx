@@ -22,22 +22,20 @@ const equipment = [
   "Stabilized gimbal systems",
 ];
 
-// Portfolio entries as on the live page; each is shown over one of our own existing clips.
-const portfolio = [
-  { title: "Monte Carlo 6 Promo", category: "Yacht Promo", clip: "moneta-golden" },
-  { title: "Corporate Event Highlight", category: "Event Film", clip: "misha-onboard" },
-  { title: "Dubai Marina Aerial", category: "Drone Footage", clip: "evo43-run" },
-  { title: "Sunset Charter Reel", category: "Social Content", clip: "harbour-sunset" },
-  { title: "Van Dutch 40 Showcase", category: "Yacht Promo", clip: "vd40-aerial" },
-  { title: "Brand Story — Imperial Yachting", category: "Brand Video", clip: "ilia-harbour" },
+// Our own clips, captioned yacht and place as in the mockup (no client projects until real ones exist).
+const reel = [
+  { clip: "vd40-aerial", name: "Van Dutch 40", place: "Drone, off Dubai Harbour" },
+  { clip: "moneta-golden", name: "Moneta \u00b7 Monte Carlo 6", place: "Golden hour, Dubai Harbour" },
+  { clip: "route-canal", name: "Dubai Water Canal", place: "On the water" },
+  { clip: "vd40-skyline", name: "Van Dutch 40", place: "Guests on board, Dubai Marina" },
 ];
 
 export function CinematographyPageContent() {
   return (
     <WakePage>
       <WakeHero
-        clip="vd40-aerial"
-        alt="Aerial shot of the Van Dutch 40"
+        clip="evo43-run"
+        alt="Evo 43 under way off Dubai"
         crumb="Home / Services / Cinematographic Bureau"
         title={<>Yacht cinematography &amp;<br /><i>content production</i></>}
         lead="Professional film production, drone footage, and content creation for yachts, brands, and events. Powered by Imperial Yachting's in-house Cinematographic Bureau."
@@ -60,21 +58,21 @@ export function CinematographyPageContent() {
       </WakeSection>
 
       <WakeSection>
-        <WakeHead title={<>Our<br />work.</>}>A selection of recent projects from our Cinematographic Bureau.</WakeHead>
+        <WakeHead title={<>Our<br />work.</>}>Shot by the Bureau on our own fleet. Every clip on this site comes from our channel, youtube.com/@imperial_wave.</WakeHead>
         <div className="w-reels">
-          {portfolio.map((p) => (
-            <figure className="w-reel" key={p.title}>
-              <WakeMedia clip={p.clip} alt={p.title} />
+          {reel.map((r) => (
+            <figure className="w-reel" key={r.clip}>
+              <WakeMedia clip={r.clip} alt={`${r.name}, ${r.place}`} />
               <figcaption>
-                <span className="cap" style={{ color: "var(--copper)" }}>{p.category}</span>
-                <b>{p.title}</b>
+                <span className="cap w-kicker">{r.place}</span>
+                <b>{r.name}</b>
               </figcaption>
             </figure>
           ))}
         </div>
       </WakeSection>
 
-      <WakeCta clip="evo43-run" alt="Evo 43 running off Dubai" title={<>Ready to create<br />something stunning?</>}>
+      <WakeCta clip="route-skyline" alt="Dubai Marina skyline from the water" title={<>Ready to create<br />something stunning?</>}>
         <Link className="btn" href="/contact">Send an Inquiry</Link>
         <a className="btn o" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
         <p className="sub">Share your vision and our production team will craft a proposal tailored to your project.</p>
