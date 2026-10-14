@@ -7,7 +7,7 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { ContactForm } from "@/components/forms/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact Us — Book a Yacht Charter in Dubai",
+  title: "Contact Us: Book a Yacht Charter in Dubai",
   description:
     "Contact Imperial Yachting for yacht charter bookings, management services, or custom events. Call +971-52-8355939, WhatsApp, or fill out our inquiry form.",
   alternates: { canonical: `${SITE_CONFIG.url}/contact` },
@@ -21,12 +21,19 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Contact Us | Imperial Yachting",
-    description: "Book a yacht charter in Dubai — call, WhatsApp, or send an inquiry.",
+    description: "Book a yacht charter in Dubai. Call, WhatsApp, or send an inquiry.",
     images: ["/og-image.jpg"],
   },
 };
 
+// Order as in the mockup (design/pages/contact @ c0f9dc1): WhatsApp, Phone, Email.
 const contactCards = [
+  {
+    label: "WhatsApp",
+    value: "Chat with us",
+    href: SITE_CONFIG.whatsapp,
+    description: "Fastest response, available 7 days a week",
+  },
   {
     label: "Phone",
     value: SITE_CONFIG.phone,
@@ -38,12 +45,6 @@ const contactCards = [
     value: SITE_CONFIG.email,
     href: `mailto:${SITE_CONFIG.email}`,
     description: "For detailed inquiries and proposals",
-  },
-  {
-    label: "WhatsApp",
-    value: "Chat with us",
-    href: SITE_CONFIG.whatsapp,
-    description: "Fastest response — available 7 days a week",
   },
 ];
 
@@ -88,7 +89,7 @@ export default function ContactPage() {
                 rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
               >
                 <span className="ix">{String(i + 1).padStart(2, "0")}</span>
-                <span className="cap" style={{ color: "var(--copper)" }}>{card.label}</span>
+                <span className="cap w-kicker">{card.label}</span>
                 <b className="serif">{card.value}</b>
                 <span className="d">{card.description}</span>
               </a>
@@ -96,7 +97,7 @@ export default function ContactPage() {
           </div>
         </WakeSection>
 
-        <WakeSection>
+        <WakeSection tone="light">
           <div className="w-split">
             <WakeSplitTitle ix="01" title={<>Send us a<br />message.</>}>
               <p>Fill out the form below and we&apos;ll get back to you within 24 hours.</p>
@@ -126,7 +127,6 @@ export default function ContactPage() {
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.5!2d55.1386934!3d25.0917604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f6b0057a49cf9%3A0xbce4e8f21687dc38!2sImperial%20Yachting!5e0!3m2!1sen!2sae!4v1"
                 width="100%"
                 height="420"
-                style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -143,24 +143,23 @@ export default function ContactPage() {
               <p>Our charter operations and office hours.</p>
             </WakeSplitTitle>
             <div>
-              <ul className="w-list">
+              <ul className="w-list w-hours">
                 {operatingHours.map((item) => (
-                  <li key={item.day} style={{ justifyContent: "space-between" }}><span>{item.day}</span><b style={{ fontWeight: 500 }}>{item.hours}</b></li>
+                  <li key={item.day}><span>{item.day}</span><b>{item.hours}</b></li>
                 ))}
               </ul>
-              <p style={{ marginTop: 24 }}>
+              <p className="w-gap">
                 Charter departures are available outside standard hours upon request. Contact us for custom scheduling.
               </p>
             </div>
           </div>
         </WakeSection>
 
-        <WakeCta clip="vd40-aerial" alt="Van Dutch 40 from above" title={<>Loved your<br />experience?</>}>
+        <WakeCta clip="route-canal" alt="Dubai Water Canal from the water" title={<>Loved your<br />experience?</>}>
           <a className="btn" href={SITE_CONFIG.googleReviewUrl} target="_blank" rel="noopener noreferrer">Leave a Google Review ↗</a>
           <p className="sub">
             Your review helps other guests find us and means everything to our crew. It takes less than a minute.
           </p>
-          <p className="contacts cap">Currently ★ 5.0 based on 6 reviews</p>
         </WakeCta>
       </WakePage>
     </>

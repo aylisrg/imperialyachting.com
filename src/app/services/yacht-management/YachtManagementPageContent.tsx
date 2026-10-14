@@ -67,15 +67,15 @@ export function YachtManagementPageContent() {
       <WakeSection>
         <div className="w-split-media">
           <div>
-            <span className="cap" style={{ color: "var(--copper)" }}>Revenue Potential</span>
-            <h2 className="serif" style={{ fontSize: "var(--fs-h3)", lineHeight: 1, margin: "16px 0 24px" }}>
+            <span className="cap w-kicker">Revenue Potential</span>
+            <h2 className="serif w-h3">
               Turn your yacht into a performing asset
             </h2>
             <p className="w-prose">
               What your yacht earns comes down to three things: her size, her condition, and how many weeks you keep
               for yourself. We won&apos;t quote you an average, because an average is a number about somebody
               else&apos;s boat. Tell us the vessel and the dates you want to hold, and we&apos;ll put the charter
-              calendar and the running costs into a <span style={{ color: "var(--copper)" }}>written projection</span>{" "}
+              calendar and the running costs into a <span className="w-kicker">written projection</span>{" "}
               before you sign anything. Pricing across the season is our job. The arithmetic stays yours to check.
             </p>
             <div className="w-stats">
@@ -84,7 +84,7 @@ export function YachtManagementPageContent() {
               ))}
             </div>
           </div>
-          <WakeMedia clip="ilia-harbour" alt="Imperial Yachting team at Dubai Harbour" className="tall" />
+          <WakeMedia clip="harbour-traffic" alt="Yacht traffic at Dubai Harbour" className="tall" />
         </div>
       </WakeSection>
 
@@ -95,7 +95,7 @@ export function YachtManagementPageContent() {
 
       <WakeFaq title={<>Management<br />FAQ.</>} lead="Common questions about our yacht management services." items={managementFAQ} />
 
-      <WakeCta clip="vd40-aerial" alt="Van Dutch 40 from above" title={<>Schedule a<br />consultation.</>}>
+      <WakeCta clip="vd40-skyline" alt="Van Dutch 40 with the Dubai Marina skyline" title={<>Schedule a<br />consultation.</>}>
         <Link className="btn" href="/contact">Get in Touch</Link>
         <a className="btn o" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
         <p className="sub">Let us show you how Imperial Yachting can maximize your yacht&apos;s potential in Dubai&apos;s charter market.</p>
