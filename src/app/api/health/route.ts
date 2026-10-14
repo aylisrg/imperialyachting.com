@@ -55,6 +55,8 @@ export async function GET(request: Request) {
       ...(!dbErrored && yachtCount === 0 && { warning: DB_EMPTY_WARNING }),
       checks: report.checks,
       timestamp: report.timestamp,
+      // Build commit SHA (Docker build-arg GIT_SHA); null when unset.
+      commit: process.env.GIT_SHA?.trim() || null,
     },
     { status: httpStatus }
   );
