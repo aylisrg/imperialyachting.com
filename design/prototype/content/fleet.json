@@ -1,0 +1,5 @@
+[
+  {"slug":"vd-40","name":"Van Dutch 40","hull":"DT 2035","builder":"Van Dutch","loa":"12 m","guests":10,"built":2010,"refit":2024,"berth":"Dubai Harbour","clips":["vd40-aerial"]},
+  {"slug":"monte-carlo-6","name":"Moneta","hull":"DT 2720","builder":"Monte Carlo Yachts","model":"Monte Carlo 6","loa":"18 m","guests":18,"built":2016,"refit":2023,"berth":"Dubai Harbour","clips":["moneta-golden"]},
+  {"slug":"evo-43","name":"Evo 43","hull":"DP 4069","builder":"Evo","loa":"13 m","guests":12,"built":null,"refit":null,"berth":"Marasi Bay","clips":["evo43-run"]}
+]
