@@ -24,9 +24,11 @@ interface Props {
   /** Hero: poster is the LCP image (priority), clip autoloads on mount. */
   hero?: boolean;
   sizes?: string;
+  /** Load the poster eagerly (no lazy loading) without making it a priority/LCP image. */
+  eager?: boolean;
 }
 
-export function HomeVideo({ clip, alt, hero = false, sizes = "100vw" }: Props) {
+export function HomeVideo({ clip, alt, hero = false, sizes = "100vw", eager = false }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const [src, setSrc] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -82,7 +84,7 @@ export function HomeVideo({ clip, alt, hero = false, sizes = "100vw" }: Props) {
         sizes={sizes}
         priority={hero}
         fetchPriority={hero ? "high" : undefined}
-        loading={hero ? "eager" : "lazy"}
+        loading={hero || eager ? "eager" : "lazy"}
       />
       <video
         ref={ref}
