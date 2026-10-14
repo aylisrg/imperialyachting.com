@@ -4,11 +4,7 @@ import type { Vacancy } from "@/lib/careers/pms";
 export const FAQ: [string, string][] = [
   [
     "Do I need a UAE visa to apply?",
-    "No. We sponsor the residence visa for full-time roles after the interview. If you already hold a UAE visa, tell us in the form and we will speed things up.",
-  ],
-  [
-    "How long does hiring take?",
-    "Usually 7–10 days: we read your CV within two working days, call you if it fits, then a short interview and an offer.",
+    "No. Tell us your current visa status in the form.",
   ],
   [
     "Can I apply for more than one role?",

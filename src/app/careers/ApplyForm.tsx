@@ -182,16 +182,12 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
               <span>Application received</span>
             </div>
             <div>
-              <b>2 · 1–2 days</b>
+              <b>2 · Next</b>
               <span>We read your CV</span>
             </div>
             <div>
-              <b>3 · Within a week</b>
-              <span>Call and interview</span>
-            </div>
-            <div>
-              <b>4 · After</b>
-              <span>Offer and visa</span>
+              <b>3 · If it fits</b>
+              <span>We contact you</span>
             </div>
           </div>
           <div className="cta" style={{ justifyContent: "center" }}>
@@ -391,9 +387,8 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
             <div className="k">Open application</div>
             <b>No position yet? No problem.</b>
             <ol>
-              <li>We read your answers within two working days</li>
-              <li>If it clicks, a call with the founders</li>
-              <li>We build a role around you — or tell you honestly why not</li>
+              <li>We read your answers</li>
+              <li>If it fits, we contact you</li>
             </ol>
           </aside>
         ) : (
@@ -404,10 +399,8 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
               <Pills v={v} />
             </div>
             <ol>
-              <li>We read your CV within two working days</li>
-              <li>A short call with our HR if it fits</li>
-              <li>Interview with the team lead</li>
-              <li>Offer and visa paperwork</li>
+              <li>We read your CV</li>
+              <li>If it fits, we contact you</li>
             </ol>
           </aside>
         )}
