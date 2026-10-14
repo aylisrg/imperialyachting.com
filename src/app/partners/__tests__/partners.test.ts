@@ -34,3 +34,15 @@ describe("/partners (Wake redesign, new page)", () => {
     expect(fleetLines()[1]).toBe("Moneta · Monte Carlo 6 · 18 m · up to 18 guests · Dubai Harbour");
   });
 });
+
+describe("/partners berth and metadata (design review #46)", () => {
+  const page = fs.readFileSync(path.resolve(__dirname, "../page.tsx"), "utf8");
+  it("names both berths: Evo 43 lies at Marasi Bay", () => {
+    expect(src).toContain("Base<b>Dubai Harbour · Marasi Bay</b>");
+    expect(page).not.toMatch(/fleet owner at Dubai Harbour\./);
+    expect(page.match(/Marasi Bay/g)?.length).toBe(3);
+  });
+  it("has no em dash in the page copy or metadata", () => {
+    expect(src + page).not.toContain("\u2014");
+  });
+});

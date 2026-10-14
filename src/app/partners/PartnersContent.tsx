@@ -22,7 +22,7 @@ export function PartnersContent({ partners = NAMED_PARTNERS }: { partners?: read
         alt="Van Dutch 40 at speed off Dubai Harbour"
         crumb="Home / Partners"
         title={<>Work<br />with us.</>}
-        lead="For agents and service providers. Direct with the fleet owner at Dubai Harbour."
+        lead="For agents and service providers. Direct with the fleet owner at Dubai Harbour and Marasi Bay."
       >
         <div className="acts"><a className="btn" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">Request terms</a></div>
       </WakeHero>
@@ -61,7 +61,7 @@ export function PartnersContent({ partners = NAMED_PARTNERS }: { partners?: read
         <div className="w-facts cap">
           <div>Company<b>Imperial Charter Yachting Services L.L.C</b></div>
           <div>Licence<b>{SITE_CONFIG.license}</b></div>
-          <div>Base<b>Dubai Harbour</b></div>
+          <div>Base<b>Dubai Harbour · Marasi Bay</b></div>
           <div>Services<b>Charter · Management · Cinematography · Brandwave</b></div>
         </div>
       </WakeSection>

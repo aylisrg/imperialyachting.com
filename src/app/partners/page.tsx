@@ -5,13 +5,13 @@ import { breadcrumbSchema } from "@/components/seo/schemas";
 import { PartnersContent } from "./PartnersContent";
 
 export const metadata: Metadata = {
-  title: "Partners — Work with Imperial Yachting, Dubai Harbour",
+  title: "Partners · Work with Imperial Yachting, Dubai Harbour and Marasi Bay",
   description:
-    "For travel agents, concierges, event and production teams and service providers: work directly with the fleet owner at Dubai Harbour. Terms on request.",
+    "For travel agents, concierges, event and production teams and service providers: work directly with the fleet owner at Dubai Harbour and Marasi Bay. Terms on request.",
   alternates: { canonical: `${SITE_CONFIG.url}/partners` },
   openGraph: {
     title: `Partners | ${SITE_CONFIG.name}`,
-    description: "Work directly with the fleet owner at Dubai Harbour. Terms for agents and service providers on request.",
+    description: "Work directly with the fleet owner at Dubai Harbour and Marasi Bay. Terms for agents and service providers on request.",
     url: `${SITE_CONFIG.url}/partners`,
     images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Partners, Imperial Yachting" }],
   },
