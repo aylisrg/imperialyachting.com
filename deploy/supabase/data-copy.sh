@@ -19,10 +19,14 @@ copy_db() {
   log "safety backup of self-hosted db first"; bash "$SB_DIR/backup.sh"
   log "dumping cloud data (public + auth.users/identities), url not shown"
   # Pass the URL as an env var name only; value never appears in argv or logs.
+  # Do not combine --schema and --table: pg_dump ignores -n when -t is set,
+  # so one command would dump only the auth tables and the TRUNCATE below
+  # would wipe public data.
   docker exec -e SUPABASE_CLOUD_DB_URL supabase-db sh -c \
     'pg_dump "$SUPABASE_CLOUD_DB_URL" --data-only --no-owner --no-privileges --column-inserts --rows-per-insert=500 \
-       --schema=public --table=auth.users --table=auth.identities \
-       --exclude-table=public.schema_migrations' > "$WORK/cloud-data.sql"
+       --schema=public --exclude-table=public.schema_migrations \
+     && pg_dump "$SUPABASE_CLOUD_DB_URL" --data-only --no-owner --no-privileges --column-inserts --rows-per-insert=500 \
+       --table=auth.users --table=auth.identities' > "$WORK/cloud-data.sql"
   log "dump size: $(du -h "$WORK/cloud-data.sql" | cut -f1)"
   log "restoring into self-hosted (one transaction, triggers off)"
   {
@@ -55,7 +59,7 @@ copy_storage() {
   svc=$(sed -n 's/^SERVICE_ROLE_KEY=//p' "$SB_ENV")
   mkdir -p "$WORK"; chmod 700 "$WORK"; list="$WORK/objects.tsv"
   docker exec -e SUPABASE_CLOUD_DB_URL supabase-db sh -c \
-    'psql "$SUPABASE_CLOUD_DB_URL" -XtA -F "	" -c "select bucket_id, name, coalesce(metadata->>'"'"'mimetype'"'"','"'"'application/octet-stream'"'"') from storage.objects where name not like '"'"'%.emptyFolderPlaceholder'"'"' order by 1,2"' > "$list"
+    'psql "$SUPABASE_CLOUD_DB_URL" -XtA -F "\t" -c "select bucket_id, name, coalesce(metadata->>'"'"'mimetype'"'"','"'"'application/octet-stream'"'"') from storage.objects where name not like '"'"'%.emptyFolderPlaceholder'"'"' order by 1,2"' > "$list"
   log "objects in cloud: $(wc -l < "$list")"
   # make sure every cloud bucket exists locally with the same settings
   docker exec -e SUPABASE_CLOUD_DB_URL supabase-db sh -c \
