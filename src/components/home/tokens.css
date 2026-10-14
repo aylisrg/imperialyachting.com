@@ -12,6 +12,7 @@
   --s-1:6px; --s-2:10px; --s-3:18px; --s-4:24px; --s-5:40px; --s-6:56px; --s-7:72px; --s-8:104px; --s-9:140px;
   --fs-h2-st:96px; --fs-h3-sm:44px; --fs-quote:32px; --fs-price-sm:34px; --fs-stat:56px; --fs-sm:15px; --fs-chan:40px;
   --shade-hero-top:rgba(8,32,42,.15); --shade-hero-bottom:rgba(8,32,42,.6); --shade-cta:rgba(14,90,97,.45);
+  --mw-card:340px;
   --gutter:56px; --nav-h:84px; --nav-h-solid:64px;
   --radius:0; --radius-pill:999px;
   --ease-menu:cubic-bezier(.7,0,.2,1); --dur-menu:.7s; --dur-nav:.4s; --dur-reveal:1.4s;

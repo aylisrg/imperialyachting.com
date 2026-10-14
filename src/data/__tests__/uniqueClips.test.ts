@@ -9,6 +9,7 @@ import path from "node:path";
  */
 const PAGES = [
   "src/app/about/AboutPageContent.tsx",
+  "src/app/destinations/dock-and-dine-dubai/DockAndDineContent.tsx",
 ];
 
 function literalClips(file: string): string[] {
