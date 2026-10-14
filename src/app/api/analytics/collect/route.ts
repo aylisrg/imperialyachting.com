@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createAdminSupabase } from "@/lib/supabase/admin";
 import { fetchWeeklyData } from "@/lib/analytics/ga-client";
 import { analyzeWithClaude } from "@/lib/analytics/claude-analyzer";
 import { sendTelegramNotification } from "@/lib/analytics/telegram-notifier";
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = await createServerSupabase();
+  const supabase = createAdminSupabase();
 
   // Calculate date range (last 7 days)
   const endDate = new Date();
