@@ -26,3 +26,20 @@
 3. Проверить: `curl -sI https://imperialyachting.com`
 
 Старые релизы сверх `IY_KEEP` удаляются вместе с их образами (`docker image rm`). Временная папка `.new-XXXX` удаляется при любой ошибке.
+
+## Превью new
+Отдельный экземпляр для new.imperialyachting.com, прод не трогает: проект `imperialyachting-preview`, папка `/srv/imperialyachting-preview` (свои `releases/` и `current`), порт 3001. Видео общие, из `/srv/imperialyachting/videos/`.
+
+Команды по порядку:
+1. DNS: A-запись `new` на `204.168.159.132`. Проверка: `dig +short new.imperialyachting.com`
+2. Env: `sudo mkdir -p /srv/imperialyachting-preview/shared` и положить туда свой `.env.production`. Можно ссылку на продовый: `ln -s /srv/imperialyachting/shared/.env.production /srv/imperialyachting-preview/shared/.env.production` (тогда превью работает с теми же ключами и базой). Так же для `.env`, если он есть.
+3. Nginx:
+   `sudo cp deploy/nginx-videos.conf /etc/nginx/snippets/imperial-videos.conf`
+   `sudo cp deploy/nginx-preview.conf /etc/nginx/sites-available/new.imperialyachting.com`
+   `sudo ln -s ../sites-available/new.imperialyachting.com /etc/nginx/sites-enabled/`
+   `sudo nginx -t && sudo systemctl reload nginx`
+4. TLS: `sudo certbot --nginx -d new.imperialyachting.com`
+5. Деплой: `bash deploy/vps-deploy.sh --preview deploy <ветка>`
+6. Видео: `bash deploy/vps-deploy.sh --preview videos-check`
+
+Откат превью: `bash deploy/vps-deploy.sh --preview rollback`. Без `--preview` все команды работают с продом как раньше.

@@ -1,21 +1,38 @@
 #!/usr/bin/env bash
 # VPS deploy for imperialyachting.com (docker compose, one image tag per release).
-# Usage: deploy/vps-deploy.sh diagnose | deploy <ref> | rollback | videos-check [clip]
+# Usage: deploy/vps-deploy.sh [--preview] diagnose | deploy <ref> | rollback | videos-check [clip]
+# --preview (or IY_ENV=preview): separate instance for new.imperialyachting.com
+# (own project, base dir, releases, port 3001). Prod defaults are unchanged.
 # Never prints env files or secrets.
 set -euo pipefail
 
-BASE="${IY_BASE:-/srv/imperialyachting}"
+ARGS=()
+for a in "$@"; do
+  if [ "$a" = "--preview" ]; then IY_ENV=preview; else ARGS+=("$a"); fi
+done
+set -- "${ARGS[@]+"${ARGS[@]}"}"
+IY_ENV="${IY_ENV:-prod}"
+if [ "$IY_ENV" = "preview" ]; then
+  D_BASE=/srv/imperialyachting-preview; D_PROJECT=imperialyachting-preview
+  D_PORT=3001; D_SITE=https://new.imperialyachting.com
+else
+  D_BASE=/srv/imperialyachting; D_PROJECT=imperialyachting
+  D_PORT=3000; D_SITE=https://imperialyachting.com
+fi
+
+BASE="${IY_BASE:-$D_BASE}"
 RELEASES="$BASE/releases"
 SHARED="$BASE/shared"          # .env.production (+ optional .env) live here, not in git
 CURRENT="$BASE/current"
 REPO="${IY_REPO:-https://github.com/aylisrg/imperialyachting.com.git}"
-PROJECT="${IY_PROJECT:-imperialyachting}"
+PROJECT="${IY_PROJECT:-$D_PROJECT}"
+export IY_PORT="${IY_PORT:-$D_PORT}"   # used by docker-compose.yml ports
 IMAGE="${IY_IMAGE:-imperialyachting}"
-HEALTH_URL="${IY_HEALTH_URL:-http://127.0.0.1:3000/api/health}"
-SITE_URL="${IY_SITE_URL:-https://imperialyachting.com}"
+HEALTH_URL="${IY_HEALTH_URL:-http://127.0.0.1:$IY_PORT/api/health}"
+SITE_URL="${IY_SITE_URL:-$D_SITE}"
 KEEP="${IY_KEEP:-5}"
 
-log() { printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*"; }
+log() { printf "[%s] " "$IY_ENV"; printf '[%s] %s\n' "$(date +%H:%M:%S)" "$*"; }
 die() { log "ERROR: $*"; exit 1; }
 redact() { grep -viE 'key|secret|password|passwd|token|auth' || true; }
 
@@ -58,16 +75,16 @@ health() { # $1 = release dir
 # Anything that serves the site outside our compose project (first deploy case).
 legacy_report() {
   local found=0 out
-  out="$(docker ps --filter publish=3000 --format '{{.Names}} {{.Image}} project={{.Label "com.docker.compose.project"}}' 2>/dev/null | grep -v "project=${PROJECT}\$" || true)"
-  [ -n "$out" ] && { echo "  docker on :3000: $out"; found=1; }
+  out="$(docker ps --filter "publish=$IY_PORT" --format '{{.Names}} {{.Image}} project={{.Label "com.docker.compose.project"}}' 2>/dev/null | grep -v "project=${PROJECT}\$" || true)"
+  [ -n "$out" ] && { echo "  docker on :$IY_PORT: $out"; found=1; }
   if command -v pm2 >/dev/null 2>&1; then
     out="$(pm2 jlist 2>/dev/null | grep -oE '"name":"[^"]+"' | sort -u | tr '\n' ' ' || true)"
     [ -n "$out" ] && { echo "  pm2: $out"; found=1; }
   fi
   out="$(systemctl list-units --type=service --state=running --no-pager --plain 2>/dev/null | grep -iE 'node|next|imperial' | awk '{print $1}' | tr '\n' ' ' || true)"
   [ -n "$out" ] && { echo "  systemd: $out"; found=1; }
-  out="$(sudo ss -ltnp 'sport = :3000' 2>/dev/null | tail -n +2 || true)"
-  [ -n "$out" ] && { echo "  port 3000: $out"; found=1; }
+  out="$(sudo ss -ltnp "sport = :$IY_PORT" 2>/dev/null | tail -n +2 || true)"
+  [ -n "$out" ] && { echo "  port $IY_PORT: $out"; found=1; }
   return $((1 - found))
 }
 
@@ -142,7 +159,7 @@ cmd_deploy() {
     prev=""
     log "FIRST DEPLOY: no previous release in $RELEASES, automatic rollback impossible."
     if legacy_report; then
-      log "An old site process is running (listed above). If it holds port 3000 the new container cannot start."
+      log "An old site process is running (listed above). If it holds port $IY_PORT the new container cannot start."
       log "Stop it yourself first, or Ctrl+C now. Continuing in 10s."
       sleep 10
     fi

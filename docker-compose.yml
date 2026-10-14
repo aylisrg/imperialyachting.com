@@ -11,7 +11,7 @@ services:
         GIT_SHA: ${GIT_SHA:-}
     env_file: .env.production
     ports:
-      - "127.0.0.1:3000:3000" # nginx in front terminates TLS
+      - "127.0.0.1:${IY_PORT:-3000}:3000" # nginx in front terminates TLS; preview uses 3001
     volumes:
       - next-cache:/app/.next/cache # persistent image/ISR cache
     restart: unless-stopped
