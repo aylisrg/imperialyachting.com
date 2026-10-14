@@ -20,7 +20,7 @@ const pillars = [
     icon: MapPin,
     title: "Dubai Harbour",
     description:
-      "Our fleet is berthed at Dubai Harbour Yacht Club, one of the city's most prestigious marinas, ideally located between Palm Jumeirah and Bluewaters Island.",
+      "The Van Dutch 40 and Monte Carlo 6 are berthed at Dubai Harbour Yacht Club, between Palm Jumeirah and Bluewaters Island, and the EVO 43 at Marasi Bay.",
   },
 ];
 
