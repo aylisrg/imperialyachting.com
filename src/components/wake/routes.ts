@@ -11,10 +11,11 @@ export const WAKE_ROUTES: readonly string[] = [
   "/services/yacht-management",
   "/services/cinematography",
   "/services/brandwave",
+  "/fleet",
 ];
 
 /** Dynamic route prefixes (e.g. "/fleet/" for yacht pages). */
-export const WAKE_PREFIXES: readonly string[] = [];
+export const WAKE_PREFIXES: readonly string[] = ["/fleet/"];
 
 export function isWakeRoute(pathname: string): boolean {
   const p = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
