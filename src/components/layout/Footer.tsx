@@ -86,14 +86,6 @@ export function Footer() {
               ))}
               <li>
                 <Link
-                  href="/documents"
-                  className="text-sm text-white/50 hover:text-gold-400 transition-colors"
-                >
-                  Documents
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/ai"
                   className="text-sm text-white/50 hover:text-gold-400 transition-colors"
                 >

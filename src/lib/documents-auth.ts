@@ -4,70 +4,128 @@ import crypto from "node:crypto";
 import { cookies } from "next/headers";
 
 /**
- * Shared-password gate for the private /documents portal.
+ * Email magic-link access for the /documents portal.
  *
- * A single password (DOCUMENTS_PASSWORD) unlocks the portal. On success an
- * httpOnly, signed cookie is issued so the visitor stays unlocked without the
- * password ever being stored client-side. The same cookie is verified before
- * any document file is streamed, so the PDFs are never reachable by direct URL
- * without unlocking first.
+ * The page itself is public (and indexed); downloading the PDFs and seeing the
+ * bank details needs a confirmed email. A visitor asks for a sign-in link, we
+ * email a short-lived signed token, and following it issues a longer-lived
+ * signed session cookie that carries the email — so every download is tied to
+ * a real, confirmed address. Tokens are stateless HMACs: rotating the secret
+ * signs everyone out.
  */
 
 export const DOCUMENTS_COOKIE = "imperial_docs_session";
 
-// Session lifetime: 7 days.
-export const DOCUMENTS_SESSION_MAX_AGE = 60 * 60 * 24 * 7;
+/** Session lifetime after following a sign-in link: 30 days. */
+export const DOCUMENTS_SESSION_MAX_AGE = 60 * 60 * 24 * 30;
 
-// Fallback password used only when DOCUMENTS_PASSWORD is not configured.
-// IMPORTANT: set DOCUMENTS_PASSWORD in the environment for production — see
-// DOCUMENTS_RU.md. This default exists so the page never hard-fails locally.
-const FALLBACK_PASSWORD = "ImperialDocs2025";
+/** How long an emailed sign-in link stays valid: 24 hours. */
+export const DOCUMENTS_LINK_TTL = 60 * 60 * 24;
 
-// Static payload that gets signed. Changing the password invalidates all
-// existing sessions automatically because the password is part of the key.
-const TOKEN_PAYLOAD = "imperial-docs-session-v1";
+type TokenPurpose = "link" | "session";
 
-export function getDocumentsPassword(): string {
-  return process.env.DOCUMENTS_PASSWORD?.trim() || FALLBACK_PASSWORD;
+interface TokenPayload {
+  /** Purpose — a link token can never be used as a session and vice versa. */
+  p: TokenPurpose;
+  /** Email, lowercased. */
+  m: string;
+  /** Expiry, epoch seconds. */
+  x: number;
 }
 
-function getSigningKey(): string {
-  // A dedicated secret is preferred; fall back to deriving from the password
-  // so the gate works with a single env var if that is all that is set.
-  const secret = process.env.DOCUMENTS_SESSION_SECRET?.trim();
-  if (secret) return secret;
-  return `imperial-docs::${getDocumentsPassword()}`;
+function getSecret(): string | null {
+  const dedicated = process.env.DOCUMENTS_SESSION_SECRET?.trim();
+  if (dedicated) return dedicated;
+  // Derive from a secret that is always present in production, so the
+  // portal works without one more env var.
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  return serviceKey ? `imperial-docs::${serviceKey}` : null;
 }
 
-function timingSafeEqual(a: string, b: string): boolean {
-  const bufA = Buffer.from(a);
-  const bufB = Buffer.from(b);
-  if (bufA.length !== bufB.length) return false;
-  return crypto.timingSafeEqual(bufA, bufB);
+/** True when tokens can be signed, i.e. the portal can grant access at all. */
+export function isDocumentsAuthConfigured(): boolean {
+  return getSecret() !== null;
 }
 
-/** Constant-time comparison of a submitted password against the configured one. */
-export function isPasswordValid(submitted: string): boolean {
-  if (typeof submitted !== "string" || submitted.length === 0) return false;
-  return timingSafeEqual(submitted, getDocumentsPassword());
+export function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
 }
 
-/** Create the signed session token to store in the cookie. */
-export function createSessionToken(): string {
-  return crypto
-    .createHmac("sha256", getSigningKey())
-    .update(TOKEN_PAYLOAD)
-    .digest("hex");
+function sign(body: string, secret: string): string {
+  return crypto.createHmac("sha256", secret).update(body).digest("base64url");
 }
 
-/** Verify a session token previously issued by createSessionToken(). */
-export function isSessionTokenValid(token: string | undefined): boolean {
-  if (!token) return false;
-  return timingSafeEqual(token, createSessionToken());
+function createToken(
+  purpose: TokenPurpose,
+  email: string,
+  ttlSeconds: number,
+  now: number
+): string | null {
+  const secret = getSecret();
+  if (!secret) return null;
+  const payload: TokenPayload = {
+    p: purpose,
+    m: normalizeEmail(email),
+    x: Math.floor(now / 1000) + ttlSeconds,
+  };
+  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  return `${body}.${sign(body, secret)}`;
 }
 
-/** Read the request cookies and report whether the visitor is unlocked. */
-export async function isUnlocked(): Promise<boolean> {
+function verifyToken(
+  purpose: TokenPurpose,
+  token: string | null | undefined,
+  now: number
+): string | null {
+  const secret = getSecret();
+  if (!secret || typeof token !== "string") return null;
+
+  const [body, signature, extra] = token.split(".");
+  if (!body || !signature || extra !== undefined) return null;
+
+  const expected = Buffer.from(sign(body, secret));
+  const given = Buffer.from(signature);
+  if (expected.length !== given.length || !crypto.timingSafeEqual(expected, given)) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(Buffer.from(body, "base64url").toString()) as TokenPayload;
+    if (payload.p !== purpose || typeof payload.m !== "string" || !payload.m) return null;
+    if (typeof payload.x !== "number" || payload.x * 1000 < now) return null;
+    return payload.m;
+  } catch {
+    return null;
+  }
+}
+
+/** Token for the emailed sign-in link; null when no signing secret is configured. */
+export function createAccessLinkToken(email: string, now: number = Date.now()): string | null {
+  return createToken("link", email, DOCUMENTS_LINK_TTL, now);
+}
+
+/** The email a sign-in link was issued to, or null if forged, malformed or expired. */
+export function verifyAccessLinkToken(token: string | null | undefined, now: number = Date.now()): string | null {
+  return verifyToken("link", token, now);
+}
+
+/** Token stored in the session cookie once a sign-in link has been followed. */
+export function createSessionToken(email: string, now: number = Date.now()): string | null {
+  return createToken("session", email, DOCUMENTS_SESSION_MAX_AGE, now);
+}
+
+/** The signed-in email for a session cookie value, or null. */
+export function verifySessionToken(token: string | null | undefined, now: number = Date.now()): string | null {
+  return verifyToken("session", token, now);
+}
+
+export interface DocumentsViewer {
+  email: string;
+}
+
+/** Reads the request cookies and returns the confirmed visitor, if any. */
+export async function getDocumentsViewer(): Promise<DocumentsViewer | null> {
   const store = await cookies();
-  return isSessionTokenValid(store.get(DOCUMENTS_COOKIE)?.value);
+  const email = verifySessionToken(store.get(DOCUMENTS_COOKIE)?.value);
+  return email ? { email } : null;
 }
