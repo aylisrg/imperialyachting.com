@@ -1,6 +1,6 @@
 # HANDOFF: imperialyachting.com, передача новой команде
 
-Составлено 14.10.2026 только по репо, PR и issues. «Не проверено» = в репо нет подтверждения.
+Составлено 14.10.2026 только по репо, PR и issues. Статусы PR на 14.10.2026 10:30 (Дубай), сверять с GitHub по факту. «Не проверено» = в репо нет подтверждения.
 
 ## 1. Что уже в main
 - Редизайн Wake (#46): #48 главная, #49 услуги + 5 страниц услуг, #50 флот + страница яхты, #51 контакты, #57 About.
@@ -17,7 +17,7 @@
 | #53 | draft | Миграция `011_fix_moneta_capacity_builder.sql` (Moneta: 18 гостей, Monte Carlo Yachts) | Применить на БД VPS после бэкапа |
 | #55 | draft | `deploy/supabase/`: self-hosted Supabase (план в #54) | Живой запуск стека не делался. Должен подтянуть main после #47 |
 | #56 | ready, MERGEABLE | Папка `design/` (гайды, макеты, ревью, постеры) | **Мерджить только squash**: в истории ветки ~99 МБ видео прототипа |
-| #58 | draft, CONFLICTING | Destinations (#46) | База была #57 (уже в main), нужен rebase на main |
+| #58 | draft, MERGEABLE | Destinations (#46) | Ревью QA/дизайна |
 | #59 | draft | Blog (#46), стек на #58 | Мерджить после #58 |
 | #60 | draft | Partners (#46), стек на #59, блок партнёров скрыт | После #59; список партнёров от владельца |
 | #61 | draft | Guard клипов: без `NEXT_PUBLIC_CLIP_BASE_URL` только постеры | Перед мержем выставить переменную (раздел 5) |
@@ -39,7 +39,8 @@
    sudo git clone https://github.com/aylisrg/imperialyachting.com /srv/imperialyachting/infra
    cd /srv/imperialyachting/infra && sudo git checkout infra/self-hosted-supabase   # после мержа: main
    ```
-   Нужны `docker compose`, `openssl`, `jq`, `curl`. Не проверено: содержит ли ветка #55 файлы из #47 (до мержа #47 в main их нет).
+   Нужны `docker compose`, `openssl`, `jq`, `curl`. Ветка #55 не содержит файлов #47. До мержа #47 выполнить:
+   `sudo git fetch origin pull/47/head:pr47 && sudo git checkout pr47 -- deploy/vps-deploy.sh deploy/nginx-videos.conf deploy/nginx-preview.conf deploy/README.md`
 2. Видео:
    ```
    sudo cp deploy/nginx-videos.conf /etc/nginx/snippets/imperial-videos.conf
@@ -47,12 +48,18 @@
    sudo nginx -t && sudo systemctl reload nginx
    bash deploy/vps-deploy.sh videos-check    # ждём 206
    ```
+   Превью new (после snippet videos, конфиг превью его подключает; env превью см. `deploy/README.md` #47):
+   ```
+   sudo cp deploy/nginx-preview.conf /etc/nginx/sites-available/new.imperialyachting.com && sudo ln -s ../sites-available/new.imperialyachting.com /etc/nginx/sites-enabled/ && sudo nginx -t && sudo systemctl reload nginx && sudo certbot --nginx -d new.imperialyachting.com
+   ```
 3. Supabase:
    ```
    bash deploy/supabase/supabase-setup.sh init
+   # заполнить в shared/supabase.env: SMTP_ADMIN_EMAIL, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
    bash deploy/supabase/supabase-setup.sh up
    bash deploy/supabase/supabase-setup.sh status   # /rest/v1/ -> 200, /auth/v1/health -> 200
    ```
+   Без SMTP не будет входа в админку по почте (смоук, шаг 8). Если SMTP заполнили после `up`, ещё раз `supabase-setup.sh up`.
 4. Nginx + TLS для db:
    ```
    sudo cp deploy/supabase/nginx-db.conf /etc/nginx/sites-available/db.imperialyachting.com
@@ -68,18 +75,19 @@
    export SUPABASE_CLOUD_URL=https://<ref>.supabase.co
    bash deploy/supabase/data-copy.sh all --yes
    ```
+   **Шаги 7 и 9 только после мержа #47 в main** (`deploy main` собирает образ из main, Dockerfile и standalone есть только в #47). До деплоя добавить `NEXT_PUBLIC_CLIP_BASE_URL` (раздел 5).
 7. Превью: `bash deploy/supabase/supabase-setup.sh app-env preview`, затем `bash deploy/vps-deploy.sh --preview deploy main`.
 8. QA-смоук на new: главная и флот с фото, яхта, вход в админку по почте, загрузка фото, заявка, `/api/health`.
 9. Прод: `bash deploy/supabase/supabase-setup.sh app-env prod`, `bash deploy/vps-deploy.sh deploy main`, тот же смоук. Если в облаке появились новые заявки, перед этим `data-copy.sh db --yes`.
-10. SMTP_* в `shared/supabase.env` (magic link, письма админам). Встроенной почты нет.
+10. SMTP_* уже заполнены в шаге 3 (встроенной почты нет).
 11. Бэкап (root crontab, 14 дней):
     `30 3 * * * /srv/imperialyachting/infra/deploy/supabase/backup.sh >> /srv/imperialyachting/backups/backup.log 2>&1`
 12. Откат: `bash deploy/supabase/supabase-setup.sh app-env-rollback preview|prod` и деплой той же командой. Откат релиза: `bash deploy/vps-deploy.sh [--preview] rollback`.
 
-Риски из README #55: сессии админов сбросятся; ссылки `*.supabase.co` в БД нужно заменить отдельным SQL после проверки превью; первый деплой без релизов не откатывается автоматически (см. `deploy/README.md`).
+Риски из README #55: после переключения все админы входят заново (magic link на почту); ссылки `*.supabase.co` перечисляет `data-copy.sh` в конце вывода, заменить их на `https://db.imperialyachting.com` отдельным SQL после смоука превью; первый деплой без релизов не откатывается автоматически (см. `deploy/README.md`).
 
 ## 5. Переменные окружения (значения не приводятся)
-- `NEXT_PUBLIC_CLIP_BASE_URL=/videos`: **в обоих местах**, Vercel и `/srv/imperialyachting/shared/.env.production`. Иначе после #61 только постеры.
+- `NEXT_PUBLIC_CLIP_BASE_URL=/videos`: **везде**: Vercel (Production и Preview), `/srv/imperialyachting/shared/.env.production` и `/srv/imperialyachting-preview/shared/.env.production` (если это не ссылка на продовый). Вшивается при сборке, поэтому добавить до деплоя в шагах 7/9. Иначе после #61 только постеры.
 - Supabase: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (на VPS ставит `app-env`).
 - Stripe: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PUBLISHABLE_KEY`.
 - Google: `GOOGLE_CALENDAR_SERVICE_ACCOUNT_KEY`, `GOOGLE_SERVICE_ACCOUNT_KEY`, `GOOGLE_ANALYTICS_PROPERTY_ID`.
@@ -96,6 +104,7 @@
 1. `011_fix_moneta_capacity_builder.sql` (#53, не в main)
 2. `012_analytics_rls_authenticated.sql` (#41, в main)
 3. `013_document_access.sql` (#43, не в main)
+После мержа #53/#43: `cd /srv/imperialyachting/infra && sudo git pull`, затем `bash deploy/supabase/migrate.sh --dry-run` и `bash deploy/supabase/migrate.sh` (или `--only 011_fix_moneta_capacity_builder.sql`). `migrate.sh` берёт файлы из `supabase/migrations` текущего чекаута.
 Если 011 смерджат после копии данных, повторить `data-copy.sh db --yes` или применить 011 и в облаке.
 
 ## 7. Открытые вопросы к владельцу
