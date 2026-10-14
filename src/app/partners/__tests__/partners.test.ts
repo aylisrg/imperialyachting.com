@@ -17,7 +17,7 @@ describe("/partners (Wake redesign, new page)", () => {
   it("names no partners until they agree, and then shows no partners block at all", () => {
     expect(NAMED_PARTNERS).toEqual([]);
     expect(src).toMatch(/partners\.length \? \(\s*<WakeSection id="partners-list">/);
-    expect(src).not.toMatch(/once they agree to be named|No partners/);
+    expect(src).not.toMatch(/once they agree to be named|w-empty/);
   });
 
   it("uses only manifest clips", () => {
