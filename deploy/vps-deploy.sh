@@ -11,7 +11,7 @@ CURRENT="$BASE/current"
 REPO="${IY_REPO:-https://github.com/aylisrg/imperialyachting.com.git}"
 PROJECT="${IY_PROJECT:-imperialyachting}"
 IMAGE="${IY_IMAGE:-imperialyachting}"
-HEALTH_URL="${IY_HEALTH_URL:-http://127.0.0.1:3000/}"
+HEALTH_URL="${IY_HEALTH_URL:-http://127.0.0.1:3000/api/health}"
 SITE_URL="${IY_SITE_URL:-https://imperialyachting.com}"
 KEEP="${IY_KEEP:-5}"
 
@@ -24,12 +24,60 @@ compose() { # $1 = release dir, rest = compose args
   (cd "$dir" && docker compose -p "$PROJECT" -f docker-compose.yml -f release.override.yml "$@")
 }
 
-health() {
+release_name() { basename "$1"; }
+
+# Success only if (a) the compose container of THIS project runs the release
+# image tag and (b) /api/health answers 200 with "commit":"<full git sha>"
+# (image built with --build-arg GIT_SHA).
+# A response from an old process on the port never matches the new SHA.
+health() { # $1 = release dir
+  local dir="$1" tag sha _ state body
+  tag="$IMAGE:$(release_name "$dir")"
+  sha="$(cat "$dir/.release-sha" 2>/dev/null || true)"
+  [ -n "$sha" ] || { log "health FAIL: $dir/.release-sha missing"; return 1; }
   for _ in $(seq 1 30); do
-    if curl -fsS -o /dev/null --max-time 5 "$HEALTH_URL"; then return 0; fi
+    state="$(compose "$dir" ps --format '{{.Image}} {{.State}} {{.Health}}' web 2>/dev/null || true)"
+    if printf '%s\n' "$state" | grep -qE "^${tag} running( healthy)?\s*$"; then
+      body="$(curl -fsS --max-time 5 "$HEALTH_URL" 2>/dev/null || true)"
+      if [ -n "$body" ] && ! printf '%s' "$body" | grep -q '"commit"'; then
+        log "health FAIL: /api/health has no \"commit\" field (build without GIT_SHA support)."
+        log "Hint: this ref predates the /api/health commit PR. Deploy a ref that contains it."
+        return 1
+      fi
+      if printf '%s' "$body" | grep -qE "\"commit\": ?\"${sha}\""; then
+        log "health OK: container $tag running, /api/health commit=$sha"
+        return 0
+      fi
+    fi
     sleep 2
   done
+  log "health FAIL (old site responses do not count): container state='${state:-none}', expected $tag running and commit=$sha"
   return 1
+}
+
+# Anything that serves the site outside our compose project (first deploy case).
+legacy_report() {
+  local found=0 out
+  out="$(docker ps --filter publish=3000 --format '{{.Names}} {{.Image}} project={{.Label "com.docker.compose.project"}}' 2>/dev/null | grep -v "project=${PROJECT}\$" || true)"
+  [ -n "$out" ] && { echo "  docker on :3000: $out"; found=1; }
+  if command -v pm2 >/dev/null 2>&1; then
+    out="$(pm2 jlist 2>/dev/null | grep -oE '"name":"[^"]+"' | sort -u | tr '\n' ' ' || true)"
+    [ -n "$out" ] && { echo "  pm2: $out"; found=1; }
+  fi
+  out="$(systemctl list-units --type=service --state=running --no-pager --plain 2>/dev/null | grep -iE 'node|next|imperial' | awk '{print $1}' | tr '\n' ' ' || true)"
+  [ -n "$out" ] && { echo "  systemd: $out"; found=1; }
+  out="$(sudo ss -ltnp 'sport = :3000' 2>/dev/null | tail -n +2 || true)"
+  [ -n "$out" ] && { echo "  port 3000: $out"; found=1; }
+  return $((1 - found))
+}
+
+first_deploy_help() {
+  log "FIRST DEPLOY FAILED, no previous release to roll back to."
+  log "Restore the old process found above (see deploy/README.md, section 'Первый деплой'):"
+  log "  docker compose:  cd <old dir> && docker compose up -d"
+  log "  pm2:             pm2 restart <name>   (or pm2 resurrect)"
+  log "  systemd:         sudo systemctl start <unit>"
+  log "Then stop the new one: cd $CURRENT && docker compose -p $PROJECT down"
 }
 
 nginx_reload() {
@@ -61,6 +109,7 @@ cmd_diagnose() {
   for d in "$CURRENT" "$BASE" "$BASE/app" "$BASE/site"; do
     if [ -d "$d/.git" ]; then echo "== commit in $d"; git -C "$d" log -1 --format='%h %ci %s' 2>&1 || true; fi
   done
+  echo "== processes serving the site outside compose project '$PROJECT'"; legacy_report || echo "  none"
   echo "== videos"; find "$BASE/videos" -maxdepth 1 -type f 2>/dev/null | wc -l
 }
 
@@ -68,36 +117,63 @@ cmd_deploy() {
   local ref="${1:-}"; [ -n "$ref" ] || die "usage: deploy <ref>"
   [ -f "$SHARED/.env.production" ] || die "missing $SHARED/.env.production"
   mkdir -p "$RELEASES"
-  local tmp; tmp="$(mktemp -d "$RELEASES/.new-XXXX")"
+  TMP_RELEASE="$(mktemp -d "$RELEASES/.new-XXXX")"
+  trap 'rm -rf "${TMP_RELEASE:-}"' EXIT
+  local tmp="$TMP_RELEASE"
   log "fetching $ref"
   git clone -q "$REPO" "$tmp"
   git -C "$tmp" checkout -q "$ref"
-  local sha; sha="$(git -C "$tmp" rev-parse --short HEAD)"
+  local full_sha; full_sha="$(git -C "$tmp" rev-parse HEAD)"
+  local sha="${full_sha:0:7}"
+  echo "$full_sha" > "$tmp/.release-sha"
   local name; name="$(date -u +%Y%m%dT%H%M%SZ)-$sha"
   local dir="$RELEASES/$name"
   mv "$tmp" "$dir"
+  TMP_RELEASE=""
   ln -sfn "$SHARED/.env.production" "$dir/.env.production"
   [ -f "$SHARED/.env" ] && ln -sfn "$SHARED/.env" "$dir/.env"
   printf 'services:\n  web:\n    image: %s:%s\n' "$IMAGE" "$name" > "$dir/release.override.yml"
 
   log "building image $IMAGE:$name"
-  compose "$dir" build web >/dev/null || die "build failed, prod untouched"
+  compose "$dir" build --build-arg GIT_SHA="$full_sha" web >/dev/null || { rm -rf "$dir"; die "build failed, prod untouched"; }
 
   local prev; prev="$(readlink "$CURRENT" 2>/dev/null || true)"
+  if [ -z "$prev" ] || [ ! -d "$prev" ]; then
+    prev=""
+    log "FIRST DEPLOY: no previous release in $RELEASES, automatic rollback impossible."
+    if legacy_report; then
+      log "An old site process is running (listed above). If it holds port 3000 the new container cannot start."
+      log "Stop it yourself first, or Ctrl+C now. Continuing in 10s."
+      sleep 10
+    fi
+  fi
   activate "$dir"
   nginx_reload
-  if health; then
-    log "OK: $name live ($HEALTH_URL)"
-    # shellcheck disable=SC2012
-    ls -1dt "$RELEASES"/*/ | tail -n +"$((KEEP + 1))" | xargs -r rm -rf
+  if health "$dir"; then
+    log "OK: $name live"
+    prune
   else
-    log "healthcheck failed"
-    if [ -n "$prev" ] && [ -d "$prev" ]; then
+    if [ -n "$prev" ]; then
       activate "$prev"
-      if health; then log "rolled back to $(basename "$prev")"; else log "rollback also unhealthy"; fi
+      if health "$prev"; then log "rolled back to $(release_name "$prev")"; else log "rollback also unhealthy"; fi
+    else
+      first_deploy_help
     fi
     exit 1
   fi
+}
+
+prune() { # keep $KEEP newest releases, remove older dirs and their image tags
+  local old=() d i n
+  for d in "$RELEASES"/*/; do old+=("${d%/}"); done
+  n=$(( ${#old[@]} - KEEP ))
+  for (( i=0; i<n; i++ )); do
+    d="${old[$i]}"
+    [ "$d" = "$(readlink -f "$CURRENT")" ] && continue
+    docker image rm "$IMAGE:$(release_name "$d")" >/dev/null 2>&1 || true
+    rm -rf "$d"
+    log "pruned $(release_name "$d")"
+  done
 }
 
 cmd_rollback() {
@@ -111,7 +187,7 @@ cmd_rollback() {
   done
   [ -n "$prev" ] || die "no previous release"
   activate "$prev"
-  if health; then log "OK: rolled back to $(basename "$prev")"; else die "previous release unhealthy"; fi
+  if health "$prev"; then log "OK: rolled back to $(basename "$prev")"; else die "previous release unhealthy"; fi
 }
 
 cmd_videos_check() {
