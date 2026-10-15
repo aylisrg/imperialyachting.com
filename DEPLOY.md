@@ -1,6 +1,17 @@
-# Выкатка imperialyachting.com
+# Выкатка imperialyachting.com (systemd)
 
-Vercel больше не используется. Сайт живёт на нашем сервере (Финский, `204.168.159.132`): Next.js через `next start` под systemd, перед ним nginx и имперский вход. Docker для сайта не нужен.
+Живой сайт на 2026-10-15 отвечает с `nginx/1.30.0`, не с Vercel. `/api/health` на проде без поля `commit` (сборка старше `GIT_SHA`). Имя `new.imperialyachting.com` снаружи не резолвится. Перед выкаткой смотри, чем процесс запущен на самом деле, и запускай только совпавший скрипт.
+
+В репозитории два разных пути, этот PR второй не удаляет:
+
+| Скрипт | Схема | Когда |
+|---|---|---|
+| `deploy/vps-deploy.sh`, `deploy/README.md` | Docker Compose, `/srv/imperialyachting`, порты 3000 и 3001 | путь из #47 |
+| `deploy/iy-deploy.sh`, этот файл | systemd, `next start`, `/opt/imperialyachting`, порты 3481 и 3482 | если на сервере службы `iy-boj` / `iy-new` |
+
+Проверка: `bash deploy/vps-deploy.sh diagnose` и `systemctl status iy-boj iy-new`. Не запускай docker-скрипт, если слушает systemd, и наоборот.
+
+Сервер: Финский, `204.168.159.132`. Перед nginx имперский вход. Docker для схемы из этой страницы не нужен.
 
 ## Экземпляры
 
@@ -30,7 +41,9 @@ bash deploy/iy-deploy.sh new rollback          # вернуть предыдущ
 
 ## Кроны
 
-`vercel.json` удалён: его кроны работали только на Vercel. На сервере их заменяют таймеры systemd живого сайта: `iy-boj-expire-holds` (03:00 UTC) и `iy-boj-balance-reminders` (06:00 UTC). Кроме того, GitHub Actions (`.github/workflows/booking-cron.yml`, `analytics-weekly.yml`, `ads-daily.yml`) дёргает `secrets.SITE_URL`, то есть тоже только живой сайт. У new кронов нет, руками их на new не вызывать.
+`vercel.json` не удаляем. Его кроны (`/api/cron/expire-holds` в 03:00 UTC, `/api/cron/balance-reminders` в 06:00 UTC) работают только на Vercel. На сервере те же маршруты должны звать таймеры `iy-boj-expire-holds` и `iy-boj-balance-reminders`, но юнитов в репозитории нет, и пока они не включены на сервере, единственное описание кронов в git это `vercel.json`.
+
+GitHub Actions (`.github/workflows/booking-cron.yml`, `analytics-weekly.yml`, `ads-daily.yml`) ходят в `secrets.SITE_URL`, то есть только на живой сайт. `booking-cron.yml` выключен вручную. У new кронов нет, руками их на new не вызывать.
 
 ## Проверка
 

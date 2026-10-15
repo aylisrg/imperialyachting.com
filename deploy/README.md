@@ -1,6 +1,8 @@
 # Деплой на VPS (204.168.159.132)
 
-Сайт работает в docker compose, видео отдаёт nginx из `/srv/imperialyachting/videos/` (блок `deploy/nginx-videos.conf`).
+Это docker-путь (`deploy/vps-deploy.sh`). Второй путь, systemd и `/opt/imperialyachting`, описан в `DEPLOY.md` и `deploy/iy-deploy.sh`. Они не заменяют друг друга: запускай тот, который совпал с `diagnose` и `systemctl status iy-boj`. `vercel.json` остаётся в репозитории.
+
+Сайт в этой схеме работает в docker compose, видео отдаёт nginx из `/srv/imperialyachting/videos/` (блок `deploy/nginx-videos.conf`).
 Секреты лежат в `/srv/imperialyachting/shared/.env.production`, скрипт их не печатает.
 
 Порядок:

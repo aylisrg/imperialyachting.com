@@ -1,0 +1,6 @@
+{
+  "crons": [
+    { "path": "/api/cron/expire-holds", "schedule": "0 3 * * *" },
+    { "path": "/api/cron/balance-reminders", "schedule": "0 6 * * *" }
+  ]
+}

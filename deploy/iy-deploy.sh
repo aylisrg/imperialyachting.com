@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Выкатка imperialyachting.com на наш сервер (Финский, 204.168.159.132). Vercel больше не используется.
+# Выкатка imperialyachting.com на наш сервер (Финский, 204.168.159.132), схема systemd.
+# Docker-схема живёт отдельно: deploy/vps-deploy.sh. vercel.json не трогать, пока нет таймеров в репо.
 #
 #   bash deploy/iy-deploy.sh <экземпляр> deploy [ref]   собрать ref (по умолчанию origin/main) и переключить
 #   bash deploy/iy-deploy.sh <экземпляр> rollback       вернуть предыдущий релиз
@@ -27,7 +28,13 @@ if [ "$CMD" != status ] && [ "$(systemctl show -p WorkingDirectory --value "$UNI
   echo "служба $UNIT запускается не из $BASE/current — сперва переведи её на релизы (DEPLOY.md, «Первый раз»)"; exit 4
 fi
 
-health() { curl -fsS --max-time 10 "http://127.0.0.1:$PORT/api/health" | grep -o '"commit":"[0-9a-f]*"' | cut -d'"' -f4; }
+health() {
+  local body
+  body="$(curl -fsS --max-time 10 "http://127.0.0.1:$PORT/api/health" 2>/dev/null || true)"
+  if [[ "$body" =~ \"commit\"[[:space:]]*:[[:space:]]*\"([0-9a-f]+)\" ]]; then
+    printf '%s\n' "${BASH_REMATCH[1]}"
+  fi
+}
 
 switch_to() {
   local dir="$1" sha
@@ -60,7 +67,7 @@ case "$CMD" in
     # Живой ходит в свою базу по имени imperialyachting.com, поэтому собирается с hosts экземпляра,
     # как и работает (BindReadOnlyPaths в юните). Общий /etc/hosts сервера не трогается.
     BUILD='set -a && . "$ENVF" && set +a && GIT_SHA="$SHA" NODE_OPTIONS=--max-old-space-size=4096 nice -n 10 npx next build'
-    [ -f "$BASE/hosts" ] && BUILD="mount --bind $BASE/hosts /etc/hosts && $BUILD"
+    [ -f "$BASE/hosts" ] && BUILD="mount --bind \"$BASE/hosts\" /etc/hosts && $BUILD"
     (cd "$DIR" && nice -n 10 npm ci --no-audit --no-fund >/dev/null \
       && ENVF="$ENVF" SHA="$SHA" unshare -m sh -c "$BUILD" > "$DIR/build.log" 2>&1) \
       || { echo "сборка упала, журнал: $DIR/build.log; отвечает прежний релиз"; exit 1; }
