@@ -146,7 +146,7 @@ export default function Image() {
                 fontWeight: 500,
               }}
             >
-              @dubai.yachts.rental
+              @imperial.yachting.uae
             </div>
           </div>
         </div>

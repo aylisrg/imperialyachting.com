@@ -8,7 +8,7 @@ export const SITE_CONFIG = {
   phone: "+971-52-8355939",
   email: "booking@imperialyachting.com",
   whatsapp: "https://wa.me/971528355939",
-  instagram: "https://instagram.com/dubai.yachts.rental",
+  instagram: "https://instagram.com/imperial.yachting.uae",
   youtube: "https://youtube.com/@imperial_wave",
   linkedinCeo: "https://www.linkedin.com/in/aylis",
   brandwave: "https://brandwave.imperialyachting.com/",
