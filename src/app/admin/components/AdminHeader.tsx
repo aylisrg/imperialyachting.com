@@ -12,6 +12,7 @@ import {
   CalendarDays,
   Sparkles,
   Users,
+  FileText,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -32,6 +33,7 @@ export function AdminHeader() {
     { label: "Bookings", href: "/admin/bookings", icon: CalendarDays },
     { label: "Extras", href: "/admin/extras", icon: Sparkles },
     { label: "Leads", href: "/admin/leads", icon: Users },
+    { label: "Docs", href: "/admin/documents", icon: FileText },
     { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   ];
 

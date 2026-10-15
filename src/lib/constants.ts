@@ -13,8 +13,8 @@ export const SITE_CONFIG = {
   linkedinCeo: "https://www.linkedin.com/in/aylis",
   brandwave: "https://brandwave.imperialyachting.com/",
   address: {
-    street: "The Binary by Omniyat, Office 1914-261",
-    area: "Business Bay",
+    street: "Office No4-592, AL KHABEESI BLDG",
+    area: "Al Khabeesi, Deira",
     city: "Dubai",
     country: "UAE",
   },
@@ -83,8 +83,13 @@ export const NAV_LINKS = [
   { label: "Destinations", href: "/destinations" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
+  // Footer only (Product PM): the header stays at seven items.
+  { label: "Docs", href: "/documents", footerOnly: true },
   { label: "Contact", href: "/contact" },
 ] as const;
+
+/** The header's links: NAV_LINKS without the footer-only ones. */
+export const HEADER_NAV_LINKS = NAV_LINKS.filter((l) => !("footerOnly" in l && l.footerOnly));
 
 export const SERVICE_NAV = [
   { label: "Charter", href: "/services/charter" },

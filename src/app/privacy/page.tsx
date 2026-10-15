@@ -12,15 +12,18 @@ export const metadata: Metadata = {
   },
 };
 
-const lastUpdated = "1 January 2025";
+const lastUpdated = "9 October 2026";
 
-const sections = [
+type Table = { head: string[]; rows: string[][] };
+type Paragraph = string | Table;
+
+const sections: { title: string; content: Paragraph[] }[] = [
   {
     title: "1. Information We Collect",
     content: [
       `When you interact with ${SITE_CONFIG.name}, we may collect the following types of information:`,
       "Personal Information: Name, email address, phone number, and any other details you voluntarily provide when making an inquiry, booking a charter, or contacting us through our website, WhatsApp, email, or phone.",
-      "Booking Information: Charter dates, vessel preferences, number of guests, special requests, and payment details necessary to process your reservation.",
+      "Booking Information: Charter dates, vessel preferences, number of guests, special requests. Payment is taken by Stripe; we receive a record that the payment was made, not your card details.",
       "Technical Information: IP address, browser type and version, device information, operating system, referral source, pages visited, and duration of visits. This data is collected automatically through cookies and analytics tools.",
       "Communication Data: Records of correspondence when you contact us, including emails, WhatsApp messages, and contact form submissions.",
     ],
@@ -48,26 +51,43 @@ const sections = [
   {
     title: "4. Third-Party Services",
     content: [
-      `We use the following third-party services that may collect and process your data:`,
-      `Google Analytics (${SITE_CONFIG.googleAnalyticsId}): We use Google Analytics to understand website traffic and usage patterns. Google Analytics collects anonymous data including pages visited, time spent on site, and referral sources. This data is processed by Google in accordance with their privacy policy. You can opt out of Google Analytics by installing the Google Analytics opt-out browser add-on.`,
-      "WhatsApp Business: We use WhatsApp for customer communication. Messages sent through WhatsApp are subject to WhatsApp's privacy policy.",
-      "We do not sell, trade, or otherwise transfer your personal information to outside parties beyond what is described in this policy.",
+      "We use the following third-party services, which collect or process your data on our behalf or as independent controllers:",
+      "**Stripe (payments).** All card payments for our services are processed by Stripe. When you pay, you enter your card details directly into Stripe's payment form. **We never receive, see or store your full card number, expiry date or security code.** Stripe receives your name, email address, payment amount, currency, and technical data such as your IP address and device information, and uses them to process the payment, to prevent fraud and to meet its own legal obligations. Stripe acts as an independent controller for these purposes. Its processing is governed by Stripe's own privacy policy at https://stripe.com/privacy.",
+      `**Google Analytics (${SITE_CONFIG.googleAnalyticsId}).** We use Google Analytics to understand website traffic and usage patterns. It collects anonymous data including pages visited, time spent on site, and referral sources. This data is processed by Google in accordance with their privacy policy. You can opt out by installing the Google Analytics opt-out browser add-on.`,
+      "**WhatsApp Business.** We use WhatsApp for customer communication. Messages sent through WhatsApp are subject to WhatsApp's privacy policy.",
+      "We do not sell or rent your personal information. We share it only with the providers named in this policy, and only to the extent needed to deliver the service you asked for or to comply with the law.",
     ],
   },
   {
-    title: "5. Data Security",
+    title: "5. International Transfers of Your Data",
+    content: [
+      "We are established in the United Arab Emirates and our own records are kept here. However, some of the providers named in section 4 process data outside the UAE, which means **your personal data leaves the United Arab Emirates.**",
+      {
+        head: ["Provider", "Purpose", "Where your data goes"],
+        rows: [
+          ["Stripe", "processing your payment", "United Kingdom, Ireland and other countries where Stripe and its group operate"],
+          ["Google", "website analytics", "United States and other countries where Google operates"],
+          ["WhatsApp (Meta)", "customer messaging", "United States and other countries where Meta operates"],
+        ],
+      },
+      "The laws of those countries may give your data a different level of protection from the law of the United Arab Emirates. Where a transfer takes place, we rely on the safeguards offered by the provider, including its contractual data-protection terms, and we transfer only the data needed for the stated purpose.",
+      "If you would rather your data were not transferred in this way, you can pay by bank transfer instead of by card and contact us by email or telephone instead of WhatsApp. Tell us before you book and we will arrange it.",
+    ],
+  },
+  {
+    title: "6. Data Security",
     content: [
       "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet or electronic storage is completely secure, and we cannot guarantee absolute security.",
     ],
   },
   {
-    title: "6. Data Retention",
+    title: "7. Data Retention",
     content: [
       "We retain your personal information only for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required or permitted by UAE law. Booking records are retained for a minimum of five years for legal and accounting purposes.",
     ],
   },
   {
-    title: "7. Your Rights",
+    title: "8. Your Rights",
     content: [
       "You have the right to:",
       "Access the personal information we hold about you.",
@@ -78,13 +98,13 @@ const sections = [
     ],
   },
   {
-    title: "8. Changes to This Policy",
+    title: "9. Changes to This Policy",
     content: [
       "We may update this privacy policy from time to time to reflect changes in our practices or applicable laws. Any changes will be posted on this page with an updated revision date. We encourage you to review this policy periodically.",
     ],
   },
   {
-    title: "9. Contact",
+    title: "10. Contact",
     content: [
       "If you have any questions or concerns about this privacy policy or our data practices, please contact us:",
       `${SITE_CONFIG.legalName}`,
@@ -94,6 +114,11 @@ const sections = [
     ],
   },
 ];
+
+// **text** in a paragraph is shown bold.
+function withBold(text: string) {
+  return text.split("**").map((part, i) => (i % 2 ? <strong key={i} className="text-white/80">{part}</strong> : part));
+}
 
 export default function PrivacyPage() {
   return (
@@ -142,14 +167,41 @@ export default function PrivacyPage() {
                     {section.title}
                   </h2>
                   <div className="space-y-3">
-                    {section.content.map((paragraph, idx) => (
-                      <p
-                        key={idx}
-                        className="text-sm text-white/55 leading-relaxed"
-                      >
-                        {paragraph}
-                      </p>
-                    ))}
+                    {section.content.map((paragraph, idx) =>
+                      typeof paragraph === "string" ? (
+                        <p
+                          key={idx}
+                          className="text-sm text-white/55 leading-relaxed"
+                        >
+                          {withBold(paragraph)}
+                        </p>
+                      ) : (
+                        <div key={idx} className="overflow-x-auto">
+                          <table className="w-full text-sm text-white/55 border-collapse">
+                            <thead>
+                              <tr>
+                                {paragraph.head.map((cell) => (
+                                  <th key={cell} className="text-left font-semibold text-white/80 border-b border-white/15 py-2 pr-4">
+                                    {cell}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {paragraph.rows.map((row) => (
+                                <tr key={row[0]}>
+                                  {row.map((cell, c) => (
+                                    <td key={c} className="align-top border-b border-white/10 py-2 pr-4 leading-relaxed">
+                                      {cell}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               ))}

@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { HOME_FLEET, HOME_CLIP_BASE, builtRefit } from "../home";
+import { HOME_FLEET, HOME_CLIP_BASE, builtRefit, clipBase } from "../home";
 
 describe("home data", () => {
-  it("defaults clip base to /videos", () => {
-    expect(HOME_CLIP_BASE).toBe("/videos");
+  it("disables clips when NEXT_PUBLIC_CLIP_BASE_URL is unset", () => {
+    expect(HOME_CLIP_BASE).toBeNull();
+    expect(clipBase(undefined)).toBeNull();
+    expect(clipBase("")).toBeNull();
+    expect(clipBase("  ")).toBeNull();
+  });
+  it("keeps the configured clip base, without a trailing slash", () => {
+    expect(clipBase("/videos")).toBe("/videos");
+    expect(clipBase("https://cdn.example.com/v/")).toBe("https://cdn.example.com/v");
   });
   it("has verified fleet capacities", () => {
     const by = Object.fromEntries(HOME_FLEET.map((y) => [y.slug, y]));
