@@ -69,8 +69,11 @@ copy_storage() {
   tmp=$(mktemp)
   while IFS=$'\t' read -r b name ct; do
     enc=$(jq -rn --arg s "$name" '$s|@uri' | sed 's/%2F/\//g')
-    if curl -sf -o "$tmp" -H "Authorization: Bearer $SUPABASE_CLOUD_SERVICE_KEY" -H "apikey: $SUPABASE_CLOUD_SERVICE_KEY" \
-         "$SUPABASE_CLOUD_URL/storage/v1/object/authenticated/$b/$enc" &&
+    # Public buckets reject /object/authenticated (400). Private ones reject /object/public.
+    # Service role can read either; try authenticated first, then public.
+    hdr=(-H "Authorization: Bearer $SUPABASE_CLOUD_SERVICE_KEY" -H "apikey: $SUPABASE_CLOUD_SERVICE_KEY")
+    if { curl -sf -o "$tmp" "${hdr[@]}" "$SUPABASE_CLOUD_URL/storage/v1/object/authenticated/$b/$enc" \
+         || curl -sf -o "$tmp" "${hdr[@]}" "$SUPABASE_CLOUD_URL/storage/v1/object/public/$b/$enc"; } &&
        curl -sf -o /dev/null -X POST -H "Authorization: Bearer $svc" -H "apikey: $svc" -H "x-upsert: true" \
          -H "Content-Type: $ct" --data-binary "@$tmp" "http://127.0.0.1:8000/storage/v1/object/$b/$enc"; then
       ok=$((ok + 1))
