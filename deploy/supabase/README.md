@@ -20,7 +20,7 @@
    `sudo nginx -t && sudo systemctl reload nginx`
    `sudo certbot --nginx -d db.imperialyachting.com`
    Проверка: `curl -s -o /dev/null -w '%{http_code}\n' https://db.imperialyachting.com/auth/v1/health` даёт 401 (нет ключа, значит kong жив).
-5. Схема: сначала `bash deploy/supabase/migrate.sh --dry-run` (всё в одной транзакции, ROLLBACK). Если OK: `bash deploy/supabase/migrate.sh` (перед применением сам делает бэкап). Повторный запуск пропускает применённые файлы.
+5. Схема: сначала `bash deploy/supabase/migrate.sh --dry-run` (всё в одной транзакции, ROLLBACK). Если OK: `bash deploy/supabase/migrate.sh` (перед применением сам делает бэкап). Скрипт сначала применяет `supabase/schema.sql` (яхты, цены, destinations: это состояние миграции 001) и помечает 001 выполненной, затем date-файлы, затем 002.. Повторный запуск пропускает применённые файлы. Storage должен быть уже поднят (шаг 3): в schema.sql есть `storage.buckets`.
 6. Данные из облака (облако только читается). Строку подключения не писать в чат и в историю shell:
    `read -rs SUPABASE_CLOUD_DB_URL && export SUPABASE_CLOUD_DB_URL`
    `read -rs SUPABASE_CLOUD_SERVICE_KEY && export SUPABASE_CLOUD_SERVICE_KEY`
@@ -44,4 +44,4 @@
 - Ссылки на файлы, сохранённые в базе как полный URL `https://<ref>.supabase.co/storage/...`, продолжат вести в облако. Шаг 6 их перечисляет. Замену на `https://db.imperialyachting.com` делаем отдельным SQL после проверки превью, не раньше.
 - Письма magic link идут через SMTP из `supabase.env` (заполнить SMTP_*), встроенной почты Supabase здесь нет.
 - Если схема облака менялась руками мимо миграций, копия данных упадёт на несовпадающей колонке. Это и есть проверка, ничего не сломается: транзакция откатится.
-- Дата-миграции из открытых PR (#53, 011) нужно применить и в облаке, и здесь, или повторить копию после мержа.
+- 011 и 013 уже в `main` и входят в `migrate.sh`. Если в облаке их ещё не применяли, копия данных приедет без этих правок: примените их в облаке до шага 6 или повторите `data-copy.sh db --yes` после.
