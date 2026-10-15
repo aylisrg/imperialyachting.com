@@ -27,7 +27,16 @@ export const HOME_HERO_CLIP = "hero-vd40-speed";
  * Base URL for the video clips (<id>-960|1920.webm|mp4). One setting: point
  * NEXT_PUBLIC_CLIP_BASE_URL at a CDN to move clips off the app server.
  */
-export const HOME_CLIP_BASE = (process.env.NEXT_PUBLIC_CLIP_BASE_URL || "/videos").replace(/\/+$/, "");
+export function clipBase(raw: string | undefined): string | null {
+  const v = raw?.trim().replace(/\/+$/, "");
+  return v ? v : null;
+}
+/**
+ * null when NEXT_PUBLIC_CLIP_BASE_URL was not set at build time: pages then
+ * render posters only and never request a clip (which would 404). The build
+ * logs a warning (next.config.ts).
+ */
+export const HOME_CLIP_BASE: string | null = clipBase(process.env.NEXT_PUBLIC_CLIP_BASE_URL);
 /** Posters stay local so next/image can serve AVIF/WebP without remotePatterns. */
 export const HOME_POSTER_BASE = "/media/home/posters";
 

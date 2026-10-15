@@ -8,6 +8,12 @@ try {
   // Supabase URL not configured
 }
 
+if (!process.env.NEXT_PUBLIC_CLIP_BASE_URL?.trim()) {
+  console.warn(
+    "[build] WARNING: NEXT_PUBLIC_CLIP_BASE_URL is not set; video clips are disabled and pages show posters only.",
+  );
+}
+
 const nextConfig: NextConfig = {
   // Self-hosted on a VPS (Docker): emit .next/standalone with a minimal server.
   output: "standalone",
@@ -17,7 +23,7 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
   },
   // Ensure the private (non-public) document PDFs are bundled with the
-  // serverless function that streams them after password authentication.
+  // serverless function that streams them after email sign-in.
   outputFileTracingIncludes: {
     "/api/documents/file/[slug]": ["./private/documents/**"],
     // Sale materials shipped with the site (e.g. spec sheets), streamed only
@@ -66,6 +72,10 @@ const nextConfig: NextConfig = {
         : []),
     ],
   },
+  redirects: async () => [
+    // "Docs" in the menu; keep a short URL that is easy to say and share.
+    { source: "/docs", destination: "/documents", permanent: true },
+  ],
   rewrites: async () => [
     // IndexNow key verification file, expected at https://<host>/<key>.txt.
     // The key itself is at least 8 hex chars, so this never matches short

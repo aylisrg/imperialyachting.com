@@ -3,7 +3,7 @@ import { DOCUMENTS_COOKIE } from "@/lib/documents-auth";
 
 export const runtime = "nodejs";
 
-/** Clears the documents session cookie (lock the portal again). */
+/** Signs the visitor out of the documents portal (clears the session cookie). */
 export async function POST() {
   const response = NextResponse.json({ ok: true });
   response.cookies.set({
