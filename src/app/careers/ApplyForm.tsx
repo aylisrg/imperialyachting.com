@@ -140,6 +140,7 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
     body.set("answers", JSON.stringify(answers));
     body.set("openAnswers", JSON.stringify(openAnswers));
     body.set("cv", cv as File);
+    body.set("stranica", window.location.href); // IY-554: page the application was sent from
 
     setBusy(true);
     setFail("");

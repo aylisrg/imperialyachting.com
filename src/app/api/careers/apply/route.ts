@@ -14,6 +14,21 @@ const CV_TYPES: Record<string, string> = {
 
 const str = (v: FormDataEntryValue | null, max = 300) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
+/** IY-554: full address of the page the form was sent from — only a page of this same site; else the Referer, else the form path. */
+function sourcePage(request: Request, given: string, vacancyId: string | null): string {
+  const host = (request.headers.get("x-forwarded-host") || request.headers.get("host") || "").split(",")[0].trim();
+  const own = (u: string) => {
+    try {
+      const x = new URL(u);
+      return (x.protocol === "https:" || x.protocol === "http:") && x.host === host ? x.toString().slice(0, 500) : "";
+    } catch {
+      return "";
+    }
+  };
+  const path = vacancyId ? `/careers/${vacancyId}/apply` : "/careers/open";
+  return own(given) || own(request.headers.get("referer") || "") || (host ? `https://${host}${path}` : path);
+}
+
 function json<T>(v: FormDataEntryValue | null, fallback: T): T {
   try {
     return typeof v === "string" && v ? (JSON.parse(v) as T) : fallback;
@@ -88,7 +103,11 @@ export async function POST(request: Request) {
     .join("\n");
 
   try {
-    await createApplication({ vacancyId, name, email, phone, city: str(form.get("c"), 120), message, answers, cv });
+    await createApplication({
+      vacancyId, name, email, phone, city: str(form.get("c"), 120), message, answers, cv,
+      page: sourcePage(request, str(form.get("stranica"), 500), vacancyId),
+      formName: vacancyId ? "Отклик на вакансию" : "Открытая заявка",
+    });
   } catch (e) {
     console.error("careers/apply: PMS write failed", e);
     return jsonError(502, "pms_failed", "Your application was not sent. Please try again.");

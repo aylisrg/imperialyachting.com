@@ -147,6 +147,8 @@ export interface ApplicationInput {
   message: string;
   answers: { anketa: string; vopros: string; otvet: string }[];
   cv: File;
+  page: string; // IY-554: full address of the page the form was sent from
+  formName: string; // IY-554: «Отклик на вакансию» | «Открытая заявка»
 }
 
 export async function createApplication(a: ApplicationInput): Promise<string | null> {
@@ -162,6 +164,8 @@ export async function createApplication(a: ApplicationInput): Promise<string | n
   form.set("soobshchenie", a.message);
   form.set("otvety", JSON.stringify(a.answers));
   form.set("cv", a.cv, a.cv.name);
+  if (a.page) form.set("stranica", a.page);
+  form.set("forma", a.formName);
   const r = await call("/otklik", { method: "POST", body: form });
   const j = (await r.json().catch(() => ({}))) as Doc;
   if (!r.ok || !j.ok) throw new Error(`PMS site API: HTTP ${r.status} ${j.oshibka ?? ""}`);
