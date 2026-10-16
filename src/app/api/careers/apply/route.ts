@@ -66,13 +66,15 @@ export async function POST(request: Request) {
   const field = str(form.get("field"), 80);
   const cv = form.get("cv");
 
-  if (name.length < 2 || !/^\S+@\S+\.\S+$/.test(email) || phone.replace(/\D/g, "").length < 7 || !visa) {
+  const city = str(form.get("c"), 120), start = str(form.get("start"), 60);
+  if (name.length < 2 || !/^\S+@\S+\.\S+$/.test(email) || phone.replace(/\D/g, "").length < 7 || !visa || city.length < 2 || !start) {
     return jsonError(400, "invalid", "Please fill in the required fields.");
   }
   if (!vacancyId && !field) return jsonError(400, "invalid", "Please choose your field.");
-  if (!(cv instanceof File) || !cv.size || cv.size > MAX_CV) return jsonError(400, "invalid_cv", "Please attach a CV up to 5 MB.");
-  const ext = (cv.name.split(".").pop() || "").toLowerCase();
-  if (!CV_TYPES[ext]) return jsonError(400, "invalid_cv", "Use PDF, DOC or DOCX.");
+  // IY-554: CV is optional now; if attached, it must be a real document up to 5 MB
+  const hasCv = cv instanceof File && cv.size > 0;
+  if (hasCv && cv.size > MAX_CV) return jsonError(400, "invalid_cv", "Please attach a CV up to 5 MB.");
+  if (hasCv && !CV_TYPES[(cv.name.split(".").pop() || "").toLowerCase()]) return jsonError(400, "invalid_cv", "Use PDF, DOC or DOCX.");
 
   // answers come keyed by questionnaire id and question index; PMS wants them by name
   const given = json<Record<string, Record<string, string>>>(form.get("answers"), {});
@@ -90,7 +92,24 @@ export async function POST(request: Request) {
     .slice(0, 5)
     .map((x) => ({ question: String(x?.question ?? "").slice(0, 200), answer: String(x?.answer ?? "").slice(0, 3000) }));
 
-  const start = str(form.get("start"), 60), link = str(form.get("l"), 300);
+  const link = str(form.get("l"), 300);
+  // IY-554: completeness of the form — the measure of the candidate. Required fields are checked above,
+  // so empty can only be optional ones: LinkedIn / portfolio, CV and optional questions of the vacancy.
+  const fields: [string, boolean][] = [
+    ["Full name", true], ["Email", true], ["Phone", true], ["City", true], ["UAE visa status", true], ["Start date", true],
+    ...(vacancyId ? [] : ([["Field", true]] as [string, boolean][])),
+    ["LinkedIn or portfolio link", Boolean(link)], ["CV", hasCv],
+  ];
+  if (vacancyId) {
+    const v = await getVacancy(vacancyId).catch(() => null);
+    for (const p of v?.polls ?? [])
+      for (const q of p.questions) fields.push([q.text, answers.some((x) => x.anketa === p.name && x.vopros === q.text)]);
+  } else {
+    for (const x of openAnswers) fields.push([x.question, Boolean(x.answer.trim())]);
+  }
+  const empty = fields.filter(([, ok]) => !ok).map(([n]) => n);
+  const completeness = `${fields.length - empty.length} из ${fields.length}`;
+
   const message = [
     `Отклик с сайта imperialyachting.com${vacancyId ? "" : " — без вакансии («Don't see your position?»)"}.`,
     field ? `Направление: ${field}` : "",
@@ -104,7 +123,8 @@ export async function POST(request: Request) {
 
   try {
     await createApplication({
-      vacancyId, name, email, phone, city: str(form.get("c"), 120), message, answers, cv,
+      vacancyId, name, email, phone, city, message, answers, cv: hasCv ? (cv as File) : null,
+      completeness, empty,
       page: sourcePage(request, str(form.get("stranica"), 500), vacancyId),
       formName: vacancyId ? "Отклик на вакансию" : "Открытая заявка",
     });

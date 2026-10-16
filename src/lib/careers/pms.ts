@@ -146,7 +146,9 @@ export interface ApplicationInput {
   city: string;
   message: string;
   answers: { anketa: string; vopros: string; otvet: string }[];
-  cv: File;
+  cv: File | null; // optional since IY-554
+  completeness: string; // IY-554: «9 из 11»
+  empty: string[]; // IY-554: names of empty fields, in English
   page: string; // IY-554: full address of the page the form was sent from
   formName: string; // IY-554: «Отклик на вакансию» | «Открытая заявка»
 }
@@ -163,7 +165,9 @@ export async function createApplication(a: ApplicationInput): Promise<string | n
   if (a.city) form.set("gorod", a.city);
   form.set("soobshchenie", a.message);
   form.set("otvety", JSON.stringify(a.answers));
-  form.set("cv", a.cv, a.cv.name);
+  if (a.cv) form.set("cv", a.cv, a.cv.name);
+  form.set("polnota", a.completeness);
+  form.set("ne_zapolneno", a.empty.join("; "));
   if (a.page) form.set("stranica", a.page);
   form.set("forma", a.formName);
   const r = await call("/otklik", { method: "POST", body: form });

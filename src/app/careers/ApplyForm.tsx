@@ -27,7 +27,7 @@ const OPEN_QUESTIONS: Question[] = [
     options: [],
     required: true,
   },
-  { id: "2", text: "What would you do for the empire in your first 90 days?", kind: "text", options: [], required: false },
+  { id: "2", text: "What would you do for the empire in your first 90 days?", kind: "text", options: [], required: true },
 ];
 
 type Errors = Record<string, boolean>;
@@ -68,10 +68,10 @@ function Select({ id, value, onChange, options }: { id: string; value: string; o
 export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
   const open = !v;
   const polls = open ? [{ id: "open", name: "", prompt: "", questions: OPEN_QUESTIONS }] : v.polls;
-  const [f, setF] = useState<Record<string, string>>({ start: "Immediately" });
+  const [f, setF] = useState<Record<string, string>>({});
   const [ans, setAns] = useState<Record<string, string>>({});
   const [cv, setCv] = useState<File | null>(null);
-  const [cvErr, setCvErr] = useState("Please attach your CV");
+  const [cvErr, setCvErr] = useState("Use PDF, DOC or DOCX up to 5 MB");
   const [agree, setAgree] = useState(false);
   const [bad, setBad] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
@@ -108,8 +108,9 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
       n: (f.n ?? "").trim().length < 2,
       e: !/^\S+@\S+\.\S+$/.test(f.e ?? ""),
       p: (f.p ?? "").replace(/\D/g, "").length < 7,
+      c: (f.c ?? "").trim().length < 2,
       vs: !f.vs,
-      cv: !cv,
+      start: !f.start,
       ag: !agree,
     };
     if (open) err.field = !f.field;
@@ -118,7 +119,6 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
         const a = (ans[`${p.id}:${q.id}`] ?? "").trim();
         if (q.required) err[`${p.id}:${q.id}`] = q.kind === "text" ? a.length < 10 : !a;
       }
-    if (!cv) setCvErr("Please attach your CV");
     setBad(err);
     if (Object.values(err).some(Boolean)) {
       requestAnimationFrame(() => formRef.current?.querySelector(".bad")?.scrollIntoView({ block: "center" }));
@@ -266,9 +266,12 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
                 <input id="p" type="tel" inputMode="tel" autoComplete="tel" placeholder="+971 50 000 0000" value={f.p ?? ""} onChange={(e) => set("p")(e.target.value)} />
                 <span className="er">Please enter your phone</span>
               </div>
-              <div className="fld">
-                <label htmlFor="c">Current city and country</label>
+              <div className={cls("c")}>
+                <label htmlFor="c">
+                  Current city and country <i>*</i>
+                </label>
                 <input id="c" autoComplete="address-level2" placeholder="Dubai, UAE" value={f.c ?? ""} onChange={(e) => set("c")(e.target.value)} />
+                <span className="er">Please enter your city</span>
               </div>
               <div className={cls("vs")}>
                 <label htmlFor="vs">
@@ -282,16 +285,12 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
                 />
                 <span className="er">Please choose one</span>
               </div>
-              <div className="fld">
-                <label htmlFor="av">When can you start?</label>
-                <div className="sel">
-                  <select id="av" value={f.start} onChange={(e) => set("start")(e.target.value)}>
-                    {["Immediately", "Within 2 weeks", "Within a month", "Later"].map((o) => (
-                      <option key={o}>{o}</option>
-                    ))}
-                  </select>
-                  <ChevronDown />
-                </div>
+              <div className={cls("start")}>
+                <label htmlFor="av">
+                  When can you start? <i>*</i>
+                </label>
+                <Select id="av" value={f.start ?? ""} onChange={set("start")} options={["Immediately", "Within 2 weeks", "Within a month", "Later"]} />
+                <span className="er">Please choose one</span>
               </div>
               {open && (
                 <div className={cls("field", true)}>
@@ -332,7 +331,7 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
                   <Upload />
                   <div>
                     <b>
-                      Upload your CV <i style={{ color: "var(--gold)", fontStyle: "normal" }}>*</i>
+                      Upload your CV
                     </b>
                     <span>PDF, DOC or DOCX, up to 5 MB — tap or drop a file here</span>
                   </div>
