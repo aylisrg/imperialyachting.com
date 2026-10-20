@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Check, ChevronDown, Upload, X } from "lucide-react";
 import type { Question, VacancyFull } from "@/lib/careers/pms";
 import { Pills } from "./content";
+import { pickUtm, UTM_STORAGE, type Utm } from "@/lib/careers/utm";
 
 const MAX_CV = 5 * 1024 * 1024;
 const CV_RE = /\.(pdf|docx?)$/i;
@@ -141,6 +142,16 @@ export function ApplyForm({ vacancy: v }: { vacancy: VacancyFull | null }) {
     body.set("openAnswers", JSON.stringify(openAnswers));
     body.set("cv", cv as File);
     body.set("stranica", window.location.href); // IY-554: page the application was sent from
+    // IY-1142: метки объявления — из адреса формы, иначе запомненные при заходе в вакансии
+    let utm: Utm = pickUtm((k) => new URLSearchParams(window.location.search).get(k));
+    if (!Object.keys(utm).length)
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(UTM_STORAGE) || "{}") as Record<string, unknown>;
+        utm = pickUtm((k) => saved[k]);
+      } catch {
+        /* нет хранилища — без меток */
+      }
+    for (const [k, v] of Object.entries(utm)) body.set(k, v);
 
     setBusy(true);
     setFail("");

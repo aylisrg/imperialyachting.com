@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/api/rateLimit";
 import { jsonError } from "@/lib/api/errors";
 import { createApplication, getVacancy, isPmsConfigured } from "@/lib/careers/pms";
+import { pickUtm } from "@/lib/careers/utm";
 
 export const runtime = "nodejs";
 
@@ -127,6 +128,7 @@ export async function POST(request: Request) {
       completeness, empty,
       page: sourcePage(request, str(form.get("stranica"), 500), vacancyId),
       formName: vacancyId ? "Отклик на вакансию" : "Открытая заявка",
+      utm: pickUtm((k) => form.get(k)), // IY-1142: чужие ключи и значения режутся здесь ещё раз
     });
   } catch (e) {
     console.error("careers/apply: PMS write failed", e);

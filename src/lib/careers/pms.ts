@@ -7,6 +7,7 @@
  * vacancies published on the platform «Сайт imperialyachting.com» whose "until" date
  * has not passed — removed or expired publication, and the vacancy is gone.
  */
+import type { Utm } from "./utm";
 
 const API = (process.env.SAYT_IY_API_URL || "https://pms.sazanoff.ru/sayt-iy").replace(/\/$/, "");
 
@@ -151,6 +152,7 @@ export interface ApplicationInput {
   empty: string[]; // IY-554: names of empty fields, in English
   page: string; // IY-554: full address of the page the form was sent from
   formName: string; // IY-554: «Отклик на вакансию» | «Открытая заявка»
+  utm?: Utm; // IY-1142: метки объявления, уже очищенные
 }
 
 export async function createApplication(a: ApplicationInput): Promise<string | null> {
@@ -170,6 +172,7 @@ export async function createApplication(a: ApplicationInput): Promise<string | n
   form.set("ne_zapolneno", a.empty.join("; "));
   if (a.page) form.set("stranica", a.page);
   form.set("forma", a.formName);
+  for (const [k, v] of Object.entries(a.utm ?? {})) form.set(k, v);
   const r = await call("/otklik", { method: "POST", body: form });
   const j = (await r.json().catch(() => ({}))) as Doc;
   if (!r.ok || !j.ok) throw new Error(`PMS site API: HTTP ${r.status} ${j.oshibka ?? ""}`);
