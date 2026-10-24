@@ -85,6 +85,7 @@ export const NAV_LINKS = [
   { label: "Blog", href: "/blog" },
   // Footer only (Product PM): the header stays at seven items.
   { label: "Docs", href: "/documents", footerOnly: true },
+  { label: "Yachts for Sale", href: "/yachts-for-sale", footerOnly: true },
   { label: "Contact", href: "/contact" },
 ] as const;
 
