@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Check,
   Download,
@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 import type { SaleDownloadFile, SaleMaterialSummary } from "@/types/sale";
 
 interface MaterialsPanelProps {
@@ -95,6 +96,7 @@ export function MaterialsPanel({ slug, items, brokerTerms }: MaterialsPanelProps
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [files, setFiles] = useState<SaleDownloadFile[]>([]);
+  const detailsOpen = useRef(false);
 
   useEffect(() => {
     const profile = loadProfile();
@@ -130,6 +132,15 @@ export function MaterialsPanel({ slug, items, brokerTerms }: MaterialsPanelProps
 
   function toggleAll() {
     setSelected(allSelected ? new Set() : new Set(items.map((i) => i.id)));
+  }
+
+  function openDetails() {
+    if (step !== "select" || selected.size === 0 || detailsOpen.current) return;
+    detailsOpen.current = true;
+    setStep("details");
+    // Only an intentional transition into the email form, never profile loads,
+    // rerenders or submissions. Do not send any entered personal information.
+    trackEvent("sales_material_form_open", { yacht_slug: slug });
   }
 
   async function submit(e: React.FormEvent) {
@@ -210,7 +221,10 @@ export function MaterialsPanel({ slug, items, brokerTerms }: MaterialsPanelProps
 
         <button
           type="button"
-          onClick={() => setStep("select")}
+          onClick={() => {
+            detailsOpen.current = false;
+            setStep("select");
+          }}
           className="mt-4 text-xs text-white/40 hover:text-gold-400 transition-colors"
         >
           Download something else
@@ -284,7 +298,7 @@ export function MaterialsPanel({ slug, items, brokerTerms }: MaterialsPanelProps
         <button
           type="button"
           disabled={selected.size === 0}
-          onClick={() => setStep("details")}
+          onClick={openDetails}
           className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gold-500 px-6 py-3.5 text-sm font-semibold text-navy-950 transition-all hover:bg-gold-400 hover:shadow-lg hover:shadow-gold-500/20 disabled:opacity-40 disabled:pointer-events-none"
         >
           <Download className="w-4 h-4" />
