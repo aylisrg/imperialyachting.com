@@ -20,6 +20,8 @@
 .iyh nav .logo{font-family:var(--font-serif);font-size:var(--fs-logo);letter-spacing:var(--ls-logo)}
 .iyh nav ul{display:flex;gap:40px;list-style:none}
 .iyh .burger,.iyh .ov{display:none}
+/* seven items (Careers) do not fit between phone and desktop: tighter gaps, no coordinates (IY-1247) */
+@media (min-width:769px) and (max-width:1100px){.iyh nav ul{gap:clamp(8px,calc((100vw - 760px) / 10),24px)}.iyh nav>span.cap{display:none}}
 .iyh .wa{position:fixed;right:20px;bottom:20px;z-index:55;width:48px;height:48px;border-radius:50%;border:1px solid rgba(243,234,219,.55);background:rgba(8,32,42,.3);color:var(--bone);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s}
 .iyh .wa.on{opacity:1;pointer-events:auto}
 /* hero */
