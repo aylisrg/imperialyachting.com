@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS, SERVICE_NAV, SITE_CONFIG, contactForPath } from "@/lib/constants";
+import { HEADER_NAV_LINKS, SERVICE_NAV, SITE_CONFIG, contactForPath } from "@/lib/constants";
 import { Container } from "./Container";
 import { trackPhoneClick, trackWhatsAppClick } from "@/lib/analytics";
 
@@ -56,7 +56,7 @@ export function Header() {
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-1">
-              {NAV_LINKS.map((link) =>
+              {HEADER_NAV_LINKS.map((link) =>
                 link.label === "Services" ? (
                   <div
                     key={link.href}
@@ -160,7 +160,7 @@ export function Header() {
         aria-hidden={!isMobileOpen}
       >
         <div className="flex flex-col items-center justify-center h-full gap-6 pt-20">
-          {NAV_LINKS.map((link) => (
+          {HEADER_NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}

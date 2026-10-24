@@ -6,7 +6,7 @@
  * which is the only supported way to fetch your own Instagram media as of 2025.
  *
  * ─── Prerequisites ───────────────────────────────────────────────────────────
- * • @dubai.yachts.rental must be a Business or Creator account (not Personal)
+ * • @imperial.yachting.uae must be a Business or Creator account (not Personal)
  *   → Instagram app → Settings → Account → Switch to Professional Account
  * • The Instagram account must be linked to a Facebook Page
  *   → Instagram Settings → Account → Linked Accounts → Facebook
@@ -29,7 +29,7 @@
  *        • instagram_basic
  *        • instagram_content_publish   (allows reading your own media)
  *   5. Click "Generate Access Token" → log in with the Facebook account
- *      that OWNS the Page linked to @dubai.yachts.rental
+ *      that OWNS the Page linked to @imperial.yachting.uae
  *   6. Copy the short-lived User Access Token (valid 1 hour)
  *
  * STEP 3 — Exchange for a Long-Lived User Access Token (valid 60 days)

@@ -1,0 +1,20 @@
+# Example for the VPS. Secrets live in .env.production on the server (not in git).
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_GOOGLE_MAPS_KEY: ${NEXT_PUBLIC_GOOGLE_MAPS_KEY}
+        NEXT_PUBLIC_MCP_URL: ${NEXT_PUBLIC_MCP_URL}
+        GIT_SHA: ${GIT_SHA:-}
+    env_file: .env.production
+    ports:
+      - "127.0.0.1:${IY_PORT:-3000}:3000" # nginx in front terminates TLS; preview uses 3001
+    volumes:
+      - next-cache:/app/.next/cache # persistent image/ISR cache
+    restart: unless-stopped
+
+volumes:
+  next-cache:

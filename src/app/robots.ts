@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 
-const DISALLOW = ["/api/", "/admin/", "/documents", "/booking/"];
+const DISALLOW = ["/api/", "/admin/", "/booking/"];
 
 const ALLOWED_BOTS = [
   "Googlebot",

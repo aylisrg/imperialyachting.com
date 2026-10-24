@@ -3,18 +3,18 @@ export const SITE_CONFIG = {
   legalName: "IMPERIAL CHARTER YACHTING SERVICES L.L.C",
   tagline: "Dubai's Premier Yacht Charter & Management",
   description:
-    "Imperial Yachting offers luxury yacht charter, management, and crewed experiences in Dubai. Explore our owned fleet of premium motor yachts at Dubai Harbour.",
+    "Imperial Yachting offers luxury yacht charter, management, and crewed experiences in Dubai. Explore our owned fleet of premium motor yachts at Dubai Harbour and Marasi Bay.",
   url: "https://imperialyachting.com",
   phone: "+971-52-8355939",
   email: "booking@imperialyachting.com",
   whatsapp: "https://wa.me/971528355939",
-  instagram: "https://instagram.com/dubai.yachts.rental",
+  instagram: "https://instagram.com/imperial.yachting.uae",
   youtube: "https://youtube.com/@imperial_wave",
   linkedinCeo: "https://www.linkedin.com/in/aylis",
   brandwave: "https://brandwave.imperialyachting.com/",
   address: {
-    street: "The Binary by Omniyat, Office 1914-261",
-    area: "Business Bay",
+    street: "Office No4-592, AL KHABEESI BLDG",
+    area: "Al Khabeesi, Deira",
     city: "Dubai",
     country: "UAE",
   },
@@ -84,8 +84,13 @@ export const NAV_LINKS = [
   { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
   { label: "Careers", href: "/careers" },
+  // Footer only (Product PM): the header stays at seven items.
+  { label: "Docs", href: "/documents", footerOnly: true },
   { label: "Contact", href: "/contact" },
 ] as const;
+
+/** The header's links: NAV_LINKS without the footer-only ones. */
+export const HEADER_NAV_LINKS = NAV_LINKS.filter((l) => !("footerOnly" in l && l.footerOnly));
 
 export const SERVICE_NAV = [
   { label: "Charter", href: "/services/charter" },

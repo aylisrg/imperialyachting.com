@@ -209,9 +209,9 @@ describe("localBusinessSchema", () => {
     });
   });
 
-  it("computes reviewCount as at least 6", () => {
-    const schema = localBusinessSchema();
-    expect(schema.aggregateRating.reviewCount).toBeGreaterThanOrEqual(6);
+  it("has no hard-coded aggregateRating (no unsourced review count)", () => {
+    const schema = localBusinessSchema() as Record<string, unknown>;
+    expect(schema.aggregateRating).toBeUndefined();
   });
 });
 

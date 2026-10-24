@@ -872,6 +872,58 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["sale_download_requests"]["Row"]>;
         Relationships: [];
       };
+      document_contacts: {
+        Row: {
+          id: string;
+          email: string;
+          name: string | null;
+          company: string | null;
+          source: string;
+          first_seen_at: string;
+          verified_at: string | null;
+          last_login_at: string | null;
+          login_count: number;
+          download_count: number;
+          last_country: string | null;
+          last_ip: string | null;
+          last_user_agent: string | null;
+          first_referrer: string | null;
+          pms_sync_status: "pending" | "synced" | "failed" | "skipped";
+          pms_synced_at: string | null;
+          pms_external_id: string | null;
+          pms_last_error: string | null;
+          pms_attempts: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Omit<Database["public"]["Tables"]["document_contacts"]["Row"], "email">> & {
+          email: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["document_contacts"]["Row"]>;
+        Relationships: [];
+      };
+      document_access_events: {
+        Row: {
+          id: string;
+          contact_id: string | null;
+          email: string;
+          event: "link_requested" | "login" | "download";
+          document_slug: string | null;
+          ip: string | null;
+          user_agent: string | null;
+          country: string | null;
+          referrer: string | null;
+          created_at: string;
+        };
+        Insert: Partial<
+          Omit<Database["public"]["Tables"]["document_access_events"]["Row"], "email" | "event">
+        > & {
+          email: string;
+          event: Database["public"]["Tables"]["document_access_events"]["Row"]["event"];
+        };
+        Update: Partial<Database["public"]["Tables"]["document_access_events"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -897,3 +949,5 @@ export type SaleListingRow = Database["public"]["Tables"]["sale_listings"]["Row"
 export type SaleMediaRow = Database["public"]["Tables"]["sale_media"]["Row"];
 export type SaleMaterialRow = Database["public"]["Tables"]["sale_materials"]["Row"];
 export type SaleDownloadRequestRow = Database["public"]["Tables"]["sale_download_requests"]["Row"];
+export type DocumentContactRow = Database["public"]["Tables"]["document_contacts"]["Row"];
+export type DocumentAccessEventRow = Database["public"]["Tables"]["document_access_events"]["Row"];

@@ -55,7 +55,7 @@ function salesSection(sales: SaleListing[] | undefined): string[] {
   return [
     "## Yachts for Sale",
     "",
-    `Owner-direct sales from the Imperial Yachting fleet, lying Dubai Harbour. Brokers welcome; spec sheets and photo packs download instantly from each listing. Overview: ${SITE_CONFIG.url}/yachts-for-sale`,
+    `Owner-direct sales from the Imperial Yachting fleet. Brokers welcome; spec sheets and photo packs download instantly from each listing. Overview: ${SITE_CONFIG.url}/yachts-for-sale`,
     "",
     `Sales enquiries and viewings: WhatsApp ${SALES_CONTACT.phone} (${SALES_CONTACT.whatsapp}).`,
     "",
@@ -110,7 +110,8 @@ function contactSection(): string {
 - Email: ${SITE_CONFIG.email}
 - WhatsApp: ${SITE_CONFIG.whatsapp}
 - Address: ${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.area}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.country}
-- Departure marina: ${SITE_CONFIG.harbour.name}, ${SITE_CONFIG.harbour.area}, ${SITE_CONFIG.harbour.city}`;
+- Departure marina: ${SITE_CONFIG.harbour.name}, ${SITE_CONFIG.harbour.area}, ${SITE_CONFIG.harbour.city}
+- Company documents (trade license ${SITE_CONFIG.license}, Ejari, registration; PDFs after email sign-in): ${SITE_CONFIG.url}/documents`;
 }
 
 function servicesSection(extras?: LlmsExtra[]): string {

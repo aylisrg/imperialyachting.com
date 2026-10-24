@@ -53,3 +53,4 @@ export async function notifyLead(lead: LeadLike | LeadRow): Promise<void> {
 }
 
 export { notifySaleDownload, salesNotifyEmail } from "./sales";
+export { notifyDocumentsLogin } from "./documents";

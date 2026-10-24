@@ -1,21 +1,24 @@
 import fs from "node:fs";
-import { NextResponse } from "next/server";
-import { isUnlocked } from "@/lib/documents-auth";
+import { NextResponse, after } from "next/server";
+import { getDocumentsViewer } from "@/lib/documents-auth";
+import { accessContextFromRequest, recordDownload } from "@/lib/documents-access";
 import { getDocumentBySlug } from "@/lib/documents";
 import { getDocumentFilePath } from "@/lib/documents-files";
 
 export const runtime = "nodejs";
 
 /**
- * Streams a private document PDF, but only to visitors who have unlocked the
- * portal with the shared password. Without a valid session cookie the request
- * is refused, so the files are never reachable by direct URL.
+ * Streams a private document PDF, but only to visitors who confirmed their
+ * email through a sign-in link. Without a valid session cookie the request is
+ * refused, so the files are never reachable by direct URL. Each download is
+ * logged against the visitor's email.
  */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  if (!(await isUnlocked())) {
+  const viewer = await getDocumentsViewer();
+  if (!viewer) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -29,6 +32,9 @@ export async function GET(
 
   const fileBuffer = await fs.promises.readFile(filePath);
   const downloadName = `${doc.slug}.pdf`;
+
+  const ctx = accessContextFromRequest(request);
+  after(() => recordDownload(viewer.email, doc.slug, ctx));
 
   return new NextResponse(new Uint8Array(fileBuffer), {
     status: 200,

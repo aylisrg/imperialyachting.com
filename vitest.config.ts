@@ -8,6 +8,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Next resolves this marker to an empty module on the server; do the same
+      // so server-only modules can be unit-tested.
+      "server-only": "next/dist/compiled/server-only/empty.js",
     },
   },
   test: {

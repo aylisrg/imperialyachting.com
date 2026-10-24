@@ -1,0 +1,17 @@
+.git
+.github
+.claude
+.vercel
+.next
+node_modules
+coverage
+out
+build
+npm-debug.log*
+.env*
+!.env.example
+Dockerfile
+docker-compose*.yml
+.dockerignore
+*.md
+docs

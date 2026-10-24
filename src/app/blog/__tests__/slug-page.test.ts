@@ -1,4 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+
+// The page renders inside WakePage, whose font loader only runs under Next.
+vi.mock("next/font/google", () => ({ Cormorant_Garamond: () => ({ variable: "font-serif", className: "" }) }));
 import { generateStaticParams } from "../[slug]/page";
 import { posts } from "@/data/posts";
 

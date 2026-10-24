@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { __resetRateLimitStateForTests } from "@/lib/api/rateLimit";
 import { mergeSaleListing } from "@/lib/sales/merge";
 import { saleRow } from "@/lib/sales/__tests__/fixtures";
+import { MONETA_BROCHURE, MONETA_SLUG } from "@/lib/sales/moneta";
+import { verifyFileToken } from "@/lib/sales/file-token";
 
 const fetchSaleListingBySlug = vi.fn();
 vi.mock("@/lib/sales/listings-db", () => ({
@@ -98,6 +100,38 @@ describe("POST /api/sales/download", () => {
         country: "DE",
       })
     );
+  });
+
+  it("keeps the email gate, lead record and emailed link copy for the real Moneta brochure resolver", async () => {
+    const secret = process.env.SALES_FILE_SECRET;
+    process.env.SALES_FILE_SECRET = "test-secret";
+    try {
+      const moneta = mergeSaleListing(saleRow({ slug: MONETA_SLUG, name: "Moneta", model: "Monte Carlo 6" }), [], null);
+      fetchSaleListingBySlug.mockResolvedValue(moneta);
+      const actual = await vi.importActual<typeof import("@/lib/sales/materials")>("@/lib/sales/materials");
+      resolveMaterials.mockImplementation(actual.resolveMaterials);
+      const { POST } = await import("../download/route");
+      const body = { ...validBody, slug: MONETA_SLUG, materialIds: [MONETA_BROCHURE.id] };
+      expect((await POST(makeRequest({ ...body, email: "" }))).status).toBe(400);
+      expect(mockInsert).not.toHaveBeenCalled();
+      const response = await POST(makeRequest(body));
+      expect(response.status).toBe(200);
+      const payload = await response.json();
+      expect(payload.files).toHaveLength(1);
+      const token = new URL(payload.files[0].url).searchParams.get("t")!;
+      expect(verifyFileToken(token)?.location).toBe(MONETA_BROCHURE.location);
+      expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
+        listing_slug: MONETA_SLUG, email: "broker@example.com",
+        materials: [{ id: MONETA_BROCHURE.id, title: MONETA_BROCHURE.title }],
+      }));
+      expect(notifySaleDownload).toHaveBeenCalledWith(expect.objectContaining({
+        email: "broker@example.com",
+        materials: [{ id: MONETA_BROCHURE.id, title: MONETA_BROCHURE.title, files: payload.files }],
+      }));
+    } finally {
+      if (secret === undefined) delete process.env.SALES_FILE_SECRET;
+      else process.env.SALES_FILE_SECRET = secret;
+    }
   });
 
   it("ignores broker fields when the requester is not a broker", async () => {

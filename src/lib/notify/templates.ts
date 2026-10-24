@@ -413,3 +413,78 @@ export function saleMaterialsRequester(event: SaleDownloadEvent): EmailTemplate 
 
   return { subject, html, text };
 }
+
+/** The sign-in link for the /documents portal, sent to the visitor's inbox. */
+export function documentsAccessLink(opts: { url: string; validHours: number }): EmailTemplate {
+  const subject = `Your sign-in link — ${SITE_CONFIG.name} documents`;
+
+  const html = wrapEmail(
+    `<p style="margin:0 0 16px;">Use the button below to open our corporate documents: trade license, Ejari, company card and banking details.</p>
+    <p style="margin:0 0 24px;"><a href="${escapeHtml(opts.url)}" style="display:inline-block;padding:12px 24px;background-color:${GOLD};color:${NAVY};font-weight:bold;text-decoration:none;border-radius:8px;">Open documents</a></p>
+    <p style="margin:0 0 16px;color:${MUTED};font-size:13px;">The link works for ${opts.validHours} hours; after that you can request a new one on the documents page. If you didn't ask for it, just ignore this email.</p>
+    <p style="margin:0;color:${MUTED};font-size:12px;word-break:break-all;">${escapeHtml(opts.url)}</p>`,
+    "Access to Company Documents"
+  );
+
+  const text = [
+    "Access to Company Documents",
+    "",
+    "Open our corporate documents (trade license, Ejari, company card, banking details):",
+    opts.url,
+    "",
+    `The link works for ${opts.validHours} hours. If you didn't ask for it, just ignore this email.`,
+    "",
+    footerText(),
+  ].join("\n");
+
+  return { subject, html, text };
+}
+
+export interface DocumentsLoginEvent {
+  email: string;
+  name: string | null;
+  company: string | null;
+  country: string | null;
+  /** Logins including this one; 1 means a first-time visitor. */
+  loginCount: number;
+  downloadCount: number;
+  at: Date;
+}
+
+function documentsLoginRows(event: DocumentsLoginEvent): Array<[string, string]> {
+  const rows: Array<[string, string]> = [["Email", event.email]];
+  if (event.name) rows.push(["Name", event.name]);
+  if (event.company) rows.push(["Company", event.company]);
+  rows.push(
+    ["Visit", event.loginCount <= 1 ? "First sign-in" : `Returning (sign-in #${event.loginCount})`],
+    ["When", formatDubai(event.at)]
+  );
+  if (event.downloadCount) rows.push(["Earlier downloads", String(event.downloadCount)]);
+  if (event.country) rows.push(["Country", event.country]);
+  return rows;
+}
+
+/** Owner-facing alert: someone confirmed their email and opened the documents. */
+export function documentsLoginAdmin(event: DocumentsLoginEvent): EmailTemplate {
+  const who = event.company ? `${event.email} (${event.company})` : event.email;
+  const subject = `Documents opened: ${who}`;
+  const rows = documentsLoginRows(event);
+
+  const html = wrapEmail(
+    `${rowsToHtml(rows)}
+    <p style="margin:0;">Reply to this email to write to them directly. <a href="${SITE_CONFIG.url}/admin/documents" style="color:${GOLD};">All document contacts</a></p>`,
+    "Company Documents Opened"
+  );
+
+  const text = [
+    "Company Documents Opened",
+    "",
+    rowsToText(rows),
+    "",
+    `All document contacts: ${SITE_CONFIG.url}/admin/documents`,
+    "",
+    footerText(),
+  ].join("\n");
+
+  return { subject, html, text };
+}

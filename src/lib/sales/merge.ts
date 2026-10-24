@@ -2,6 +2,7 @@ import type { FAQItem } from "@/types/common";
 import type { Yacht } from "@/types/yacht";
 import type { SaleListingRow, SaleMediaRow } from "@/lib/supabase/types";
 import type { SaleListing, SaleSpecSection, SaleVideo } from "@/types/sale";
+import { applyMonetaSaleFacts } from "./moneta";
 
 const M_TO_FT = 3.28084;
 
@@ -107,7 +108,7 @@ export function mergeSaleListing(
     nonEmpty(row.seo_description) ??
     `${saleTitle(model, row.name)} for sale in Dubai.`;
 
-  return {
+  return applyMonetaSaleFacts({
     id: row.id,
     slug: row.slug,
     status: row.status,
@@ -148,7 +149,7 @@ export function mergeSaleListing(
     videos,
     publishedAt: row.published_at,
     updatedAt: row.updated_at,
-  };
+  });
 }
 
 /** "Price on application" or a formatted amount. */

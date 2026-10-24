@@ -219,7 +219,7 @@ export const posts: BlogPost[] = [
       {
         heading: "Which one should you pick",
         paragraphs: [
-          "If your priority is Palm Jumeirah, Atlantis, Burj Al Arab, and Bluewaters — the landmarks most sunset cruises and birthday charters are built around — Dubai Harbour gets you there faster, leaving more of your booked hours for the actual experience rather than transit. If you specifically want the dense Marina skyline as your main visual and don't mind a longer transit to reach the Palm, Dubai Marina works well too. Imperial Yachting's entire fleet is based at Dubai Harbour Yacht Club specifically because it sits at this strategic midpoint — close to Palm Jumeirah, Atlantis, and Bluewaters, with the Marina skyline still visible on the outbound and return legs.",
+          "If your priority is Palm Jumeirah, Atlantis, Burj Al Arab, and Bluewaters — the landmarks most sunset cruises and birthday charters are built around — Dubai Harbour gets you there faster, leaving more of your booked hours for the actual experience rather than transit. If you specifically want the dense Marina skyline as your main visual and don't mind a longer transit to reach the Palm, Dubai Marina works well too. Imperial Yachting keeps the Van Dutch 40 and the Monte Carlo 6 at Dubai Harbour Yacht Club specifically because it sits at this strategic midpoint — close to Palm Jumeirah, Atlantis, and Bluewaters, with the Marina skyline still visible on the outbound and return legs. The EVO 43 is berthed at Marasi Bay.",
         ],
       },
     ],
@@ -237,7 +237,7 @@ export const posts: BlogPost[] = [
       {
         question: "Where does Imperial Yachting's fleet depart from?",
         answer:
-          "All Imperial Yachting vessels are berthed at Dubai Harbour Yacht Club, between Palm Jumeirah and Bluewaters Island.",
+          "The Van Dutch 40 and the Monte Carlo 6 are berthed at Dubai Harbour Yacht Club, between Palm Jumeirah and Bluewaters Island. The EVO 43 is berthed at Marasi Bay.",
       },
     ],
   },

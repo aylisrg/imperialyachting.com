@@ -34,6 +34,19 @@ describe("GET /api/health", () => {
     vi.clearAllMocks();
     delete process.env.BOOKING_CRON_SECRET;
     delete process.env.ANALYTICS_CRON_SECRET;
+    delete process.env.GIT_SHA;
+  });
+
+  it("reports the build commit from GIT_SHA, or null when unset", async () => {
+    mockRunHealthChecks.mockResolvedValue(makeReport());
+    const { GET } = await import("@/app/api/health/route");
+
+    let body = await (await GET(new Request("https://example.com/api/health"))).json();
+    expect(body.commit).toBeNull();
+
+    process.env.GIT_SHA = "abc1234";
+    body = await (await GET(new Request("https://example.com/api/health"))).json();
+    expect(body.commit).toBe("abc1234");
   });
 
   it("returns a shallow, backward-compatible report for a plain GET", async () => {

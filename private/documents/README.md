@@ -1,9 +1,9 @@
 # Private company documents
 
-PDF files placed in this folder are served **only** through the password-gated
-portal at `/documents`, via the auth-checked route
+PDF files placed in this folder are served **only** to visitors who signed in
+to `/documents` with an emailed link, via the auth-checked route
 `GET /api/documents/file/[slug]`. They are deliberately **not** in `/public`, so
-they cannot be opened by direct URL without unlocking the portal first.
+they cannot be opened by direct URL without signing in first.
 
 ## Expected file names
 

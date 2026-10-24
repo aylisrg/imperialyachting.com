@@ -13,11 +13,11 @@ describe("robots", () => {
     expect(wildcard).toBeDefined();
     expect(wildcard?.allow).toBe("/");
     expect(wildcard?.disallow).toEqual(
-      expect.arrayContaining(["/api/", "/admin/", "/documents", "/booking/"])
+      expect.arrayContaining(["/api/", "/admin/", "/booking/"])
     );
   });
 
-  it("does not disallow /ai or /.well-known/", () => {
+  it("does not disallow /ai, /documents or /.well-known/", () => {
     const rules = Array.isArray(result.rules) ? result.rules : [result.rules];
     for (const rule of rules) {
       const disallow = Array.isArray(rule.disallow)
@@ -26,6 +26,7 @@ describe("robots", () => {
           ? [rule.disallow]
           : [];
       expect(disallow).not.toContain("/ai");
+      expect(disallow).not.toContain("/documents");
       expect(disallow).not.toContain("/.well-known/");
     }
   });

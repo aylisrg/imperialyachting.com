@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Syne, Inter, Playfair_Display } from "next/font/google";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { SiteShell } from "@/components/layout/SiteShell";
 import "./globals.css";
@@ -54,7 +53,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_CONFIG.name}`,
   },
   description:
-    "Charter luxury yachts in Dubai from AED 2,500/hr. Imperial Yachting owns & operates a premium fleet at Dubai Harbour — all-inclusive crew, fuel & amenities. Book today.",
+    "Charter luxury yachts in Dubai from AED 2,500/hr. Imperial Yachting owns & operates a premium fleet at Dubai Harbour and Marasi Bay — all-inclusive crew, fuel & amenities. Book today.",
   keywords: [
     "yacht charter Dubai",
     "luxury yacht rental Dubai",
@@ -102,7 +101,7 @@ export const metadata: Metadata = {
     siteName: SITE_CONFIG.name,
     title: `${SITE_CONFIG.name} — Luxury Yacht Charter in Dubai`,
     description:
-      "Charter luxury yachts in Dubai from AED 2,500/hr. We own & operate a premium fleet at Dubai Harbour — all-inclusive crew, fuel & amenities.",
+      "Charter luxury yachts in Dubai from AED 2,500/hr. We own & operate a premium fleet at Dubai Harbour and Marasi Bay — all-inclusive crew, fuel & amenities.",
     images: [
       {
         url: "/og-image.jpg",
@@ -117,7 +116,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${SITE_CONFIG.name} — Luxury Yacht Charter in Dubai`,
     description:
-      "Charter luxury yachts in Dubai from AED 2,500/hr. Premium fleet at Dubai Harbour — all-inclusive crew, fuel & amenities.",
+      "Charter luxury yachts in Dubai from AED 2,500/hr. Premium fleet at Dubai Harbour and Marasi Bay — all-inclusive crew, fuel & amenities.",
     images: [
       {
         url: "/og-image.jpg",
@@ -166,7 +165,6 @@ export default function RootLayout({
           <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL} crossOrigin="anonymous" />
         )}
         <link rel="dns-prefetch" href="https://wa.me" />
-        <link rel="preload" as="image" href="/media/hero/hero-poster.jpg" type="image/jpeg" />
       </head>
       <body
         className={`${syne.variable} ${inter.variable} ${playfair.variable} antialiased`}
@@ -174,12 +172,11 @@ export default function RootLayout({
         <SiteShell>{children}</SiteShell>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${SITE_CONFIG.googleAnalyticsId}`}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="gtag-init" strategy="afterInteractive">
+        <Script id="gtag-init" strategy="lazyOnload">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${SITE_CONFIG.googleAnalyticsId}');`}
         </Script>
-        <SpeedInsights />
       </body>
     </html>
   );

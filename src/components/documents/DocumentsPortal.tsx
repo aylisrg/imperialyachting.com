@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   FileText,
@@ -11,8 +11,11 @@ import {
   KeyRound,
   Download,
   Lock,
+  LogOut,
   ShieldCheck,
   Clock,
+  CheckCircle2,
+  ArrowDown,
   type LucideIcon,
 } from "lucide-react";
 import { Container } from "@/components/layout/Container";
@@ -24,10 +27,16 @@ import {
   type CompanyDocument,
   type DocumentCategory,
 } from "@/lib/documents";
+import {
+  ACCESS_EMAIL_INPUT_ID,
+  DocumentsAccessForm,
+} from "./DocumentsAccessForm";
 
 interface DocumentWithAvailability extends CompanyDocument {
   available: boolean;
 }
+
+export type AccessNotice = "granted" | "expired";
 
 const ICONS: Record<CompanyDocument["icon"], LucideIcon> = {
   license: ScrollText,
@@ -58,7 +67,19 @@ const bankingDetails = [
 
 const CATEGORY_ORDER: DocumentCategory[] = ["legal", "corporate"];
 
-function DocumentCard({ doc }: { doc: DocumentWithAvailability }) {
+/** Brings the email form into view and focuses it. */
+function focusAccessForm() {
+  document.getElementById("access")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  document.getElementById(ACCESS_EMAIL_INPUT_ID)?.focus({ preventScroll: true });
+}
+
+function DocumentCard({
+  doc,
+  unlocked,
+}: {
+  doc: DocumentWithAvailability;
+  unlocked: boolean;
+}) {
   const Icon = ICONS[doc.icon];
 
   return (
@@ -80,7 +101,12 @@ function DocumentCard({ doc }: { doc: DocumentWithAvailability }) {
         {doc.description}
       </p>
 
-      {doc.available ? (
+      {!doc.available ? (
+        <span className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 px-5 py-2.5 text-sm font-medium text-white/40 cursor-default">
+          <Clock className="w-4 h-4" />
+          Available on request
+        </span>
+      ) : unlocked ? (
         <a
           href={`/api/documents/file/${doc.slug}`}
           className="inline-flex items-center justify-center gap-2 rounded-lg bg-gold-500 px-5 py-2.5 text-sm font-semibold text-navy-950 transition-all duration-300 hover:bg-gold-400 hover:shadow-lg hover:shadow-gold-500/20"
@@ -89,38 +115,103 @@ function DocumentCard({ doc }: { doc: DocumentWithAvailability }) {
           Download
         </a>
       ) : (
-        <span className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 px-5 py-2.5 text-sm font-medium text-white/40 cursor-default">
-          <Clock className="w-4 h-4" />
-          Available on request
-        </span>
+        <button
+          type="button"
+          onClick={focusAccessForm}
+          className="inline-flex items-center justify-center gap-2 rounded-lg border border-gold-500/30 px-5 py-2.5 text-sm font-semibold text-gold-300 transition-all duration-300 hover:bg-gold-500/10 hover:border-gold-500/50"
+        >
+          <Lock className="w-4 h-4" />
+          Get access to download
+        </button>
       )}
+    </div>
+  );
+}
+
+function AccessGrantedCard({
+  email,
+  justSignedIn,
+  onSignOut,
+  signingOut,
+}: {
+  email: string;
+  justSignedIn: boolean;
+  onSignOut: () => void;
+  signingOut: boolean;
+}) {
+  return (
+    <div className="glass-card rounded-2xl p-6 sm:p-8" role={justSignedIn ? "status" : undefined}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+        </div>
+        <div>
+          <h2 className="font-heading text-xl font-bold text-white">
+            {justSignedIn ? "You're in" : "Access granted"}
+          </h2>
+          <p className="text-xs text-white/40">All documents are unlocked</p>
+        </div>
+      </div>
+      <p className="text-sm text-white/60">
+        Signed in as <span className="text-white font-medium break-all">{email}</span>
+      </p>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <a
+          href="#library"
+          className="inline-flex items-center gap-2 rounded-lg bg-gold-500 px-5 py-2.5 text-sm font-semibold text-navy-950 transition-all hover:bg-gold-400"
+        >
+          <ArrowDown className="w-4 h-4" />
+          Go to documents
+        </a>
+        <button
+          type="button"
+          onClick={onSignOut}
+          disabled={signingOut}
+          className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2.5 text-sm font-medium text-white/50 transition-colors hover:text-white/80 hover:border-white/20 disabled:opacity-50"
+        >
+          <LogOut className="w-4 h-4" />
+          Sign out
+        </button>
+      </div>
     </div>
   );
 }
 
 export function DocumentsPortal({
   documents,
+  viewer,
+  notice,
 }: {
   documents: DocumentWithAvailability[];
+  viewer: { email: string } | null;
+  notice: AccessNotice | null;
 }) {
   const router = useRouter();
-  const [locking, setLocking] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const unlocked = viewer !== null;
 
   const availableCount = documents.filter((d) => d.available).length;
 
-  const handleLock = async () => {
-    setLocking(true);
+  // Drop ?access=… so a refresh or a shared URL doesn't repeat the notice.
+  useEffect(() => {
+    if (notice) {
+      window.history.replaceState(null, "", `/documents${window.location.hash}`);
+    }
+  }, [notice]);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
     try {
       await fetch("/api/documents/lock", { method: "POST" });
       router.refresh();
-    } catch {
-      setLocking(false);
+    } finally {
+      setSigningOut(false);
     }
   };
 
   return (
     <>
-      {/* Hero */}
+      {/* Hero + access */}
       <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden">
         <div className="absolute inset-0 bg-navy-950">
           <div className="absolute inset-0 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800" />
@@ -137,8 +228,8 @@ export function DocumentsPortal({
         </div>
 
         <Container className="relative z-10">
-          <div className="flex items-start justify-between gap-6">
-            <div className="max-w-3xl">
+          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-center">
+            <div className="max-w-2xl">
               <div className="origin-left mb-8 animate-hero-line">
                 <div className="gold-line" />
               </div>
@@ -146,39 +237,58 @@ export function DocumentsPortal({
               <div className="inline-flex items-center gap-2 rounded-full border border-gold-500/20 bg-gold-500/[0.06] px-3 py-1 mb-6 animate-hero-1">
                 <ShieldCheck className="w-3.5 h-3.5 text-gold-400" />
                 <span className="text-xs font-medium text-gold-300/80 tracking-wide">
-                  Verified &amp; licensed company
+                  Verified &amp; licensed in Dubai
                 </span>
               </div>
 
               <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white animate-hero-2">
-                Corporate Documents
+                Company Documents
               </h1>
 
               <p className="mt-5 text-lg text-white/50 max-w-xl leading-relaxed animate-hero-3">
-                Official licensing, registration, and company records for{" "}
-                {SITE_CONFIG.legalName}. Download verified PDFs and review our
-                full corporate information below.
+                Official licensing, registration and company records of{" "}
+                {SITE_CONFIG.legalName}. Check our credentials below and download
+                verified PDFs for your due diligence, onboarding or payments.
               </p>
+
+              <dl className="mt-8 grid grid-cols-2 gap-4 max-w-md animate-hero-4">
+                <div>
+                  <dt className="text-[11px] uppercase tracking-wider text-white/35">Trade License</dt>
+                  <dd className="mt-1 font-mono text-white/80">{SITE_CONFIG.license}</dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] uppercase tracking-wider text-white/35">Registration</dt>
+                  <dd className="mt-1 font-mono text-white/80">{SITE_CONFIG.companyRegistration}</dd>
+                </div>
+              </dl>
             </div>
 
-            <button
-              onClick={handleLock}
-              disabled={locking}
-              className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-xs font-medium text-white/50 transition-colors hover:text-white/80 hover:border-white/20 disabled:opacity-50 shrink-0 animate-hero-3"
-            >
-              <Lock className="w-3.5 h-3.5" />
-              Lock
-            </button>
+            <div id="access" className="scroll-mt-28 animate-hero-3">
+              {viewer ? (
+                <AccessGrantedCard
+                  email={viewer.email}
+                  justSignedIn={notice === "granted"}
+                  onSignOut={handleSignOut}
+                  signingOut={signingOut}
+                />
+              ) : (
+                <DocumentsAccessForm expired={notice === "expired"} />
+              )}
+            </div>
           </div>
         </Container>
       </section>
 
       {/* Document downloads */}
-      <section className="py-24 sm:py-28 bg-navy-900">
+      <section id="library" className="py-24 sm:py-28 bg-navy-900 scroll-mt-20">
         <Container>
           <SectionHeading
             title="Document Library"
-            subtitle={`${availableCount} of ${documents.length} documents currently available to download. The remainder are available on request.`}
+            subtitle={
+              unlocked
+                ? `${availableCount} of ${documents.length} documents ready to download. The remainder are available on request.`
+                : `${availableCount} of ${documents.length} documents available as PDF after a quick email sign-in. The remainder are available on request.`
+            }
           />
 
           <div className="space-y-16">
@@ -199,7 +309,7 @@ export function DocumentsPortal({
                   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {docs.map((doc, i) => (
                       <Reveal key={doc.slug} delay={i * 80}>
-                        <DocumentCard doc={doc} />
+                        <DocumentCard doc={doc} unlocked={unlocked} />
                       </Reveal>
                     ))}
                   </div>
@@ -265,18 +375,35 @@ export function DocumentsPortal({
               </div>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
-              {bankingDetails.map((item) => (
-                <div key={item.label}>
-                  <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-1">
-                    {item.label}
-                  </p>
-                  <p className="text-sm text-white/80 font-mono break-all">
-                    {item.value}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {unlocked ? (
+              <div className="grid gap-6 sm:grid-cols-2">
+                {bankingDetails.map((item) => (
+                  <div key={item.label}>
+                    <p className="text-xs font-medium text-white/40 uppercase tracking-wider mb-1">
+                      {item.label}
+                    </p>
+                    <p className="text-sm text-white/80 font-mono break-all">
+                      {item.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-lg border border-dashed border-white/10 p-5">
+                <Lock className="w-5 h-5 text-gold-400/70 shrink-0" />
+                <p className="text-sm text-white/50 flex-1">
+                  To protect you from payment fraud, our bank details are shown
+                  only after you confirm your email.
+                </p>
+                <button
+                  type="button"
+                  onClick={focusAccessForm}
+                  className="shrink-0 inline-flex items-center justify-center gap-2 rounded-lg border border-gold-500/30 px-4 py-2 text-sm font-semibold text-gold-300 transition-colors hover:bg-gold-500/10"
+                >
+                  Get access
+                </button>
+              </div>
+            )}
 
             <div className="mt-6 pt-6 border-t border-white/5">
               <p className="text-xs text-white/30">
@@ -320,14 +447,16 @@ export function DocumentsPortal({
               </a>
               .
             </p>
-            <button
-              onClick={handleLock}
-              disabled={locking}
-              className="mt-2 inline-flex items-center gap-2 text-xs font-medium text-white/40 transition-colors hover:text-white/70 disabled:opacity-50"
-            >
-              <Lock className="w-3.5 h-3.5" />
-              Lock this area
-            </button>
+            {viewer && (
+              <button
+                onClick={handleSignOut}
+                disabled={signingOut}
+                className="mt-2 inline-flex items-center gap-2 text-xs font-medium text-white/40 transition-colors hover:text-white/70 disabled:opacity-50"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Sign out ({viewer.email})
+              </button>
+            )}
           </div>
         </Container>
       </section>

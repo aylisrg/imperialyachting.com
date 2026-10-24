@@ -1,10 +1,8 @@
 export const revalidate = 3600;
 
 import type { Metadata } from "next";
-import { Container } from "@/components/layout/Container";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Badge } from "@/components/ui/Badge";
-import { FAQAccordion } from "@/components/shared/FAQAccordion";
+import { WakePage } from "@/components/wake/WakePage";
+import { WakeFaq, WakeHero, WakeSection } from "@/components/wake/blocks";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { yachtProductSchema, faqSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { fleetFAQ } from "@/data/faq";
@@ -14,9 +12,9 @@ import { getLowestPrice } from "@/lib/pricing";
 import { FleetGrid } from "./FleetGrid";
 
 export const metadata: Metadata = {
-  title: "Our Fleet — Luxury Yachts for Charter in Dubai",
+  title: "Our Fleet: Luxury Yachts for Charter in Dubai",
   description:
-    "Browse Imperial Yachting's premium fleet of motor yachts for charter in Dubai. Van Dutch, Monte Carlo, Evo — all-inclusive from AED 2,500/hr at Dubai Harbour.",
+    "Browse Imperial Yachting's premium fleet of motor yachts for charter in Dubai. Van Dutch, Monte Carlo, Evo. All-inclusive from AED 2,500/hr at Dubai Harbour.",
   alternates: { canonical: `${SITE_CONFIG.url}/fleet` },
   openGraph: {
     title: "Our Fleet | Imperial Yachting",
@@ -28,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Our Fleet | Imperial Yachting",
-    description: "Premium motor yachts for charter in Dubai — all-inclusive from Dubai Harbour.",
+    description: "Premium motor yachts for charter in Dubai, all-inclusive from Dubai Harbour.",
     images: ["/og-image.jpg"],
   },
 };
@@ -61,33 +59,19 @@ export default async function FleetPage() {
         ])}
       />
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden">
-        <div className="absolute inset-0 bg-navy-950">
-          <div className="absolute inset-0 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800" />
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gold-500/[0.03] rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-sea-500/[0.04] rounded-full blur-[80px] translate-y-1/3 -translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-navy-950 to-transparent" />
-        </div>
+      <WakePage>
+        <WakeHero
+          clip="hero-vd40-speed"
+          alt="Van Dutch 40 at speed off Dubai Harbour"
+          crumb="Home / Fleet"
+          short={false}
+          title={<>Our<br />fleet.</>}
+          lead="Premium motor yachts, exclusively owned and maintained to the highest standards. Berthed at Dubai Harbour Yacht Club, ready for your next unforgettable experience on the water."
+        >
+          <p className="cap note">Fleet Owner &mdash; Not a Broker</p>
+        </WakeHero>
 
-        <Container className="relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <Badge variant="gold">Fleet Owner &mdash; Not a Broker</Badge>
-            <h1 className="mt-6 font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
-              Our Fleet
-            </h1>
-            <p className="mt-5 text-lg sm:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto">
-              Premium motor yachts, exclusively owned and maintained to
-              the highest standards. Berthed at Dubai Harbour Yacht Club, ready
-              for your next unforgettable experience on the water.
-            </p>
-          </div>
-        </Container>
-      </section>
-
-      {/* Fleet Grid */}
-      <section className="py-16 sm:py-24 bg-navy-950">
-        <Container>
+        <WakeSection>
           <FleetGrid
             yachts={yachts.map((yacht) => ({
               slug: yacht.slug,
@@ -105,22 +89,14 @@ export default async function FleetPage() {
               images: yacht.images,
             }))}
           />
-        </Container>
-      </section>
+        </WakeSection>
 
-      {/* FAQ Section */}
-      <section className="py-24 sm:py-32 bg-navy-950">
-        <Container>
-          <div className="max-w-3xl mx-auto">
-            <SectionHeading
-              title="Fleet Questions"
-              subtitle="Common questions about our yachts and charter options."
-              align="center"
-            />
-            <FAQAccordion items={fleetFAQ} />
-          </div>
-        </Container>
-      </section>
+        <WakeFaq
+          title={<>Fleet<br />questions.</>}
+          lead="Common questions about our yachts and charter options."
+          items={fleetFAQ}
+        />
+      </WakePage>
     </>
   );
 }

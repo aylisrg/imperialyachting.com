@@ -1,0 +1,125 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wake: дизайн-код Imperial Yachting</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--sea);color:var(--light);font:var(--fs-body)/1.6 var(--font-sans);-webkit-font-smoothing:antialiased}
+.serif{font-family:var(--font-serif);font-weight:300;letter-spacing:var(--ls-serif)}
+.cap{font-size:var(--fs-cap);letter-spacing:var(--ls-cap);text-transform:uppercase}
+.ix{font-family:var(--font-serif);font-style:italic;color:var(--copper);font-size:var(--fs-index)}
+sec,section{display:block;padding:var(--s-8) var(--gutter);border-top:1px solid var(--line-dark-soft)}
+.light{background:var(--sand);color:var(--sea);border:0}.teal{background:var(--teal);border:0}
+h2{font-size:clamp(56px,8vw,120px);line-height:.86;margin:var(--s-3) 0 var(--s-7)}
+.hero{position:relative;height:88vh;padding:0;overflow:hidden;border:0}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .sh{position:absolute;inset:0;background:var(--shade-hero)}
+.hero h1{position:absolute;left:var(--gutter);bottom:var(--s-8);font-size:clamp(64px,12vw,180px);line-height:.85}
+.hero .m{position:absolute;left:var(--gutter);right:var(--gutter);bottom:40px;display:flex;justify-content:space-between}
+nav{position:absolute;top:0;left:0;right:0;z-index:3;height:var(--nav-h);padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between}
+nav .logo{font-family:var(--font-serif);font-size:var(--fs-logo);letter-spacing:var(--ls-logo)}
+.sw{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--s-4)}
+.sw div i{display:block;height:160px;margin-bottom:var(--s-3);border:1px solid var(--line-dark-soft)}
+.sw b{display:block;font-weight:500}.sw span{color:var(--mute);font-size:12px}
+.ty>div{display:grid;grid-template-columns:220px 1fr;align-items:baseline;border-top:1px solid var(--line-dark);padding:var(--s-3) 0;gap:var(--s-4)}
+.ty .k{color:var(--mute)}
+.ct{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4)}
+.ct div{padding:var(--s-4);font-size:13px}.ct b{font-family:var(--font-serif);font-size:44px;font-weight:300;display:block}
+.btn{display:inline-block;padding:18px 30px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--sea);background:var(--copper);text-decoration:none}
+.btn.o{background:none;border:1px solid var(--light);color:var(--light)}
+.row{display:flex;gap:var(--s-4);flex-wrap:wrap;align-items:center}
+.svc .it{display:grid;grid-template-columns:90px 1fr 380px;align-items:baseline;border-top:1px solid var(--line-dark);padding:18px 0}
+.svc .it h3{font-size:var(--fs-h3-svc);line-height:1}.svc .it.dim{opacity:.18}
+.card{display:grid;grid-template-columns:1.2fr 1fr;gap:0}
+.card .v{position:relative;height:420px;overflow:hidden}.card video{width:100%;height:100%;object-fit:cover}
+.card .no{position:absolute;left:24px;top:20px;color:var(--light)}
+.card .info{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4);padding:var(--s-5);align-content:center;border-top:1px solid var(--line-light)}
+.card h3{grid-column:1/3;font-size:var(--fs-h3);line-height:1}.card .k{color:var(--earth)}.card .val{font-family:var(--font-serif);font-size:var(--fs-spec)}
+.grid12{display:grid;grid-template-columns:repeat(12,1fr);gap:24px;height:120px}.grid12 i{background:rgba(208,138,78,.18);border-left:1px solid var(--copper)}
+.sp{display:flex;align-items:flex-end;gap:var(--s-4);flex-wrap:wrap}.sp i{display:block;background:var(--copper)}
+.mo{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-4)}.mo div{border-top:1px solid var(--line-dark);padding-top:var(--s-3)}
+.mo b{font-family:var(--font-serif);font-size:30px;font-weight:300;display:block}
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-6)}.dd li{list-style:none;border-top:1px solid var(--line-light);padding:12px 0}
+.dd h3{font-size:44px;margin-bottom:var(--s-3)}
+.phone{width:300px;height:560px;border:1px solid var(--line-dark);position:relative;overflow:hidden}
+.phone video{width:100%;height:100%;object-fit:cover}
+.pill{position:absolute;right:14px;bottom:14px;padding:11px 18px;border-radius:var(--radius-pill);background:var(--sea);color:var(--light);border:1px solid var(--line-dark);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}.facts div{border-left:1px solid rgba(8,32,42,.25);padding-left:18px}.facts p{margin-top:10px;font-size:15px}
+.big{font-size:19vw;line-height:.8;margin-top:var(--s-7);color:var(--teal)}
+@media (max-width:768px){
+ .sw{grid-template-columns:repeat(2,1fr)}.ty>div{grid-template-columns:1fr;gap:4px}.ct,.mo,.dd,.facts{grid-template-columns:1fr}
+ .svc .it{grid-template-columns:34px 1fr}.svc .it p{grid-column:2;font-size:13px}.card{grid-template-columns:1fr}.card .v{height:52vh}
+ .card .info{padding:var(--s-4) 0}.grid12{grid-template-columns:repeat(4,1fr)}.grid12 i:nth-child(n+5){display:none}
+ nav ul{display:none}.hero .m span:nth-child(2){display:none}.phone{width:100%}
+}
+@media (prefers-reduced-motion:reduce){video{display:none}}
+</style></head><body>
+<header class="hero"><video src="prototype/clips/hero-vd40-speed-1920.mp4" poster="prototype/clips/hero-vd40-speed.jpg" autoplay muted loop playsinline></video><div class="sh"></div>
+<nav><div class="logo">IMPERIAL</div><span class="cap">Wake / design code / v1 / 2026</span></nav>
+<h1 class="serif">Wake<br><i>design code.</i></h1><div class="m cap"><span>Imperial Yachting</span><span>Основа: live-концепт</span><span>Токены: tokens.css</span></div></header>
+
+<section><div class="cap"><span class="ix">01</span>&nbsp;&nbsp; Принципы</div><h2 class="serif">Чисто. Серьёзно.<br><i>Только правда.</i></h2>
+<div class="mo"><div><b>Живое видео</b>Каждая сцена на реальном кадре с наших лодок. Full-bleed, без рамок.</div><div><b>Без слопа</b>Нет градиентов, стекла, теней, скруглений, стоков.</div><div><b>Факты</b>Лицензия 960574, юрлицо, Dubai Harbour, рейтинг Google. Ничего выдуманного.</div></div></section>
+
+<section><div class="cap"><span class="ix">02</span>&nbsp;&nbsp; Палитра</div><h2 class="serif">Море, песок,<br><i>медь.</i></h2>
+<div class="sw">
+<div><i style="background:#08202A"></i><b>Sea</b><span>#08202A / фон 60%</span></div>
+<div><i style="background:#0E5A61"></i><b>Teal</b><span>#0E5A61 / Partners</span></div>
+<div><i style="background:#E8D9BF"></i><b>Sand</b><span>#E8D9BF / светлые сцены</span></div>
+<div><i style="background:#D08A4E"></i><b>Copper</b><span>#D08A4E / CTA, индексы</span></div>
+<div><i style="background:#F3EADB"></i><b>Light</b><span>#F3EADB / текст</span></div>
+<div><i style="background:#A9C3C2"></i><b>Mute</b><span>#A9C3C2 / вторичный</span></div>
+<div><i style="background:#6B5B44"></i><b>Earth</b><span>#6B5B44 / подписи на sand</span></div></div>
+<div class="ct" style="margin-top:var(--s-6)">
+<div style="background:var(--sea);border:1px solid var(--line-dark)"><b>14.1</b>Light на Sea. Любой текст</div>
+<div style="background:var(--teal);color:var(--light)"><b>6.6</b>Light на Teal. Любой текст</div>
+<div style="background:var(--copper);color:var(--sea)"><b>5.9</b>Sea на Copper. Кнопка</div>
+<div style="background:var(--sand);color:var(--earth)"><b>4.7</b>Earth на Sand. Только cap</div></div></section>
+
+<section><div class="cap"><span class="ix">03</span>&nbsp;&nbsp; Типографика</div><h2 class="serif">Cormorant<br><i>&amp; Inter.</i></h2>
+<div class="ty">
+<div><span class="cap k">Display 19vw / 300</span><span class="serif" style="font-size:clamp(64px,10vw,150px);line-height:.85">Imperial</span></div>
+<div><span class="cap k">H2 120 / lh .86</span><span class="serif" style="font-size:clamp(48px,6vw,96px);line-height:.86">Three hulls. <i>One crew.</i></span></div>
+<div><span class="cap k">H3 сервис 72</span><span class="serif" style="font-size:var(--fs-h3-svc);line-height:1">Yacht management</span></div>
+<div><span class="cap k">H3 яхта 52</span><span class="serif" style="font-size:var(--fs-h3);line-height:1">Van Dutch 40</span></div>
+<div><span class="cap k">Spec 30 serif</span><span class="serif" style="font-size:30px">12 m &nbsp; 2010 / 2024</span></div>
+<div><span class="cap k">Lead 17 / Inter 400</span><span style="font-size:var(--fs-lead)">Charter, management, film and brand work, run from one berth by the people who own the boats.</span></div>
+<div><span class="cap k">Body 14</span><span>Day, weekly and monthly charters with crew, from Dubai Harbour.</span></div>
+<div><span class="cap k">Cap 11 / .2em</span><span class="cap">Hull DT 2035 &nbsp;/&nbsp; Dubai Harbour</span></div>
+<div><span class="cap k">Index</span><span class="ix">i &nbsp; ii &nbsp; 02 &nbsp; 03</span></div></div></section>
+
+<section><div class="cap"><span class="ix">04</span>&nbsp;&nbsp; Сетка и отступы</div><h2 class="serif">56 / 20.<br><i>Радиус ноль.</i></h2>
+<div class="grid12"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<p class="cap" style="margin:var(--s-3) 0 var(--s-6);color:var(--mute)">12 колонок, gutter 24, поля 56 desktop / 20 mobile, брейкпоинт 768</p>
+<div class="sp"><span><i style="width:6px;height:6px"></i>6</span><span><i style="width:10px;height:10px"></i>10</span><span><i style="width:18px;height:18px"></i>18</span><span><i style="width:24px;height:24px"></i>24</span><span><i style="width:40px;height:40px"></i>40</span><span><i style="width:56px;height:56px"></i>56</span><span><i style="width:72px;height:72px"></i>72</span><span><i style="width:104px;height:104px"></i>104</span><span><i style="width:140px;height:140px"></i>140</span></div></section>
+
+<section><div class="cap"><span class="ix">05</span>&nbsp;&nbsp; Движение</div><h2 class="serif">GSAP, ScrollTrigger,<br><i>Lenis.</i></h2>
+<div class="mo"><div><b>Hero reveal</b>1.4s expo.out, затем scrub: видео scale 1.15</div><div><b>Manifesto</b>inset в full-bleed, power2.inOut, pin 160% / 90%</div><div><b>Services</b>строки 0.18 до 1, кроссфейд фона, pin 220% / 120%</div><div><b>Fleet</b>горизонтальный трек, на мобиле clip-раскрытие</div><div><b>Partners</b>circle-wipe power2.in, pin 120%</div><div><b>Reduced motion</b>без pin, scrub и Lenis, постер вместо видео</div></div>
+<p class="cap" style="margin-top:var(--s-5);color:var(--mute)">Lenis lerp .09 &nbsp;/&nbsp; scrub 1 desktop, .6 mobile &nbsp;/&nbsp; меню .7s cubic-bezier(.7,0,.2,1)</p></section>
+
+<section><div class="cap"><span class="ix">06</span>&nbsp;&nbsp; Видео</div><h2 class="serif">Muted. Loop.<br><i>Faststart.</i></h2>
+<div class="mo"><div><b>Формат</b>webm VP9 CRF 38 + mp4 H.264 Main yuv420p CRF 26 +faststart</div><div><b>Размеры</b>1920 и 960 (до 1000px экрана), 30 fps, 6 до 12 c, петля с кроссфейдом .5s</div><div><b>Нарезка</b>live/scripts/make-clip.sh, запись в content/clips.json, правила в RULES.md</div></div></section>
+
+<section class="svc" style="position:relative"><div class="cap"><span class="ix">07</span>&nbsp;&nbsp; Компоненты / Services</div><h2 class="serif">Сервисы</h2>
+<div class="it dim"><span class="ix">i</span><h3 class="serif">Charter</h3><p>Day, weekly and monthly charters with crew, from Dubai Harbour.</p></div>
+<div class="it"><span class="ix">ii</span><h3 class="serif">Yacht management</h3><p>Crew, maintenance, charter revenue and accounting for owners.</p></div>
+<div class="it dim"><span class="ix">iii</span><h3 class="serif">Cinematography</h3><p>Yacht-based film, drone and content production.</p></div>
+<div class="row" style="margin-top:var(--s-6)"><a class="btn">Request terms</a><a class="btn o">WhatsApp</a><span class="cap" style="color:var(--mute)">Основная copper, вторичная контур. Одна copper на экран.</span></div></section>
+
+<section class="light"><div class="cap" style="color:var(--earth)"><span class="ix">08</span>&nbsp;&nbsp; Fleet card</div><h2 class="serif">Карточка<br><i>яхты.</i></h2>
+<div class="card"><div class="v"><video src="prototype/clips/vd40-aerial-960.mp4" poster="prototype/clips/vd40-aerial.jpg" autoplay muted loop playsinline></video><span class="no cap">Hull DT 2035</span></div>
+<div class="info"><h3 class="serif">Van Dutch 40</h3><div><div class="k cap">LOA</div><div class="val">12 m</div></div><div><div class="k cap">Guests</div><div class="val">10</div></div><div><div class="k cap">Built / Refit</div><div class="val">2010 / 2024</div></div><div><div class="k cap">Berth</div><div class="val">Dubai Harbour</div></div></div></div></section>
+
+<section class="teal"><div class="cap" style="color:var(--mute)"><span class="ix">09</span>&nbsp;&nbsp; Partners</div><h2 class="serif">Work with<br><i>the operator.</i></h2>
+<p style="max-width:480px;font-size:var(--fs-lead);margin-bottom:36px">Direct access to an owned fleet and in-house crew. Terms for agencies, concierges and service providers on request.</p><a class="btn">Request terms</a>
+<p class="cap" style="margin-top:var(--s-5);color:var(--mute)">Без комиссий и цифр на странице. Одна кнопка.</p></section>
+
+<section><div class="cap"><span class="ix">10</span>&nbsp;&nbsp; Mobile</div><h2 class="serif">Одна<br><i>пилюля.</i></h2>
+<div class="row" style="align-items:flex-start;gap:var(--s-6)"><div class="phone"><video src="prototype/clips/moneta-golden-960.mp4" poster="prototype/clips/moneta-golden.jpg" autoplay muted loop playsinline></video><span class="pill">WhatsApp</span></div>
+<ul style="max-width:440px;list-style:none" class="dd"><li>Поля 20, брейкпоинт 768, высота сцен 100svh</li><li>WhatsApp-пилюля справа внизу, после hero, скрыта над Partners</li><li>Никаких полос с кнопками на всю ширину</li><li>Pin короче, scrub .6, флот вертикально</li><li>Видео 960 + faststart, иначе iOS не стартует</li></ul></div></section>
+
+<section class="light"><div class="cap" style="color:var(--earth)"><span class="ix">11</span>&nbsp;&nbsp; Можно / нельзя</div><h2 class="serif">Do <i>&amp; don't.</i></h2>
+<div class="dd"><div><h3 class="serif">Можно</h3><ul><li>Full-bleed видео наших лодок</li><li>Курсив как акцент</li><li>Линии 1px, острые углы</li><li>Copper один раз на экран</li><li>Реальные факты с источником</li></ul></div>
+<div><h3 class="serif"><i>Нельзя</i></h3><ul><li>Градиенты, стекло, тени, скругления</li><li>Стоки и AI-картинки</li><li>1,200+ / 5,000+ и отзывы без ссылок</li><li>Цены, комиссии, продажа яхт</li><li>YouTube-iframe, звук, больше 2 шрифтов</li></ul></div></div></section>
+
+<section class="light" style="border-top:1px solid var(--line-light)"><div class="facts"><div><span class="cap">Legal entity</span><p>Imperial Charter Yachting Services L.L.C</p></div><div><span class="cap">Trade licence</span><p>No. 960574</p></div><div><span class="cap">Berth</span><p>Dubai Harbour Yacht Club</p></div><div><span class="cap">Desk</span><p>+971 52 835 5939 / booking@imperialyachting.com</p></div></div>
+<div class="big serif">IMPERIAL</div></section>
+</body></html>
