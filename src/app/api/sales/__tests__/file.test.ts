@@ -1,11 +1,26 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { createFileToken } from "@/lib/sales/file-token";
+import { createHash } from "node:crypto";
+import { MONETA_BROCHURE } from "@/lib/sales/moneta";
 
 beforeEach(() => {
   process.env.SALES_FILE_SECRET = "test-secret";
 });
 
 describe("GET /api/sales/file", () => {
+  it("streams the exact updated Moneta PDF with private, non-indexable response headers", async () => {
+    const { GET } = await import("../file/route");
+    const token = createFileToken(MONETA_BROCHURE.location, MONETA_BROCHURE.fileName, 60)!;
+    const res = await GET(new Request(`https://x/api/sales/file?t=${encodeURIComponent(token)}`));
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toBe("application/pdf");
+    expect(res.headers.get("content-length")).toBe("13388979");
+    expect(res.headers.get("cache-control")).toBe("private, no-store");
+    expect(res.headers.get("x-robots-tag")).toBe("noindex");
+    expect(createHash("sha256").update(new Uint8Array(await res.arrayBuffer())).digest("hex")).toBe(
+      "b9bbdc6387a3d0c379dda4f73d4646857192c1f4dd5e0b9120a5cd4fb2500666"
+    );
+  });
   it("streams a bundled file for a valid token", async () => {
     const { GET } = await import("../file/route");
     const token = createFileToken("van-dutch-connect/technical-specification.pdf", "VanDutch Spec.pdf", 60)!;

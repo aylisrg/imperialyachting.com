@@ -8,6 +8,7 @@ import type {
 } from "@/types/sale";
 import { createFileToken } from "./file-token";
 import { getPackZipUrl } from "./pack-zip";
+import { isMonetaBrochure, MONETA_SLUG, withMonetaBrochure } from "./moneta";
 
 export const SALE_MEDIA_BUCKET = "sale-media";
 export const SALE_MATERIALS_BUCKET = "sale-materials";
@@ -53,7 +54,7 @@ export function buildMaterialSummaries(
   listing: SaleListing,
   rows: SaleMaterialRow[]
 ): SaleMaterialSummary[] {
-  const items: SaleMaterialSummary[] = rows.map((row) => ({
+  const items: SaleMaterialSummary[] = withMonetaBrochure(listing, rows).map((row) => ({
     id: row.id,
     title: row.title,
     description: row.description,
@@ -207,8 +208,15 @@ export async function resolveMaterials(
 ): Promise<ResolvedMaterial[]> {
   const wanted = new Set(selectedIds);
   const resolved: ResolvedMaterial[] = [];
+  const materialRows = withMonetaBrochure(listing, rows);
+  // A cached page may still submit an older brochure id. Resolve it to the
+  // current PDF rather than sending the superseded file or a duplicate.
+  if (listing.slug === MONETA_SLUG && rows.some((row) => wanted.has(row.id) && isMonetaBrochure(row))) {
+    const current = materialRows.find(isMonetaBrochure);
+    if (current) wanted.add(current.id);
+  }
 
-  for (const row of rows) {
+  for (const row of materialRows) {
     if (!wanted.has(row.id)) continue;
     const file = await materialFile(row, baseUrl);
     if (file) resolved.push({ id: row.id, title: row.title, files: [file] });
