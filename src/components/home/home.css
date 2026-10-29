@@ -16,7 +16,8 @@
 .iyh .btn{display:inline-block;padding:18px 30px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--sea);background:var(--copper)}
 /* nav */
 .iyh nav{position:fixed;top:0;left:0;right:0;z-index:50;height:var(--nav-h);padding:0 var(--gutter);display:flex;align-items:center;justify-content:space-between;mix-blend-mode:difference;color:#fff;transition:background var(--dur-nav),height var(--dur-nav)}
-.iyh nav.solid{mix-blend-mode:normal;background:var(--sea);height:var(--nav-h-solid);border-bottom:1px solid var(--line-dark-soft);color:var(--bone)}
+/* IY-1594: и при прокрутке меню прозрачное — видео на всю страницу, как в макете; текст светлый, как в макете */
+.iyh nav.solid{mix-blend-mode:normal;height:var(--nav-h-solid);color:var(--bone)}
 .iyh nav .logo{font-family:var(--font-serif);font-size:var(--fs-logo);letter-spacing:var(--ls-logo)}
 .iyh nav ul{display:flex;gap:40px;list-style:none}
 .iyh .burger,.iyh .ov{display:none}
