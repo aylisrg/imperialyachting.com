@@ -31,6 +31,15 @@ function Spec({ k, v }: { k: string; v: string | number | null }) {
   );
 }
 
+/** IY-1596: кадры услуг по порядку списка (Charter, Yacht management, Cinematography, Brandwave, Speedboat transfer). */
+const SVC_KADRY: [string, string][] = [
+  ["charter", "Guests on the bow of Moneta"],
+  ["management", "Helm station of Moneta"],
+  ["cinematography", "Photo session on board"],
+  ["brandwave", "Brand shoot on deck"],
+  ["speedboat", "Van Dutch 40 against the Dubai skyline"],
+];
+
 export default function HomePage() {
   return (
     <div className={`iyh ${cormorant.variable}`}>
@@ -89,6 +98,10 @@ export default function HomePage() {
         <div className="bg">
           <div className="b0"><HomeVideo clip="evo43-run" alt="Evo 43 under way" /></div>
           <div className="b1"><HomeVideo clip="moneta-golden" alt="Moneta at golden hour" /></div>
+          {/* IY-1596: своя картинка у каждой услуги — кадры из наших видео, проявляются вместе с услугой */}
+          {SVC_KADRY.map(([k, alt], i) => (
+            <div key={k} className={`k k${i + 1}`}><img src={`/media/home/services/${k}.jpg`} alt={alt} loading="lazy" decoding="async" /></div>
+          ))}
         </div>
         <div className="shade" />
         <div className="head cap"><span className="ix">02</span>&nbsp;&nbsp; Services</div>
