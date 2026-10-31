@@ -34,6 +34,18 @@ export function clipWidth(box: { width: number; height: number }, dpr = 1, aspec
 type Job = { el: HTMLElement; hero: boolean; start: () => void; done?: () => void };
 const queue: Job[] = [];
 let busy = false;
+// The hero clip goes first: other clips wait until it can play (or 1.5 s after load on pages without a hero).
+let heroGone = false;
+function openGate() {
+  if (heroGone) return;
+  heroGone = true;
+  next();
+}
+if (typeof window !== "undefined") {
+  const late = () => setTimeout(openGate, 1500);
+  if (document.readyState === "complete") late();
+  else window.addEventListener("load", late, { once: true });
+}
 
 function distance(el: HTMLElement): number {
   const r = el.getBoundingClientRect();
@@ -44,6 +56,7 @@ function distance(el: HTMLElement): number {
 
 function next() {
   if (busy || !queue.length) return;
+  if (!heroGone && !queue.some((j) => j.hero)) return;
   queue.sort((a, b) => (a.hero === b.hero ? distance(a.el) - distance(b.el) : a.hero ? -1 : 1));
   const job = queue.shift()!;
   busy = true;
@@ -52,6 +65,7 @@ function next() {
     if (t) clearTimeout(t);
     job.done = undefined;
     busy = false;
+    if (job.hero) heroGone = true;
     next();
   };
   t = setTimeout(() => job.done?.(), 8000);
