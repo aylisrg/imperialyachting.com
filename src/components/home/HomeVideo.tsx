@@ -14,8 +14,58 @@ export function videoAllowed(): boolean {
   return !c?.saveData;
 }
 
-export function clipWidth(): 960 | 1920 {
-  return window.innerWidth > 1000 ? 1920 : 960;
+/**
+ * Clip width for the frame it fills (IY-1680). The clip is cropped to cover the frame
+ * (object-fit: cover), so a full-screen phone frame needs the source as wide as the
+ * frame's HEIGHT × the clip's aspect — not as wide as the window. Device pixels count
+ * (capped at 2×), and the measured box already includes the zoom transforms of the frame.
+ * 960 is used only while it is upscaled by at most ~15%; otherwise 1920.
+ */
+export function clipWidth(box: { width: number; height: number }, dpr = 1, aspect = 16 / 9): 960 | 1920 {
+  const need = Math.max(box.width, box.height * aspect) * Math.min(Math.max(dpr, 1), 2);
+  return need <= 1100 ? 960 : 1920;
+}
+
+/**
+ * One clip downloads at a time (IY-1680): the hero first, then whichever waiting clip is
+ * nearest the screen. The next one starts when the current can play through, fails, or
+ * after 8 s — so the first clip on screen is never fighting the others for bandwidth.
+ */
+type Job = { el: HTMLElement; hero: boolean; start: () => void; done?: () => void };
+const queue: Job[] = [];
+let busy = false;
+
+function distance(el: HTMLElement): number {
+  const r = el.getBoundingClientRect();
+  if (r.bottom < 0) return -r.bottom;
+  if (r.top > window.innerHeight) return r.top - window.innerHeight;
+  return 0;
+}
+
+function next() {
+  if (busy || !queue.length) return;
+  queue.sort((a, b) => (a.hero === b.hero ? distance(a.el) - distance(b.el) : a.hero ? -1 : 1));
+  const job = queue.shift()!;
+  busy = true;
+  let t: ReturnType<typeof setTimeout> | undefined;
+  job.done = () => {
+    if (t) clearTimeout(t);
+    job.done = undefined;
+    busy = false;
+    next();
+  };
+  t = setTimeout(() => job.done?.(), 8000);
+  job.start();
+}
+
+function enqueue(job: Job): () => void {
+  queue.push(job);
+  next();
+  return () => {
+    const i = queue.indexOf(job);
+    if (i >= 0) queue.splice(i, 1);
+    job.done?.();
+  };
 }
 
 interface Props {
@@ -26,54 +76,75 @@ interface Props {
   sizes?: string;
   /** Load the poster eagerly (no lazy loading) without making it a priority/LCP image. */
   eager?: boolean;
+  /** Width ÷ height of the clip; 16/9 unless the clip is portrait. */
+  aspect?: number;
 }
 
-export function HomeVideo({ clip, alt, hero = false, sizes = "100vw", eager = false }: Props) {
+export function HomeVideo({ clip, alt, hero = false, sizes = "100vw", eager = false, aspect = 16 / 9 }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
+  const job = useRef<Job | null>(null);
   const [src, setSrc] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const v = ref.current;
     if (!v || !HOME_CLIP_BASE || !videoAllowed()) return;
+    let cancel: (() => void) | undefined;
+    const ask = () => {
+      if (job.current) return;
+      job.current = {
+        el: v,
+        hero,
+        start: () => setSrc((s) => s ?? clipWidth(v.getBoundingClientRect(), window.devicePixelRatio, aspect)),
+      };
+      cancel = enqueue(job.current);
+    };
     if (hero) {
       // Hero clip starts after the page has loaded so it never competes with LCP;
       // the poster image is shown until then.
       let t: ReturnType<typeof setTimeout> | undefined;
       const go = () => {
-        t = setTimeout(() => setSrc(clipWidth()), 300);
+        t = setTimeout(ask, 300);
       };
       if (document.readyState === "complete") go();
       else window.addEventListener("load", go, { once: true });
       return () => {
         window.removeEventListener("load", go);
         if (t) clearTimeout(t);
+        cancel?.();
       };
     }
-    // Non-hero clips: nothing is fetched until the section enters the viewport.
-    const io = new IntersectionObserver(
+    // Non-hero clips queue up as their section comes within one screen of the viewport;
+    // they play only while on screen.
+    const near = new IntersectionObserver(
       (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            setSrc((s) => s ?? clipWidth());
-            v.play().catch(() => {});
-          } else {
-            v.pause();
-          }
-        }
+        if (entries.some((e) => e.isIntersecting)) ask();
       },
-      { rootMargin: "0px 0px 15% 0px" },
+      { rootMargin: "0px 0px 100% 0px" },
     );
-    io.observe(v);
-    return () => io.disconnect();
-  }, [hero]);
+    const on = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) v.play().catch(() => {});
+        else v.pause();
+      }
+    });
+    near.observe(v);
+    on.observe(v);
+    return () => {
+      near.disconnect();
+      on.disconnect();
+      cancel?.();
+    };
+  }, [hero, aspect]);
 
   useEffect(() => {
     const v = ref.current;
     if (!v || src == null) return;
     v.load();
-    v.play().catch(() => {});
-  }, [src]);
+    if (hero || distance(v) === 0) v.play().catch(() => {});
+  }, [src, hero]);
+
+  const ready = () => job.current?.done?.();
 
   return (
     <div className="media">
@@ -97,6 +168,8 @@ export function HomeVideo({ clip, alt, hero = false, sizes = "100vw", eager = fa
         preload="none"
         aria-hidden="true"
         onPlaying={() => setPlaying(true)}
+        onCanPlayThrough={ready}
+        onError={ready}
       >
         {src != null && (
           <>

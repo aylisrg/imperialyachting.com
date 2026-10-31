@@ -89,7 +89,7 @@ export default function HomePage() {
           <div className="cap s">Aboard the Evo 43</div>
         </div>
         <div>
-          <div className="c"><HomeVideo clip="misha-onboard" alt="Misha at Dubai Harbour" sizes="(max-width:768px) 100vw, 26vw" /></div>
+          <div className="c"><HomeVideo clip="misha-onboard" aspect={1920 / 2398} alt="Misha at Dubai Harbour" sizes="(max-width:768px) 100vw, 26vw" /></div>
           <div className="cap s">Misha &nbsp;/&nbsp; Dubai Harbour</div>
         </div>
       </section>
