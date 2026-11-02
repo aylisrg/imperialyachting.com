@@ -12,9 +12,11 @@ describe("Docs link placement", () => {
   });
 });
 
-describe("Yachts for Sale link placement", () => {
+describe("Yacht Sales link placement", () => {
   it("is discoverable in the footer without expanding the header", () => {
-    expect(NAV_LINKS.some((l) => l.href === "/yachts-for-sale")).toBe(true);
+    expect(NAV_LINKS.find((l) => l.href === "/yachts-for-sale")).toEqual({
+      label: "Yacht Sales", href: "/yachts-for-sale", footerOnly: true,
+    });
     expect(HEADER_NAV_LINKS.some((l) => l.href === "/yachts-for-sale")).toBe(false);
   });
 });

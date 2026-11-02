@@ -24,6 +24,7 @@ import {
 import { mergeSaleListing } from "@/lib/sales/merge";
 import { verifyFileToken } from "@/lib/sales/file-token";
 import { fleetYacht, mediaRow, saleRow } from "./fixtures";
+import { MONETA_BROCHURE, MONETA_SLUG } from "@/lib/sales/moneta";
 
 function material(overrides: Partial<SaleMaterialRow>): SaleMaterialRow {
   return {
@@ -58,6 +59,13 @@ beforeEach(() => {
 });
 
 describe("buildMaterialSummaries", () => {
+  it("offers the current Moneta PDF alongside the unchanged photo pack without exposing its path", () => {
+    const moneta = mergeSaleListing(saleRow({ slug: MONETA_SLUG }), [], fleetYacht());
+    const items = buildMaterialSummaries(moneta, []);
+    expect(items.map((i) => i.id)).toEqual([MONETA_BROCHURE.id, PHOTO_PACK_ID]);
+    expect(items[0]).toMatchObject({ category: "brochure", kind: "file", sizeBytes: 13388979 });
+    expect(JSON.stringify(items)).not.toContain(MONETA_BROCHURE.location);
+  });
   it("lists stored materials, then the photo and video packs, without exposing locations", () => {
     const items = buildMaterialSummaries(listing, [
       material({}),
@@ -73,6 +81,36 @@ describe("buildMaterialSummaries", () => {
 });
 
 describe("resolveMaterials", () => {
+  it("serves the new Moneta brochure only through the existing signed download endpoint", async () => {
+    const moneta = mergeSaleListing(saleRow({ slug: MONETA_SLUG }), [], null);
+    const result = await resolveMaterials(moneta, [], [MONETA_BROCHURE.id], "https://preview.example");
+    expect(result).toHaveLength(1);
+    expect(result[0].files[0].url).toMatch(/^https:\/\/preview.example\/api\/sales\/file\?t=/);
+    const token = new URL(result[0].files[0].url).searchParams.get("t")!;
+    expect(verifyFileToken(token)).toMatchObject({ location: MONETA_BROCHURE.location, fileName: MONETA_BROCHURE.fileName });
+    expect(createSignedUrl).not.toHaveBeenCalled();
+  });
+
+  it("resolves cached old Moneta brochure selections to one current PDF, not an old storage link", async () => {
+    const moneta = mergeSaleListing(saleRow({ slug: MONETA_SLUG }), [], null);
+    const old = material({ id: "old", category: "brochure", title: "Moneta brochure", source: "storage" });
+    const otherOld = { ...old, id: "older" };
+    const result = await resolveMaterials(moneta, [old, otherOld], ["older", "old"]);
+    expect(result).toHaveLength(1);
+    expect(verifyFileToken(new URL(result[0].files[0].url).searchParams.get("t")!)?.location).toBe(MONETA_BROCHURE.location);
+    expect(createSignedUrl).not.toHaveBeenCalled();
+  });
+
+  it("fails closed for the Moneta PDF when signing is not configured", async () => {
+    delete process.env.SALES_FILE_SECRET;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+    try {
+      expect(await resolveMaterials(mergeSaleListing(saleRow({ slug: MONETA_SLUG }), [], null), [], [MONETA_BROCHURE.id])).toEqual([]);
+    } finally {
+      if (key !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = key;
+    }
+  });
   it("signs bundled files, forces downloads for gallery photos and keeps links as links", async () => {
     const resolved = await resolveMaterials(
       listing,
