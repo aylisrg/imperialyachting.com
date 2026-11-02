@@ -13,6 +13,7 @@ interface FleetYachtCard {
   description: string;
   builder: string;
   year: number;
+  modelYear?: number;
   refit?: number;
   lengthFeet: number;
   lengthMeters: number;
@@ -60,7 +61,8 @@ export function FleetGrid({ yachts }: FleetGridProps) {
               <div className="w-spec">
                 <div><span className="cap">Length</span><b>{y.lengthFeet}ft / {y.lengthMeters}m</b></div>
                 <div><span className="cap">Guests</span><b>{y.capacity} guests</b></div>
-                <div><span className="cap">Year</span><b>{y.year}{y.refit ? ` / ${y.refit}` : ""}</b></div>
+                <div><span className="cap">Built / Refit</span><b>{y.year}{y.refit ? ` / ${y.refit}` : ""}</b></div>
+                {y.modelYear && <div><span className="cap">Model year</span><b>{y.modelYear}</b></div>}
                 <div>
                   {y.lowestPrice ? (
                     <><span className="cap">From</span><b>AED {y.lowestPrice.amount.toLocaleString("en-US")}<small>{y.lowestPrice.unit}</small></b></>

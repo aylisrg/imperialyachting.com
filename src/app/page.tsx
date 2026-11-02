@@ -120,6 +120,7 @@ export default function HomePage() {
                 <Spec k="LOA" v={y.loa} />
                 <Spec k="Guests" v={y.guests} />
                 <Spec k="Built / Refit" v={builtRefit(y)} />
+                {y.modelYear && <Spec k="Model year" v={y.modelYear} />}
                 <Spec k="Berth" v={y.berth} />
                 <Link className="book cap" href={y.href}>Book {y.name}</Link>
               </div>

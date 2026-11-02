@@ -3,7 +3,6 @@ import { __resetRateLimitStateForTests } from "@/lib/api/rateLimit";
 import { mergeSaleListing } from "@/lib/sales/merge";
 import { saleRow } from "@/lib/sales/__tests__/fixtures";
 import { MONETA_BROCHURE, MONETA_SLUG } from "@/lib/sales/moneta";
-import { verifyFileToken } from "@/lib/sales/file-token";
 
 const fetchSaleListingBySlug = vi.fn();
 vi.mock("@/lib/sales/listings-db", () => ({
@@ -118,8 +117,7 @@ describe("POST /api/sales/download", () => {
       expect(response.status).toBe(200);
       const payload = await response.json();
       expect(payload.files).toHaveLength(1);
-      const token = new URL(payload.files[0].url).searchParams.get("t")!;
-      expect(verifyFileToken(token)?.location).toBe(MONETA_BROCHURE.location);
+      expect(payload.files[0]).toEqual({ name: MONETA_BROCHURE.title, url: MONETA_BROCHURE.location, kind: "link" });
       expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
         listing_slug: MONETA_SLUG, email: "broker@example.com",
         materials: [{ id: MONETA_BROCHURE.id, title: MONETA_BROCHURE.title }],
@@ -178,3 +176,4 @@ describe("POST /api/sales/download", () => {
     expect((await POST(makeRequest(validBody, "9.9.9.9"))).status).toBe(429);
   });
 });
+

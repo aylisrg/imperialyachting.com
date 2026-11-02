@@ -381,9 +381,10 @@ export function yachtProductSchema(yacht: Yacht) {
       },
       {
         "@type": "PropertyValue",
-        name: "Year",
+        name: "Year built",
         value: yacht.year,
       },
+      ...(yacht.modelYear ? [{ "@type": "PropertyValue", name: "Model year", value: yacht.modelYear }] : []),
       {
         "@type": "PropertyValue",
         name: "Capacity",

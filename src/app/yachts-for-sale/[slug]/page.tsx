@@ -87,11 +87,12 @@ function keyFacts(listing: SaleListing): Array<[string, string]> {
     ["Builder", listing.builder || null],
     ["Model", listing.model || null],
     [
-      "Year",
+      "Year built",
       listing.yearBuilt
         ? `${listing.yearBuilt}${listing.refitYear ? ` · refit ${listing.refitYear}` : ""}`
         : null,
     ],
+    ["Model year", listing.modelYear ? String(listing.modelYear) : null],
     [
       "LOA",
       listing.lengthM

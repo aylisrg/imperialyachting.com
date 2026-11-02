@@ -1,3 +1,5 @@
+import { MONETA_BUILD_YEAR, MONETA_MODEL_YEAR } from "@/lib/moneta-years";
+
 // Source: design/prototype/content/fleet.json (design/design-code @ 858bc96, issue #46).
 // Verified data only; null fields are not rendered.
 export interface HomeYacht {
@@ -9,6 +11,7 @@ export interface HomeYacht {
   loa: string | null;
   guests: number | null;
   built: number | null;
+  modelYear?: number;
   refit: number | null;
   berth: string | null;
   clip: string;
@@ -18,7 +21,7 @@ export interface HomeYacht {
 
 export const HOME_FLEET: HomeYacht[] = [
   { slug: "vd-40", name: "Van Dutch 40", hull: "DT 2035", builder: "Van Dutch", loa: "12 m", guests: 10, built: 2010, refit: 2024, berth: "Dubai Harbour", clip: "vd40-aerial", href: "/fleet/van-dutch-40" },
-  { slug: "monte-carlo-6", name: "Moneta", hull: "DT 2720", builder: "Monte Carlo Yachts", model: "Monte Carlo 6", loa: "18 m", guests: 18, built: 2016, refit: 2023, berth: "Dubai Harbour", clip: "moneta-golden", href: "/fleet/monte-carlo-6" },
+  { slug: "monte-carlo-6", name: "Moneta", hull: "DT 2720", builder: "Monte Carlo Yachts", model: "Monte Carlo 6", loa: "18 m", guests: 18, built: MONETA_BUILD_YEAR, modelYear: MONETA_MODEL_YEAR, refit: 2023, berth: "Dubai Harbour", clip: "moneta-golden", href: "/fleet/monte-carlo-6" },
   { slug: "evo-43", name: "Evo 43", hull: "DP 4069", builder: "Evo", loa: "13 m", guests: 12, built: null, refit: null, berth: "Marasi Bay", clip: "evo43-run", href: "/fleet/evo-43" },
 ];
 

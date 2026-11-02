@@ -168,7 +168,8 @@ export default async function YachtDetailPage({
             <div><span className="cap">Length</span><b>{yacht.length.feet}ft / {yacht.length.meters}m</b></div>
             <div><span className="cap">Capacity</span><b>{yacht.capacity} guests</b></div>
             <div><span className="cap">Builder</span><b>{yacht.builder}</b></div>
-            <div><span className="cap">Year</span><b>{yacht.refit ? `${yacht.year} / ${yacht.refit}` : `${yacht.year}`}</b></div>
+            <div><span className="cap">Built / Refit</span><b>{yacht.refit ? `${yacht.year} / ${yacht.refit}` : `${yacht.year}`}</b></div>
+            {yacht.modelYear && <div><span className="cap">Model year</span><b>{yacht.modelYear}</b></div>}
             {yacht.cabins ? <div><span className="cap">Cabins</span><b>{yacht.cabins}</b></div> : null}
             <div><span className="cap">Location</span><b>{yacht.location.replace(", Berth BD2", "")}</b></div>
           </div>
