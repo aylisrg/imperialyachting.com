@@ -63,7 +63,7 @@ describe("buildMaterialSummaries", () => {
     const moneta = mergeSaleListing(saleRow({ slug: MONETA_SLUG }), [], fleetYacht());
     const items = buildMaterialSummaries(moneta, []);
     expect(items.map((i) => i.id)).toEqual([MONETA_BROCHURE.id, PHOTO_PACK_ID]);
-    expect(items[0]).toMatchObject({ category: "brochure", kind: "file", sizeBytes: 13388979 });
+    expect(items[0]).toMatchObject({ category: "brochure", kind: "link", sizeBytes: 17986582 });
     expect(JSON.stringify(items)).not.toContain(MONETA_BROCHURE.location);
   });
   it("lists stored materials, then the photo and video packs, without exposing locations", () => {
@@ -81,13 +81,11 @@ describe("buildMaterialSummaries", () => {
 });
 
 describe("resolveMaterials", () => {
-  it("serves the new Moneta brochure only through the existing signed download endpoint", async () => {
+  it("resolves the current Moneta direct download after the existing email gate", async () => {
     const moneta = mergeSaleListing(saleRow({ slug: MONETA_SLUG }), [], null);
     const result = await resolveMaterials(moneta, [], [MONETA_BROCHURE.id], "https://preview.example");
     expect(result).toHaveLength(1);
-    expect(result[0].files[0].url).toMatch(/^https:\/\/preview.example\/api\/sales\/file\?t=/);
-    const token = new URL(result[0].files[0].url).searchParams.get("t")!;
-    expect(verifyFileToken(token)).toMatchObject({ location: MONETA_BROCHURE.location, fileName: MONETA_BROCHURE.fileName });
+    expect(result[0].files[0]).toEqual({ name: MONETA_BROCHURE.title, url: MONETA_BROCHURE.location, kind: "link" });
     expect(createSignedUrl).not.toHaveBeenCalled();
   });
 
@@ -97,16 +95,16 @@ describe("resolveMaterials", () => {
     const otherOld = { ...old, id: "older" };
     const result = await resolveMaterials(moneta, [old, otherOld], ["older", "old"]);
     expect(result).toHaveLength(1);
-    expect(verifyFileToken(new URL(result[0].files[0].url).searchParams.get("t")!)?.location).toBe(MONETA_BROCHURE.location);
+    expect(result[0].files[0].url).toBe(MONETA_BROCHURE.location);
     expect(createSignedUrl).not.toHaveBeenCalled();
   });
 
-  it("fails closed for the Moneta PDF when signing is not configured", async () => {
+  it("does not require a file-signing secret for the already-public V3 download", async () => {
     delete process.env.SALES_FILE_SECRET;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     delete process.env.SUPABASE_SERVICE_ROLE_KEY;
     try {
-      expect(await resolveMaterials(mergeSaleListing(saleRow({ slug: MONETA_SLUG }), [], null), [], [MONETA_BROCHURE.id])).toEqual([]);
+      expect(await resolveMaterials(mergeSaleListing(saleRow({ slug: MONETA_SLUG }), [], null), [], [MONETA_BROCHURE.id])).toEqual([expect.objectContaining({ files: [{ name: MONETA_BROCHURE.title, url: MONETA_BROCHURE.location, kind: "link" }] })]);
     } finally {
       if (key !== undefined) process.env.SUPABASE_SERVICE_ROLE_KEY = key;
     }

@@ -15,6 +15,9 @@ describe("home data", () => {
   it("has verified fleet capacities", () => {
     const by = Object.fromEntries(HOME_FLEET.map((y) => [y.slug, y]));
     expect(by["monte-carlo-6"].guests).toBe(18);
+    expect(by["monte-carlo-6"].built).toBe(2018);
+    expect(by["monte-carlo-6"].modelYear).toBe(2019);
+    expect(by["monte-carlo-6"].refit).toBe(2023);
     expect(by["evo-43"].guests).toBe(12);
     expect(by["evo-43"].berth).toBe("Marasi Bay");
   });

@@ -80,6 +80,7 @@ export default async function FleetPage() {
               description: yacht.description,
               builder: yacht.builder,
               year: yacht.year,
+              modelYear: yacht.modelYear,
               refit: yacht.refit,
               lengthFeet: yacht.length.feet,
               lengthMeters: yacht.length.meters,

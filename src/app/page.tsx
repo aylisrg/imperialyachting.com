@@ -133,6 +133,7 @@ export default function HomePage() {
                 <Spec k="LOA" v={y.loa} />
                 <Spec k="Guests" v={y.guests} />
                 <Spec k="Built / Refit" v={builtRefit(y)} />
+                {y.modelYear && <Spec k="Model year" v={y.modelYear} />}
                 <Spec k="Berth" v={y.berth} />
                 <Link className="book cap" href={y.href}>Book {y.name}</Link>
               </div>
@@ -163,6 +164,7 @@ export default function HomePage() {
           <div><span className="cap">Berth</span><p>Dubai Harbour Yacht Club</p></div>
           <div><span className="cap">Desk</span><p><a href={`tel:${SITE_CONFIG.phone}`}>+971 52 835 5939</a> &nbsp;/&nbsp; <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a></p></div>
         </div>
+        <p className="cap" style={{ marginTop: 32 }}><Link href="/yachts-for-sale">Yacht Sales</Link></p>
         <div className="big serif" aria-hidden="true">IMPERIAL</div>
       </footer>
 

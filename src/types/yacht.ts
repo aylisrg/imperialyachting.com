@@ -30,7 +30,9 @@ export interface Yacht {
   tagline: string;
   description: string;
   builder: string;
+  /** Year of construction, not model year. */
   year: number;
+  modelYear?: number;
   refit?: number;
   length: { feet: number; meters: number };
   beam?: { feet: number; meters: number };

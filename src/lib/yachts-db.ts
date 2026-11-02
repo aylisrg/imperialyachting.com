@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createPublicSupabase } from "./supabase/public";
 import { withRetry } from "./supabase/with-retry";
 import type { Database } from "./supabase/types";
+import { applyMonetaFleetYears } from "./moneta-years";
 import type { Yacht } from "@/types/yacht";
 
 type SupabaseDbClient = SupabaseClient<Database>;
@@ -147,7 +148,7 @@ async function mapYachtFromDB(
     ? [heroImg.url, ...images.filter((img) => img.id !== heroImg.id).map((img) => img.url)]
     : images.map((img) => img.url);
 
-  return {
+  return applyMonetaFleetYears({
     slug: dbYacht.slug,
     name: dbYacht.name,
     tagline: dbYacht.tagline || "",
@@ -196,5 +197,5 @@ async function mapYachtFromDB(
     currency: dbYacht.currency || undefined,
     calendarId: dbYacht.calendar_id ?? null,
     bookingEnabled: dbYacht.booking_enabled ?? undefined,
-  };
+  });
 }

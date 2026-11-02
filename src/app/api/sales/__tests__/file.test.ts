@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { createFileToken } from "@/lib/sales/file-token";
 import { createHash } from "node:crypto";
-import { MONETA_BROCHURE } from "@/lib/sales/moneta";
+import { MONETA_LEGACY_BROCHURE_LOCATION } from "@/lib/sales/moneta";
 
 beforeEach(() => {
   process.env.SALES_FILE_SECRET = "test-secret";
@@ -10,7 +10,7 @@ beforeEach(() => {
 describe("GET /api/sales/file", () => {
   it("streams the exact updated Moneta PDF with private, non-indexable response headers", async () => {
     const { GET } = await import("../file/route");
-    const token = createFileToken(MONETA_BROCHURE.location, MONETA_BROCHURE.fileName, 60)!;
+    const token = createFileToken(MONETA_LEGACY_BROCHURE_LOCATION, "MONETA-Monte-Carlo-6-Specification-and-Videos.pdf", 60)!;
     const res = await GET(new Request(`https://x/api/sales/file?t=${encodeURIComponent(token)}`));
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toBe("application/pdf");
