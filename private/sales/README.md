@@ -12,10 +12,15 @@ New materials should normally be uploaded through the sales-admin MCP
 
 ## Moneta GitHub/VPS release
 
-`monte-carlo-6-moneta/specification-and-videos.pdf` is the approved 63-page
-brochure (13,388,979 bytes; SHA-256
-`b9bbdc6387a3d0c379dda4f73d4646857192c1f4dd5e0b9120a5cd4fb2500666`).
-`src/lib/sales/moneta.ts` supplies this release's brochure and confirmed sale
+`monte-carlo-6-moneta/specification-and-videos.pdf` is the corrected 34-page V3
+brochure (17,986,582 bytes; SHA-256
+`769bc9f6fbcd0897201610b0dc9c171f8b81479f998446715ed1f73ea0e76d1f`).
+Verified public years: **built 2018 / model year 2019**. The actual launch date
+is unconfirmed; no launch year is asserted. Private ownership/registration
+source documents and identifiers must not be included in public materials.
+
+`src/lib/moneta-years.ts` normalizes these years for the fleet, its metadata
+and machine-readable feeds. `src/lib/sales/moneta.ts` supplies this release's brochure and confirmed sale
 facts for that exact listing slug, so publishing the GitHub release does not
 require a separate database migration or admin upload. The PDF uses the same
 email gate, lead log, emailed links and signed file endpoint as other bundles.

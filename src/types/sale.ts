@@ -36,6 +36,7 @@ export interface SaleListing {
   builder: string;
   model: string;
   yearBuilt: number | null;
+  modelYear?: number | null;
   refitYear: number | null;
   lengthM: number | null;
   lengthFt: number | null;

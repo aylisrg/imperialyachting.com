@@ -1,18 +1,19 @@
 import type { SaleMaterialRow } from "@/lib/supabase/types";
+import { MONETA_BUILD_YEAR, MONETA_MODEL_YEAR, correctMonetaYearSpecs, correctMonetaYearText } from "@/lib/moneta-years";
 import type { SaleListing, SaleSpecSection } from "@/types/sale";
 
 export const MONETA_SLUG = "monte-carlo-6-moneta";
 export const MONETA_BROCHURE = {
-  id: "moneta-specification-and-videos-2026-10",
+  id: "moneta-specification-and-videos-2026-11-v3",
   title: "Moneta specification & videos (PDF)",
-  description: "63 pages: specifications, photographs and four linked video previews.",
+  description: "34 pages: specifications, photographs and four linked video previews.",
   location: "monte-carlo-6-moneta/specification-and-videos.pdf",
   fileName: "MONETA-Monte-Carlo-6-Specification-and-Videos.pdf",
-  sizeBytes: 13388979,
+  sizeBytes: 17986582,
 } as const;
 
 /** Owner-approved brochure facts, published with the GitHub/VPS release.
- * Keep this sale-specific: changing the linked charter yacht is a separate task.
+ * Year facts are shared with the charter fleet; all other overrides remain sale-specific.
  */
 export function applyMonetaSaleFacts(listing: SaleListing): SaleListing {
   if (listing.slug !== MONETA_SLUG) return listing;
@@ -21,11 +22,6 @@ export function applyMonetaSaleFacts(listing: SaleListing): SaleListing {
     builder: "Beneteau",
     manufacturer: "Beneteau",
     model: "Monte Carlo 6",
-    year: "2019",
-    "year built": "2019",
-    built: "2019",
-    launched: "2020",
-    "launch year": "2020",
     loa: "18.35 m / 60'2\"",
     length: "18.35 m / 60'2\"",
     "length overall": "18.35 m / 60'2\"",
@@ -34,37 +30,46 @@ export function applyMonetaSaleFacts(listing: SaleListing): SaleListing {
   };
   const specs: SaleSpecSection[] = listing.specSections.map((section) => ({
     ...section,
-    items: section.items.map((item) => ({
+    title: /launch/i.test(section.title) ? "Build & model year" : section.title,
+    items: correctMonetaYearSpecs(section.items).map((item) => ({
       ...item,
-      value: item.label.replace(/\s/g, "").toLowerCase() === "year/refit"
-        ? item.value.replace(/^\s*\d{4}/, "2019")
-        : correctedSpecs[item.label.trim().toLowerCase()] ?? item.value,
+      value: correctedSpecs[item.label.trim().toLowerCase()] ?? item.value,
     })),
-  }));
-  if (!specs.some((s) => s.items.some((i) => /^(launched|launch year)$/i.test(i.label.trim())))) {
-    specs.push({ title: "Build & launch", items: [
-      { label: "Year built", value: "2019" },
-      { label: "Launched", value: "2020" },
-    ] });
-  }
+  })).filter((section) => section.items.length > 0);
+  const yearItems = [
+    { label: "Year built", value: String(MONETA_BUILD_YEAR) },
+    { label: "Model year", value: String(MONETA_MODEL_YEAR) },
+  ].filter(({ label }) => !specs.some((section) => section.items.some((item) => item.label.trim().toLowerCase() === label.toLowerCase())));
+  if (yearItems.length) specs.push({ title: "Build & model year", items: yearItems });
 
-  const summary = "Beneteau Monte Carlo 6 MONETA for sale in Dubai. Built 2019, launched 2020. 18.35 m flybridge yacht with an updated specification and video brochure.";
+  const summary = "Beneteau Monte Carlo 6 MONETA for sale in Dubai. Built 2018, model year 2019. 18.35 m flybridge yacht with an updated specification and video brochure.";
   return {
     ...listing,
     builder: "Beneteau",
     model: "Monte Carlo 6",
-    yearBuilt: 2019,
+    yearBuilt: MONETA_BUILD_YEAR,
+    modelYear: MONETA_MODEL_YEAR,
     lengthM: 18.35,
     lengthFt: 60,
     beamM: 4.91,
     draftM: 1.17,
-    headline: "Beneteau Monte Carlo 6 · Built 2019 · Launched 2020",
+    headline: "Beneteau Monte Carlo 6 · Built 2018 · Model year 2019",
     summary,
-    description: "MONETA is a Beneteau Monte Carlo 6 flybridge yacht, built in 2019 and launched in 2020. She measures 18.35 m overall, with a 4.91 m beam and a 1.17 m draft.\n\nThe updated 63-page brochure contains the technical specification, photographs and four linked video previews.",
+    description: "MONETA is a Beneteau Monte Carlo 6 flybridge yacht, built in 2018, model year 2019. She measures 18.35 m overall, with a 4.91 m beam and a 1.17 m draft.\n\nThe updated 34-page brochure contains the technical specification, photographs and four linked video previews.",
+    highlights: listing.highlights.map(correctMonetaYearText),
+    features: listing.features.map(correctMonetaYearText),
+    faq: listing.faq.map((item) => ({
+      question: correctMonetaYearText(item.question),
+      answer: /launch/i.test(item.question)
+        ? "The launch date has not been confirmed."
+        : /(?:year.*(?:built|construction)|when.*built)/i.test(item.question)
+          ? "MONETA was built in 2018; her model year is 2019."
+          : correctMonetaYearText(item.answer),
+    })),
     specSections: specs,
-    seoTitle: "Beneteau Monte Carlo 6 MONETA for Sale in Dubai — Built 2019, Launched 2020",
+    seoTitle: "Beneteau Monte Carlo 6 MONETA for Sale in Dubai — Built 2018, Model Year 2019",
     seoDescription: summary,
-    keywords: listing.keywords.map((keyword) => keyword.replace(/Monte Carlo Yachts/gi, "Beneteau")),
+    keywords: listing.keywords.map((keyword) => correctMonetaYearText(keyword.replace(/Monte Carlo Yachts/gi, "Beneteau"))),
   };
 }
 

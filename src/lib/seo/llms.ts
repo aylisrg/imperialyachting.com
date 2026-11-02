@@ -197,7 +197,7 @@ function fullFleetSection(yachts: Yacht[]): string {
         "",
         yacht.description,
         "",
-        `- Builder: ${yacht.builder} (${yacht.year})`,
+        `- Builder: ${yacht.builder} (built ${yacht.year}${yacht.modelYear ? `; model year ${yacht.modelYear}` : ""})`,
         `- Length: ${yacht.length.feet}ft (${yacht.length.meters}m)`,
         `- Capacity: up to ${yacht.capacity} guests`,
         `- Location: ${yacht.location}`,
