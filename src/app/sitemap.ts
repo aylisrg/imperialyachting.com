@@ -90,8 +90,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: updatedAt ?? now,
   }));
 
-  // Yachts for sale: not linked from the navigation, so the sitemap (plus
-  // llms.txt and IndexNow) is how crawlers discover the section.
+  // Yachts for sale: include the hub and public listings alongside the footer link.
   const saleListings = await fetchSaleListings().catch(() => []);
   const salePages = [
     { url: `${BASE_URL}/yachts-for-sale`, changeFrequency: "weekly" as const, priority: 0.8, lastModified: now },
