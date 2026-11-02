@@ -1,7 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
-import path from "node:path";
 import type { SaleMaterialRow } from "@/lib/supabase/types";
 import { saleListingSchema } from "@/components/seo/schemas";
 import { mergeSaleListing } from "@/lib/sales/merge";
@@ -86,10 +83,10 @@ describe("Moneta release facts", () => {
   });
 });
 
-describe("Moneta bundled brochure replacement", () => {
+describe("Moneta current brochure replacement", () => {
   it("offers exactly one current brochure when the database has no old row", () => {
     expect(withMonetaBrochure(moneta(), [])).toEqual([expect.objectContaining({
-      id: MONETA_BROCHURE.id, category: "brochure", source: "bundled",
+      id: MONETA_BROCHURE.id, category: "brochure", source: "url",
       location: MONETA_BROCHURE.location, size_bytes: 17986582,
     })]);
   });
@@ -99,7 +96,7 @@ describe("Moneta bundled brochure replacement", () => {
     const before = structuredClone(old);
     const rows = withMonetaBrochure(moneta(), [old, material({ id: "duplicate" })]);
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ id: old.id, source: "bundled", location: MONETA_BROCHURE.location,
+    expect(rows[0]).toMatchObject({ id: old.id, source: "url", location: MONETA_BROCHURE.location,
       sort_order: old.sort_order, created_at: old.created_at });
     expect(old).toEqual(before);
   });
@@ -120,12 +117,12 @@ describe("Moneta bundled brochure replacement", () => {
     expect(withMonetaBrochure(mergeSaleListing(saleRow(), [], null), rows)).toBe(rows);
   });
 
-  it("ships the exact owner-approved PDF outside public/", () => {
-    const pdf = readFileSync(path.join(process.cwd(), "private/sales", MONETA_BROCHURE.location));
-    expect(pdf.length).toBe(MONETA_BROCHURE.sizeBytes);
-    expect(pdf.subarray(0, 4).toString()).toBe("%PDF");
-    expect(createHash("sha256").update(pdf).digest("hex")).toBe(
-      "769bc9f6fbcd0897201610b0dc9c171f8b81479f998446715ed1f73ea0e76d1f"
-    );
+  it("uses the verified existing V3 direct download, not a viewer or a new public upload", () => {
+    const url = new URL(MONETA_BROCHURE.location);
+    expect(url.origin).toBe("https://drive.google.com");
+    expect(url.pathname).toBe("/uc");
+    expect(url.searchParams.get("export")).toBe("download");
+    expect(url.searchParams.get("id")).toBe("19hS9msi4GqCUEn32p_mODU0qYWWwGLhF");
+    expect(MONETA_BROCHURE.sizeBytes).toBe(17986582);
   });
 });

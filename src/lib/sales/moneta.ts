@@ -3,11 +3,12 @@ import { MONETA_BUILD_YEAR, MONETA_MODEL_YEAR, correctMonetaYearSpecs, correctMo
 import type { SaleListing, SaleSpecSection } from "@/types/sale";
 
 export const MONETA_SLUG = "monte-carlo-6-moneta";
+export const MONETA_LEGACY_BROCHURE_LOCATION = "monte-carlo-6-moneta/specification-and-videos.pdf";
 export const MONETA_BROCHURE = {
-  id: "moneta-specification-and-videos-2026-11-v3",
-  title: "Moneta specification & videos (PDF)",
+  id: "moneta-specification-and-videos-2026-10",
+  title: "Moneta specification & videos — V3 (PDF)",
   description: "34 pages: specifications, photographs and four linked video previews.",
-  location: "monte-carlo-6-moneta/specification-and-videos.pdf",
+  location: "https://drive.google.com/uc?export=download&id=19hS9msi4GqCUEn32p_mODU0qYWWwGLhF",
   fileName: "MONETA-Monte-Carlo-6-Specification-and-Videos.pdf",
   sizeBytes: 17986582,
 } as const;
@@ -78,7 +79,8 @@ export function applyMonetaSaleFacts(listing: SaleListing): SaleListing {
  * and is categorized as a brochure, or already points at this exact bundle.
  */
 export function isMonetaBrochure(row: SaleMaterialRow): boolean {
-  if (row.source === "bundled" && row.location === MONETA_BROCHURE.location) return true;
+  if (row.source === "bundled" && row.location === MONETA_LEGACY_BROCHURE_LOCATION) return true;
+  if (row.source === "url" && row.location === MONETA_BROCHURE.location) return true;
   // Every upload has the listing slug as its directory; that prefix is NOT
   // evidence of document identity. Model-only brochures may be manufacturer's.
   const basename = row.location.split(/[\\/]/).pop()?.split(/[?#]/)[0] ?? "";
@@ -99,7 +101,7 @@ export function withMonetaBrochure(listing: SaleListing, rows: SaleMaterialRow[]
     title: MONETA_BROCHURE.title,
     description: MONETA_BROCHURE.description,
     category: "brochure",
-    source: "bundled",
+    source: "url",
     location: MONETA_BROCHURE.location,
     file_name: MONETA_BROCHURE.fileName,
     mime_type: "application/pdf",

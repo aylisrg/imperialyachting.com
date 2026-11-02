@@ -10,29 +10,32 @@ New materials should normally be uploaded through the sales-admin MCP
 (`sales_add_material`), which stores them in the private Supabase bucket
 `sale-materials` — no deploy needed. See `docs/YACHT_SALES_RU.md`.
 
-## Moneta GitHub/VPS release
+## Moneta year correction and V3
 
-`monte-carlo-6-moneta/specification-and-videos.pdf` is the corrected 34-page V3
-brochure (17,986,582 bytes; SHA-256
-`769bc9f6fbcd0897201610b0dc9c171f8b81479f998446715ed1f73ea0e76d1f`).
 Verified public years: **built 2018 / model year 2019**. The actual launch date
 is unconfirmed; no launch year is asserted. Private ownership/registration
 source documents and identifiers must not be included in public materials.
 
-`src/lib/moneta-years.ts` normalizes these years for the fleet, its metadata
-and machine-readable feeds. `src/lib/sales/moneta.ts` supplies this release's brochure and confirmed sale
-facts for that exact listing slug, so publishing the GitHub release does not
-require a separate database migration or admin upload. The PDF uses the same
-email gate, lead log, emailed links and signed file endpoint as other bundles.
+`src/lib/moneta-years.ts` normalizes these years for the fleet, metadata and
+machine-readable feeds. `src/lib/sales/moneta.ts` supplies the sale facts and
+supersedes identifiable MONETA brochure rows at read time.
 
-Explicitly MONETA-named brochure rows are superseded at read time, preserving
-their first id and retaining database records/files for rollback. Other PDFs,
-survey/specification records and generic brochures are not hidden. The actual
-production old brochure id has not been verified; after release, inspect the
-live material pack for an old PDF stored under a different category/title.
-Do not claim that a particular database row was deleted or replaced.
+New brochure requests use the existing `source: 'url'` path after the unchanged
+email gate (including lead logging and the emailed copy). The canonical Drive
+file was already link-readable; this change does not alter sharing. Its direct
+`uc?export=download` URL was verified on 2026-11-02 to return the exact 34-page
+V3 PDF, not an HTML viewer/login/confirmation page: 17,986,582 bytes, SHA-256
+`769bc9f6fbcd0897201610b0dc9c171f8b81479f998446715ed1f73ea0e76d1f`.
+The public material summary does not expose the URL before the gate.
 
-The existing Next.js file tracing and Dockerfile already include private/sales.
-Do not move this PDF into public/ or change Drive sharing. The main branch's
-GitHub CI is not a VPS deployment trigger; verify the active VPS release and
-live page separately before reporting publication.
+The historical `monte-carlo-6-moneta/specification-and-videos.pdf` remains
+unchanged for rollback; it is not offered for new brochure requests. Already
+issued signed links are not revoked by this override. Other documents, photo
+packs, surveys and generic manufacturer brochures are not changed. No database
+rows/files were deleted. Inspect the live pack after release for unidentifiable
+old PDFs stored under different categories/titles.
+
+This is not proof of production publication. The active deployment integration
+and branch remain unverified; do not roll out unrelated main-branch redesign
+changes as part of this correction. Verify the live page and a gated download
+separately before reporting publication.
