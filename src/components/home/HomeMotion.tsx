@@ -48,7 +48,11 @@ export function HomeMotion() {
           const s = gsap.timeline({ scrollTrigger: { trigger: ".svc", start: "top top", end: "+=220%", pin: true, scrub: 1 } });
           its.forEach((it, i) => {
             s.to(it, { opacity: 1, x: 24, duration: 1 }, i);
-            if (i < its.length - 1) s.to(it, { opacity: 0.35, x: 0, duration: 1 }, i + 1);
+            s.to(`.svc .k${i + 1}`, { opacity: 1, duration: 1 }, i);   // IY-1596: кадр своей услуги
+            if (i < its.length - 1) {
+              s.to(it, { opacity: 0.35, x: 0, duration: 1 }, i + 1);
+              s.to(`.svc .k${i + 1}`, { opacity: 0, duration: 1 }, i + 1);
+            }
           });
           s.to(".svc .b1", { opacity: 1, duration: 2 }, 2).fromTo(".svc .b1 .media", { scale: 1.2 }, { scale: 1, duration: 2 }, 2);
 
@@ -76,7 +80,11 @@ export function HomeMotion() {
           const s = gsap.timeline({ scrollTrigger: { trigger: ".svc", start: "top top", end: "+=120%", pin: true, scrub: 0.6 } });
           its.forEach((it, i) => {
             s.to(it, { opacity: 1, x: 10, duration: 1 }, i);
-            if (i < its.length - 1) s.to(it, { opacity: 0.4, x: 0, duration: 1 }, i + 1);
+            s.to(`.svc .k${i + 1}`, { opacity: 1, duration: 1 }, i);   // IY-1596
+            if (i < its.length - 1) {
+              s.to(it, { opacity: 0.4, x: 0, duration: 1 }, i + 1);
+              s.to(`.svc .k${i + 1}`, { opacity: 0, duration: 1 }, i + 1);
+            }
           });
           s.to(".svc .b1", { opacity: 1, duration: 2 }, 2);
           gsap.utils.toArray<HTMLElement>(".panel").forEach((p) => {

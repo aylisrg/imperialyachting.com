@@ -31,6 +31,15 @@ function Spec({ k, v }: { k: string; v: string | number | null }) {
   );
 }
 
+/** IY-1596: кадры услуг по порядку списка (Charter, Yacht management, Cinematography, Brandwave, Speedboat transfer). */
+const SVC_KADRY: [string, string][] = [
+  ["charter", "Guests on the bow of Moneta"],
+  ["management", "Helm station of Moneta"],
+  ["cinematography", "Photo session on board"],
+  ["brandwave", "Brand shoot on deck"],
+  ["speedboat", "Van Dutch 40 against the Dubai skyline"],
+];
+
 export default function HomePage() {
   return (
     <div className={`iyh ${cormorant.variable}`}>
@@ -80,7 +89,7 @@ export default function HomePage() {
           <div className="cap s">Aboard the Evo 43</div>
         </div>
         <div>
-          <div className="c"><HomeVideo clip="misha-onboard" alt="Misha at Dubai Harbour" sizes="(max-width:768px) 100vw, 26vw" /></div>
+          <div className="c"><HomeVideo clip="misha-onboard" aspect={1920 / 2398} alt="Misha at Dubai Harbour" sizes="(max-width:768px) 100vw, 26vw" /></div>
           <div className="cap s">Misha &nbsp;/&nbsp; Dubai Harbour</div>
         </div>
       </section>
@@ -89,6 +98,10 @@ export default function HomePage() {
         <div className="bg">
           <div className="b0"><HomeVideo clip="evo43-run" alt="Evo 43 under way" /></div>
           <div className="b1"><HomeVideo clip="moneta-golden" alt="Moneta at golden hour" /></div>
+          {/* IY-1596: своя картинка у каждой услуги — кадры из наших видео, проявляются вместе с услугой */}
+          {SVC_KADRY.map(([k, alt], i) => (
+            <div key={k} className={`k k${i + 1}`}><img src={`/media/home/services/${k}.jpg`} alt={alt} loading="lazy" decoding="async" /></div>
+          ))}
         </div>
         <div className="shade" />
         <div className="head cap"><span className="ix">02</span>&nbsp;&nbsp; Services</div>
@@ -147,7 +160,7 @@ export default function HomePage() {
       <footer className="facts">
         <div className="g">
           <div><span className="cap">Legal entity</span><p>Imperial Charter Yachting Services L.L.C</p></div>
-          <div><span className="cap">Trade licence</span><p>No. 960574 &nbsp;/&nbsp; <Link href="/documents">Docs</Link></p></div>
+          <div><span className="cap">Trade licence</span><p>No. 960574 &nbsp;/&nbsp; <Link href="/documents">Docs</Link> &nbsp;/&nbsp; <Link href="/careers">Careers</Link></p></div>
           <div><span className="cap">Berth</span><p>Dubai Harbour Yacht Club</p></div>
           <div><span className="cap">Desk</span><p><a href={`tel:${SITE_CONFIG.phone}`}>+971 52 835 5939</a> &nbsp;/&nbsp; <a href={`mailto:${SITE_CONFIG.email}`}>{SITE_CONFIG.email}</a></p></div>
         </div>

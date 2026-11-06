@@ -35,3 +35,23 @@ describe("HomeVideo clip base guard", () => {
     expect(container.querySelector("video")).not.toBeNull();
   });
 });
+
+describe("clipWidth — the clip fits the frame it fills (IY-1680)", () => {
+  it("a full-screen phone frame needs 1920: the 16:9 clip is cropped to the frame height", async () => {
+    const { clipWidth } = await import("../HomeVideo");
+    expect(clipWidth({ width: 390, height: 844 }, 3)).toBe(1920);
+  });
+  it("a small tile on a phone stays 960", async () => {
+    const { clipWidth } = await import("../HomeVideo");
+    expect(clipWidth({ width: 300, height: 170 }, 3)).toBe(960);
+  });
+  it("a laptop hero takes 1920", async () => {
+    const { clipWidth } = await import("../HomeVideo");
+    expect(clipWidth({ width: 1440, height: 810 }, 1)).toBe(1920);
+  });
+  it("a portrait clip in a portrait tile is measured by its own aspect", async () => {
+    const { clipWidth } = await import("../HomeVideo");
+    expect(clipWidth({ width: 400, height: 500 }, 2, 1920 / 2398)).toBe(960);
+    expect(clipWidth({ width: 400, height: 500 }, 2)).toBe(1920);
+  });
+});

@@ -29,6 +29,9 @@ export const companyInfo = {
   stats: {
     yearsInBusiness: new Date().getFullYear() - 2023,
     fleetSize: 3,
+    // Shown on the Careers page (production branch, IY-494).
+    happyClients: "1,200+",
+    charterHours: "5,000+",
   },
   values: [
     {
