@@ -1,0 +1,10 @@
+[Unit]
+Description=Автовыкатка main из GitHub на песочницу iy-new.sazanoff.ru (IY-1772, Верстальщик)
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/imperialyachting/new/avtovykatka.sh
+Nice=10
+MemoryMax=4G
+TimeoutStartSec=3600
