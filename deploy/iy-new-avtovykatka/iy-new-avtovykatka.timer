@@ -1,0 +1,9 @@
+[Unit]
+Description=Каждые 2 минуты: есть ли новый коммит main для песочницы iy-new.sazanoff.ru (IY-1772)
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=2min
+
+[Install]
+WantedBy=timers.target
