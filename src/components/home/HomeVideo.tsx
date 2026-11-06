@@ -60,15 +60,14 @@ function next() {
   queue.sort((a, b) => (a.hero === b.hero ? distance(a.el) - distance(b.el) : a.hero ? -1 : 1));
   const job = queue.shift()!;
   busy = true;
-  let t: ReturnType<typeof setTimeout> | undefined;
+  const t = setTimeout(() => job.done?.(), 8000);
   job.done = () => {
-    if (t) clearTimeout(t);
+    clearTimeout(t);
     job.done = undefined;
     busy = false;
     if (job.hero) heroGone = true;
     next();
   };
-  t = setTimeout(() => job.done?.(), 8000);
   job.start();
 }
 
