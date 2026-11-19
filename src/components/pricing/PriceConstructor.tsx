@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { Clock, Gift, ArrowRight } from "lucide-react";
 import { BookingWidget } from "./BookingWidget";
+import { BONUS_HOURS_EVERY, CHARTER_BONUS_ACTIVE, getCharterBaseAmount, getCharterBonusHours } from "@/lib/booking/constants";
 
 const WHATSAPP_NUMBER = "971528355939";
 const UTM_PARAMS = "utm_source=website&utm_medium=price_constructor&utm_campaign=4plus1_hours";
@@ -39,9 +40,9 @@ export function PriceConstructor({
 
   const { bonusHours, totalPrice, totalTime, savedAmount } = useMemo(() => {
     // For every 4 hours paid, 1 bonus hour is given
-    const bonus = Math.floor(hours / 4);
+    const bonus = getCharterBonusHours(hours);
     const total = hours + bonus;
-    const price = hours * hourlyRate;
+    const price = getCharterBaseAmount(hourlyRate, hours);
     const saved = bonus * hourlyRate;
     return { bonusHours: bonus, totalPrice: price, totalTime: total, savedAmount: saved };
   }, [hours, hourlyRate]);
@@ -67,7 +68,7 @@ export function PriceConstructor({
           Build Your Charter
         </h3>
         <p className="mt-1 text-sm text-white/50">
-          Select your hours and see the price instantly. Book 4 hours, get 1 FREE.
+          Select your hours and see the price instantly.{CHARTER_BONUS_ACTIVE && ` Book ${BONUS_HOURS_EVERY} hours, get 1 FREE.`}
         </p>
       </div>
 
@@ -161,11 +162,11 @@ export function PriceConstructor({
           )}
 
           {/* Hint when close to bonus */}
-          {hours % 4 !== 0 && hours >= 3 && (
+          {CHARTER_BONUS_ACTIVE && hours % BONUS_HOURS_EVERY !== 0 && hours >= BONUS_HOURS_EVERY - 1 && (
             <div className="mt-2 text-xs text-white/30">
-              {4 - (hours % 4) === 1
+              {BONUS_HOURS_EVERY - (hours % BONUS_HOURS_EVERY) === 1
                 ? "Add 1 more hour to unlock a FREE bonus hour!"
-                : `Add ${4 - (hours % 4)} more hours to unlock a FREE bonus hour`}
+                : `Add ${BONUS_HOURS_EVERY - (hours % BONUS_HOURS_EVERY)} more hours to unlock a FREE bonus hour`}
             </div>
           )}
         </div>

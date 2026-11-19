@@ -1,13 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
-import { charterInquiry, fullDayCharters, standardDayIncludes, type FullDayCharter } from "@/lib/day-charters";
+import { BONUS_HOURS_EVERY } from "@/lib/booking/constants";
+import { charterInquiry, fullDayCharters, fullDayOffer, standardDayIncludes, type FullDayCharter } from "@/lib/day-charters";
 
-export function FullDayRate({ charter }: { charter: FullDayCharter }) {
+export function FullDayRate({ charter, hourlyRate = null }: { charter: FullDayCharter; hourlyRate?: number | null }) {
+  const offer = fullDayOffer(charter.price, hourlyRate);
+  const total = `AED ${offer.amount.toLocaleString("en-US")}`;
+  const inquiry = offer.promotional
+    ? `the 8-hour private charter on ${charter.name} and the qualifying ${total} promotion (VAT included)`
+    : `the 8-hour private charter on ${charter.name} at the standard ${total} rate (VAT included)`;
   return (
     <div className="w-day-rate">
       <div className="cap w-mute">Full day · 8 hours</div>
-      <div className="w-day-money"><strong>AED {charter.price.toLocaleString("en-US")}</strong><span>VAT included · per yacht</span></div>
-      <a className="btn" href={charterInquiry(`the 8-hour private charter on ${charter.name}`)} target="_blank" rel="noopener noreferrer" aria-label={`Check availability for ${charter.name}`}>Check availability <span aria-hidden="true">↗</span></a>
+      <div className="w-day-money"><strong>{offer.promotional ? `From ${total}` : total}</strong><span>VAT included · per yacht</span></div>
+      {offer.promotional && <p className="w-day-promo w-mute">{BONUS_HOURS_EVERY}+1 on qualifying dates · standard AED {offer.standardAmount.toLocaleString("en-US")}</p>}
+      <a className="btn" href={charterInquiry(inquiry)} target="_blank" rel="noopener noreferrer" aria-label={`Check availability for ${charter.name}`}>Check availability <span aria-hidden="true">↗</span></a>
       <details>
         <summary>What’s included</summary>
         <p>{standardDayIncludes} Eight hours is the charter window, not continuous sailing. Catering, extended cruising, other marina fees and extra time are quoted separately. Alcohol is not included.</p>
@@ -17,7 +24,7 @@ export function FullDayRate({ charter }: { charter: FullDayCharter }) {
   );
 }
 
-export function DayCharterCards() {
+export function DayCharterCards({ hourlyRates = {} }: { hourlyRates?: Record<string, number | null> }) {
   return (
     <div className="w-day-fleet">
       {fullDayCharters.map((charter) => (
@@ -28,7 +35,7 @@ export function DayCharterCards() {
           <div className="w-day-body">
             <h3 className="serif">{charter.name}</h3>
             <p className="w-mute">{charter.detail}</p>
-            <FullDayRate charter={charter} />
+            <FullDayRate charter={charter} hourlyRate={hourlyRates[charter.slug]} />
           </div>
         </article>
       ))}

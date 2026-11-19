@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { DayCharterCards, ExtendedCharters } from "../DayCharters";
-import { fullDayCharters, getFullDayCharter } from "@/lib/day-charters";
+import { fullDayCharters, fullDayOffer, getFullDayCharter } from "@/lib/day-charters";
 
 afterEach(cleanup);
 
@@ -27,6 +27,26 @@ describe("full-day charter offer", () => {
     }
     expect(getFullDayCharter("evo-43")).toBeUndefined();
     expect(getFullDayCharter("van-dutch-40")?.price).toBe(7500);
+  });
+
+  it("shows a lower qualifying eight-hour promotion without hiding the standard prices", () => {
+    render(<DayCharterCards hourlyRates={{ "vd-40": 1000, maybach: 1500, "monte-carlo-6": 2000 }} />);
+    const cards = screen.getAllByRole("article");
+    for (const [index, [promo, standard]] of [[7000, 7500], [10500, 11500], [14000, 15000]].entries()) {
+      const card = within(cards[index]);
+      expect(card.getByText(`From AED ${promo.toLocaleString("en-US")}`)).toBeInTheDocument();
+      expect(card.getByText(`4+1 on qualifying dates · standard AED ${standard.toLocaleString("en-US")}`)).toBeInTheDocument();
+      const link = card.getByRole<HTMLAnchorElement>("link", { name: /Check availability for/ });
+      expect(new URL(link.href).searchParams.get("text")).toContain(`qualifying AED ${promo.toLocaleString("en-US")} promotion (VAT included)`);
+    }
+  });
+
+  it("uses the exact standard rates when the promotion is off, data is absent, or it costs more", () => {
+    for (const [hourly, regular] of [[1000, 7500], [1500, 11500], [2000, 15000]]) {
+      expect(fullDayOffer(regular, hourly, false)).toEqual({ amount: regular, standardAmount: regular, promotional: false });
+    }
+    expect(fullDayOffer(7500, null)).toEqual({ amount: 7500, standardAmount: 7500, promotional: false });
+    expect(fullDayOffer(7500, 1200).amount).toBe(7500);
   });
 
   it("routes overnight, 24-hour and extended inquiries separately without price promises", () => {

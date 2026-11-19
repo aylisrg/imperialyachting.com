@@ -25,7 +25,7 @@ const processSteps = [
   { title: "Experience", description: "Board at Dubai Harbour or Marasi Bay and enjoy your cruise." },
 ];
 
-export function CharterPageContent() {
+export function CharterPageContent({ hourlyRates }: { hourlyRates: Record<string, number | null> }) {
   return (
     <WakePage>
       <WakeHero
@@ -43,7 +43,7 @@ export function CharterPageContent() {
 
       <WakeSection>
         <WakeHead title={<>A full day<br />on the water.</>}>Eight hours aboard your own crewed yacht. Choose the boat and we’ll plan the day with you.</WakeHead>
-        <DayCharterCards />
+        <DayCharterCards hourlyRates={hourlyRates} />
         <ExtendedCharters />
       </WakeSection>
 

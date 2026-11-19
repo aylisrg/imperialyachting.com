@@ -202,7 +202,8 @@
 .iyp .w-day-money{display:flex;align-items:baseline;gap:4px 10px;flex-wrap:wrap;margin:4px 0 14px}
 .iyp .w-day-money strong{font-family:var(--font-serif);font-size:var(--fs-price-sm);line-height:1;font-weight:500;color:var(--copper)}
 .iyp .w-day-money span,.iyp .w-day-rate details p,.iyp .w-day-extended p{color:var(--mute)}
-.iyp .w-day-money span,.iyp .w-day-rate details{font-size:14px}
+.iyp .w-day-money span,.iyp .w-day-rate details,.iyp .w-day-promo{font-size:14px}
+.iyp .w-day-promo{margin:0 0 14px}
 .iyp .w-day-rate details summary{display:list-item;min-height:44px;padding:12px 0;cursor:pointer}
 .iyp .w-day-rate details p{margin:0 0 8px}
 .iyp .w-day-rate details a{text-decoration:underline;text-underline-offset:3px}

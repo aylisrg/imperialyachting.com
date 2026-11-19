@@ -241,7 +241,7 @@ export default async function YachtDetailPage({
         {fullDay && (
           <WakeSection>
             <WakeHead title={<>Your full day<br />on the water.</>}>A private charter from Dubai Harbour.</WakeHead>
-            <FullDayRate charter={fullDay} />
+            <FullDayRate charter={fullDay} hourlyRate={hourlyRate} />
             <Link href="/services/charter" className="btn o">View extended charter options</Link>
           </WakeSection>
         )}

@@ -10,6 +10,16 @@ export const DEPOSIT_RATE = 0.5;
 
 /** For every N paid hours, 1 bonus hour is granted for free. */
 export const BONUS_HOURS_EVERY = 4;
+/** Shared switch for the existing charter promotion. */
+export const CHARTER_BONUS_ACTIVE: boolean = true;
+
+export function getCharterBonusHours(paidHours: number, active = CHARTER_BONUS_ACTIVE): number {
+  return active ? Math.floor(Math.max(0, paidHours) / BONUS_HOURS_EVERY) : 0;
+}
+
+export function getCharterBaseAmount(hourlyRate: number, paidHours: number): number {
+  return Math.round(hourlyRate * paidHours);
+}
 
 /** Yacht operating window, in Dubai local time (24h clock). */
 export const OPERATING_HOURS = { start: 8, end: 22 } as const;

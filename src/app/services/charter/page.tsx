@@ -4,6 +4,11 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { faqSchema, serviceSchema, breadcrumbSchema } from "@/components/seo/schemas";
 import { charterFAQ } from "@/data/faq";
 import { CharterPageContent } from "./CharterPageContent";
+import { fetchAllYachts } from "@/lib/yachts-db";
+import { getHourlyRate } from "@/lib/pricing";
+import { getFullDayCharter } from "@/lib/day-charters";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Yacht Charter Dubai — Hourly, Daily & Weekly Rentals",
@@ -25,7 +30,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CharterPage() {
+export default async function CharterPage() {
+  const hourlyRates: Record<string, number | null> = {};
+  try {
+    for (const yacht of await fetchAllYachts()) {
+      const charter = getFullDayCharter(yacht.slug);
+      if (charter) hourlyRates[charter.slug] = getHourlyRate(yacht.pricing);
+    }
+  } catch {
+    // Keep standard package rates available without asserting an unverified promo price.
+  }
   return (
     <>
       <JsonLd data={faqSchema(charterFAQ)} />
@@ -44,7 +58,7 @@ export default function CharterPage() {
           { name: "Yacht Charter Dubai", url: "/services/charter" },
         ])}
       />
-      <CharterPageContent />
+      <CharterPageContent hourlyRates={hourlyRates} />
     </>
   );
 }
