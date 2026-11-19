@@ -8,19 +8,19 @@ import { CharterPageContent } from "./CharterPageContent";
 export const metadata: Metadata = {
   title: "Yacht Charter Dubai — Hourly, Daily & Weekly Rentals",
   description:
-    "Luxury yacht charter in Dubai from AED 2,500/hr. Day, weekly & monthly charters on our owned fleet from Dubai Harbour and Marasi Bay. All-inclusive crew, fuel & amenities.",
+    "Eight-hour private yacht charters from Dubai Harbour. See VAT-inclusive yacht prices, what is included and longer charters by request.",
   alternates: { canonical: `${SITE_CONFIG.url}/services/charter` },
   openGraph: {
     title: "Yacht Charter Dubai | Imperial Yachting",
     description:
-      "Charter luxury yachts in Dubai — hourly, daily & weekly. All-inclusive from Dubai Harbour and Marasi Bay.",
+      "Eight-hour private yacht charters from Dubai Harbour, with overnight and extended itineraries on request.",
     url: `${SITE_CONFIG.url}/services/charter`,
     images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Yacht Charter Dubai" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Yacht Charter Dubai | Imperial Yachting",
-    description: "Luxury yacht charter from AED 2,500/hr — all-inclusive from Dubai Harbour and Marasi Bay.",
+    description: "Eight-hour private yacht charters from Dubai Harbour. Prices include VAT.",
     images: ["/og-image.jpg"],
   },
 };
@@ -33,10 +33,8 @@ export default function CharterPage() {
         data={serviceSchema({
           name: "Luxury Yacht Charter Dubai",
           description:
-            "All-inclusive crewed yacht charter from Dubai Harbour and Marasi Bay. Choose from the Monte Carlo 6 (60ft, 18 guests), Van Dutch 40 (40ft, 10 guests) or EVO 43 (43ft, 12 guests). Rates from AED 2,500/hr including captain, crew, fuel and amenities.",
+            "Eight-hour private yacht charters from Dubai Harbour, with captain, crew, water and standard-route fuel. Longer itineraries on request.",
           url: `${SITE_CONFIG.url}/services/charter`,
-          priceFrom: 2500,
-          priceCurrency: "AED",
         })}
       />
       <JsonLd

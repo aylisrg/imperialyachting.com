@@ -31,34 +31,3 @@ export const services: ServiceItem[] = [
     externalUrl: "https://brandwave.imperialyachting.com/",
   },
 ];
-
-export const charterTypes = [
-  {
-    title: "Day Charter",
-    duration: "4-8 hours",
-    description:
-      "Perfect for sunset cruises, birthday celebrations, proposals, and sightseeing along Dubai's coastline.",
-    priceFrom: "AED 12,000",
-  },
-  {
-    title: "Weekly Charter",
-    duration: "7 days",
-    description:
-      "Extended exploration of Dubai's waters with the flexibility to cruise further including Abu Dhabi coast.",
-    priceFrom: "AED 18,000",
-  },
-  {
-    title: "Monthly Charter",
-    duration: "30 days",
-    description:
-      "Long-term yacht access for residents, seasonal visitors, or businesses seeking ongoing entertainment.",
-    priceFrom: "AED 45,000",
-  },
-  {
-    title: "Corporate Events",
-    duration: "Custom",
-    description:
-      "Bespoke yacht experiences for team building, client entertainment, product launches, and executive retreats.",
-    priceFrom: "Custom quote",
-  },
-];

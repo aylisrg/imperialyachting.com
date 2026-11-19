@@ -16,6 +16,8 @@ import { getLowestPrice, getHourlyRate } from "@/lib/pricing";
 import { buildYachtFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import { PriceConstructor } from "@/components/pricing/PriceConstructor";
+import { FullDayRate } from "@/components/wake/DayCharters";
+import { getFullDayCharter } from "@/lib/day-charters";
 import type { Yacht } from "@/types/yacht";
 
 export const dynamicParams = true;
@@ -117,15 +119,20 @@ export default async function YachtDetailPage({
 
   const lowestPrice = getLowestPrice(yacht.pricing);
   const hourlyRate = getHourlyRate(yacht.pricing);
+  const fullDay = getFullDayCharter(yacht.slug);
   const showB2B = hasAnyB2B(yacht);
   const showHourly = hasAnyHourly(yacht);
   const clips = fleetClips(yacht.slug);
   const heroImage = yacht.heroImage || yacht.images[0];
   const crumb = `Home / Fleet / ${yacht.name}`;
+  // The older database rows do not describe the new eight-hour package.
+  const structuredYacht = fullDay
+    ? { ...yacht, pricing: yacht.pricing.map((season) => ({ ...season, daily: null, weekly: null, monthly: null })) }
+    : yacht;
 
   return (
     <>
-      <JsonLd data={yachtProductSchema(yacht)} />
+      <JsonLd data={yachtProductSchema(structuredYacht)} />
       <JsonLd data={faqSchema(buildYachtFAQ(yacht))} />
       <JsonLd
         data={breadcrumbSchema([
@@ -231,7 +238,15 @@ export default async function YachtDetailPage({
           </WakeSection>
         )}
 
-        {yacht.pricing.length > 0 && (
+        {fullDay && (
+          <WakeSection>
+            <WakeHead title={<>Your full day<br />on the water.</>}>A private charter from Dubai Harbour.</WakeHead>
+            <FullDayRate charter={fullDay} />
+            <Link href="/services/charter" className="btn o">View extended charter options</Link>
+          </WakeSection>
+        )}
+
+        {yacht.pricing.length > 0 && (!fullDay || showHourly || showB2B) && (
           <WakeSection>
             <WakeHead title={<>Charter<br />rates.</>}>All prices in AED. Rates include crew, fuel, and standard amenities.</WakeHead>
             <div className="w-table-wrap">
@@ -241,9 +256,7 @@ export default async function YachtDetailPage({
                     <th>Season</th>
                     <th>Period</th>
                     {showHourly && <th>Hourly</th>}
-                    <th>Daily</th>
-                    <th>Weekly</th>
-                    <th>Monthly</th>
+                    {!fullDay && <><th>Daily</th><th>Weekly</th><th>Monthly</th></>}
                     {showB2B && (
                       <>
                         {showHourly && <th className="b2b">Hourly B2B</th>}
@@ -260,9 +273,7 @@ export default async function YachtDetailPage({
                       <td>{season.season}</td>
                       <td className="w-mute">{season.period}</td>
                       {showHourly && <td>{formatPrice(season.hourly)}</td>}
-                      <td>{formatPrice(season.daily)}</td>
-                      <td>{formatPrice(season.weekly)}</td>
-                      <td>{formatPrice(season.monthly)}</td>
+                      {!fullDay && <><td>{formatPrice(season.daily)}</td><td>{formatPrice(season.weekly)}</td><td>{formatPrice(season.monthly)}</td></>}
                       {showB2B && (
                         <>
                           {showHourly && <td className="b2b">{formatPrice(season.hourlyB2B ?? null)}</td>}
@@ -276,7 +287,7 @@ export default async function YachtDetailPage({
                 </tbody>
               </table>
             </div>
-            {(yacht.dailyRules || yacht.weeklyRules) && (
+            {!fullDay && (yacht.dailyRules || yacht.weeklyRules) && (
               <div className="w-opts o2 w-after">
                 {yacht.dailyRules && <CharterRulesCard title="Daily Charter" rules={yacht.dailyRules} />}
                 {yacht.weeklyRules && <CharterRulesCard title="Weekly Charter" rules={yacht.weeklyRules} />}

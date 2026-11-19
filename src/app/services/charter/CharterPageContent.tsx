@@ -1,19 +1,14 @@
 import Link from "next/link";
-import { charterTypes } from "@/data/services";
+import { DayCharterCards, ExtendedCharters } from "@/components/wake/DayCharters";
 import { charterFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import { WakePage } from "@/components/wake/WakePage";
 import { WakeBand, WakeCta, WakeFaq, WakeHead, WakeHero, WakeList, WakeSection, WakeSplitTitle, WakeSteps } from "@/components/wake/blocks";
 
-// Layout: Wake redesign (issue #46, design/pages/services-charter @ c0f9dc1). Copy and prices unchanged.
-
 const inclusions = [
   "Professional captain & crew",
-  "Fuel for standard routes",
-  "Water sports equipment",
-  "Onboard WiFi",
-  "Premium sound system",
-  "Ice, towels & soft drinks",
+  "Fuel for the agreed standard Dubai Harbour route",
+  "Drinking water",
 ];
 
 const destinations = [
@@ -47,25 +42,16 @@ export function CharterPageContent() {
       </WakeHero>
 
       <WakeSection>
-        <WakeHead title={<>Charter<br />options.</>}>Flexible packages tailored to your schedule and occasion.</WakeHead>
-        <div className="w-opts">
-          {charterTypes.map((t, i) => (
-            <div className="w-opt" key={t.title}>
-              <span className="ix">{String(i + 1).padStart(2, "0")}</span>
-              <span className="cap w-mute">{t.duration}</span>
-              <h3 className="serif">{t.title}</h3>
-              <p>{t.description}</p>
-              <div className="cap from">Starting from<b>{t.priceFrom}</b></div>
-            </div>
-          ))}
-        </div>
+        <WakeHead title={<>A full day<br />on the water.</>}>Eight hours aboard your own crewed yacht. Choose the boat and we’ll plan the day with you.</WakeHead>
+        <DayCharterCards />
+        <ExtendedCharters />
       </WakeSection>
 
       <WakeSection tone="light">
         <div className="w-split">
           <WakeSplitTitle ix="01" title={<>What&apos;s<br />included.</>}>
-            <p>Every charter comes fully equipped for an exceptional day on the water.</p>
-            <p>Additional catering, decorations, and water sports can be arranged upon request.</p>
+            <p>Your standard eight-hour charter starts and ends at Dubai Harbour.</p>
+            <p>We confirm the route, timing and available extras before you book.</p>
           </WakeSplitTitle>
           <WakeList items={inclusions} />
         </div>
