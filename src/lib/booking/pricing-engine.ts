@@ -1,7 +1,8 @@
 import type { Yacht, SeasonPricing } from "@/types/yacht";
 import type { Extra } from "@/types/booking";
 import {
-  BONUS_HOURS_EVERY,
+  getCharterBonusHours,
+  getCharterBaseAmount,
   DEPOSIT_RATE,
   DUBAI_TZ,
   MAX_HOURS,
@@ -266,7 +267,7 @@ export function calculateQuote(input: CalculateQuoteInput): QuoteResult {
   }
 
   const paidHours = Math.max(hours, 0);
-  const bonusHours = Math.floor(paidHours / BONUS_HOURS_EVERY);
+  const bonusHours = getCharterBonusHours(paidHours);
   const totalHours = paidHours + bonusHours;
   const endsAt = new Date(startsAt.getTime() + totalHours * 60 * 60 * 1000);
 
@@ -287,7 +288,7 @@ export function calculateQuote(input: CalculateQuoteInput): QuoteResult {
 
   // At this point hourlyRate, season are guaranteed non-null (no `no_pricing` error was raised).
   const rate = hourlyRate as number;
-  const baseAmount = Math.round(rate * hours);
+  const baseAmount = getCharterBaseAmount(rate, hours);
 
   const extraLines: QuoteExtraLine[] = extras.map(({ extra, qty }) => {
     let amount: number;

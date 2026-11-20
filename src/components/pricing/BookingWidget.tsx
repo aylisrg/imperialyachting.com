@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { BONUS_HOURS_EVERY, CHARTER_BONUS_ACTIVE, getCharterBonusHours } from "@/lib/booking/constants";
 import { Clock, Gift, ArrowRight, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { trackBookingStart, trackCheckoutRedirect } from "@/lib/analytics";
 
@@ -122,7 +123,7 @@ export function BookingWidget({ yachtSlug, yachtName, hourlyRate, capacity }: Bo
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
-  const bonusHours = Math.floor(hours / 4);
+  const bonusHours = getCharterBonusHours(hours);
 
   // Fetch extras catalogue once.
   useEffect(() => {
@@ -256,7 +257,7 @@ export function BookingWidget({ yachtSlug, yachtName, hourlyRate, capacity }: Bo
       <div className="px-6 py-5 sm:px-8 sm:py-6 border-b border-white/5">
         <h3 className="font-heading text-xl sm:text-2xl font-bold text-white">Build Your Charter</h3>
         <p className="mt-1 text-sm text-white/50">
-          Select your date, hours and extras, then reserve with a 50% deposit. Book 4 hours, get 1 FREE.
+          Select your date, hours and extras, then reserve with a 50% deposit.{CHARTER_BONUS_ACTIVE && ` Book ${BONUS_HOURS_EVERY} hours, get 1 FREE.`}
         </p>
       </div>
 

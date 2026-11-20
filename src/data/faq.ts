@@ -1,10 +1,11 @@
 import { FAQItem } from "@/types/common";
+import { getFullDayCharter, standardDayIncludes } from "@/lib/day-charters";
 
 export const homeFAQ: FAQItem[] = [
   {
     question: "What is the cost of renting a yacht in Dubai?",
     answer:
-      "Yacht charter prices in Dubai range from AED 12,000 to AED 52,000 per day depending on the vessel, season, and duration. Imperial Yachting offers competitive rates starting at AED 12,000/day for our Van Dutch 40 and up to AED 20,000/day for the flagship Monte Carlo 6. We offer daily, weekly, and monthly rates with significant discounts for longer charters. All prices include crew, fuel, and basic amenities.",
+      "See the Yacht Charter page for VAT-inclusive prices by yacht and what is included in the standard eight-hour package. Weekly and monthly schedules are individually quoted.",
   },
   {
     question: "Where do Imperial Yachting yachts depart from?",
@@ -59,6 +60,7 @@ export const homeFAQ: FAQItem[] = [
 ];
 
 export interface YachtFAQInput {
+  slug?: string;
   name: string;
   capacity: number;
   length: { feet: number };
@@ -78,7 +80,7 @@ export function buildYachtFAQ(yacht: YachtFAQInput): FAQItem[] {
       answer:
         `The ${yacht.name} is a ${yacht.length.feet}ft ${yacht.builder} yacht that comfortably accommodates up to ${yacht.capacity} guests` +
         (yacht.cabins
-          ? `, with ${yacht.cabins} cabin${yacht.cabins > 1 ? "s" : ""} on board for overnight or multi-day charters.`
+          ? `, with ${yacht.cabins} cabin${yacht.cabins > 1 ? "s" : ""} on board.`
           : ", making it a great fit for day charters, celebrations, and group outings."),
     },
     {
@@ -89,7 +91,9 @@ export function buildYachtFAQ(yacht: YachtFAQInput): FAQItem[] {
     {
       question: `How is the ${yacht.name}'s charter price calculated, and what's included?`,
       answer:
-        `Charter pricing for the ${yacht.name} is based on an hourly (or daily, for longer bookings) rate that includes a professional captain and crew, fuel for standard cruising routes, soft drinks, bottled water, ice, and fresh towels. Catering, decoration, photography, and water sports are available as optional extras.`,
+        yacht.slug && getFullDayCharter(yacht.slug)
+          ? `The standard eight-hour private charter includes ${standardDayIncludes[0].toLowerCase() + standardDayIncludes.slice(1)} The price is per yacht and includes VAT. Ask about longer itineraries and optional extras.`
+          : `Charter pricing for the ${yacht.name} is based on an hourly (or daily, for longer bookings) rate that includes a professional captain and crew, fuel for standard cruising routes, soft drinks, bottled water, ice, and fresh towels. Catering, decoration, photography, and water sports are available as optional extras.`,
     },
     {
       question: `Where does the ${yacht.name} depart from?`,
@@ -115,7 +119,7 @@ export const fleetFAQ: FAQItem[] = [
   {
     question: "Are the yachts available for overnight charters?",
     answer:
-      "Yes, the Monte Carlo 6 is available for overnight and multi-day charters with 3 comfortable cabins. Weekly and monthly rates offer significant savings compared to daily rates. The Van Dutch 40 and EVO 43 are primarily day charter vessels but monthly rentals are available during all seasons.",
+      "Ask about an overnight or full 24-hour charter on Moneta. These are quoted separately, with sleeping capacity and overnight arrangements confirmed for your itinerary. Weekly and monthly charters are by individual quote.",
   },
 ];
 
@@ -123,7 +127,7 @@ export const charterFAQ: FAQItem[] = [
   {
     question: "What is the difference between a day charter and a weekly charter in Dubai?",
     answer:
-      "A day charter typically runs 4-8 hours and is perfect for sunset cruises, celebrations, or sightseeing along Dubai's coastline. Weekly charters offer 7 consecutive days of yacht access with the flexibility to explore further destinations including Abu Dhabi and the east coast. Weekly rates offer 15-25% savings compared to daily booking.",
+      "The full-day package is eight hours aboard the yacht, with a standard Dubai Harbour route and no overnight stay. For a week or a month, we agree the dates, sailing hours, crew, route and overnight arrangements in a written quote.",
   },
   {
     question: "Can I customize my yacht charter itinerary?",
@@ -133,7 +137,7 @@ export const charterFAQ: FAQItem[] = [
   {
     question: "What happens if weather conditions are bad on my charter day?",
     answer:
-      "Safety is our top priority. If weather conditions make sailing unsafe, we offer free rescheduling to an alternative date. Our captains monitor conditions closely and will communicate any concerns at least 12 hours before departure. Light winds and small swells are handled comfortably thanks to our Seakeeper stabilizer on the Monte Carlo 6.",
+      "If Imperial cancels the charter for unsafe conditions, the booking terms provide for a reschedule or full refund. The captain makes the safety decision.",
   },
   {
     question: "How do I book a yacht charter in Dubai?",
