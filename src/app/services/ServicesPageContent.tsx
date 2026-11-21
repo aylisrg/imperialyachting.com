@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { services } from "@/data/services";
+import { newYearsEvePath, showNewYearsEveInquiry } from "@/lib/new-year-charters";
 import { SITE_CONFIG } from "@/lib/constants";
 import { WakePage } from "@/components/wake/WakePage";
 import { WakeCta, WakeHead, WakeHero, WakeMedia, WakeSection, WakeSteps } from "@/components/wake/blocks";
@@ -41,6 +42,7 @@ export function ServicesPageContent() {
               <h3 className="serif">{s.title}</h3>
               <p>{s.description}</p>
               <Link className="cap lnk" href={s.href}>Learn more →</Link>
+              {s.href === "/services/charter" && showNewYearsEveInquiry() && <Link className="cap lnk" href={newYearsEvePath}>New Year’s Eve 2026 →</Link>}
               {s.externalUrl && (
                 <a className="cap ext" href={s.externalUrl} target="_blank" rel="noopener noreferrer">brandwave.imperialyachting.com ↗</a>
               )}

@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
