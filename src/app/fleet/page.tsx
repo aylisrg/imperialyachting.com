@@ -8,13 +8,14 @@ import { yachtProductSchema, faqSchema, breadcrumbSchema } from "@/components/se
 import { fleetFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import { fetchAllYachts } from "@/lib/yachts-db";
+import { publicCharterPricing, structuredCharterPricing } from "@/lib/day-charters";
 import { getLowestPrice } from "@/lib/pricing";
 import { FleetGrid } from "./FleetGrid";
 
 export const metadata: Metadata = {
   title: "Our Fleet: Luxury Yachts for Charter in Dubai",
   description:
-    "Browse Imperial Yachting's premium fleet of motor yachts for charter in Dubai. Van Dutch, Monte Carlo, Evo. All-inclusive from AED 2,500/hr at Dubai Harbour.",
+    "Browse Imperial Yachting's premium fleet of motor yachts for charter in Dubai. VanDutch 40, Moneta, Maybach and EVO 43. See day and four-outing rates with VAT included.",
   alternates: { canonical: `${SITE_CONFIG.url}/fleet` },
   openGraph: {
     title: "Our Fleet | Imperial Yachting",
@@ -44,7 +45,7 @@ export default async function FleetPage() {
     itemListElement: yachts.map((yacht, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      item: yachtProductSchema(yacht),
+      item: yachtProductSchema({ ...yacht, pricing: structuredCharterPricing(yacht) }),
     })),
   };
 
@@ -85,7 +86,7 @@ export default async function FleetPage() {
               lengthFeet: yacht.length.feet,
               lengthMeters: yacht.length.meters,
               capacity: yacht.capacity,
-              lowestPrice: getLowestPrice(yacht.pricing),
+              lowestPrice: getLowestPrice(publicCharterPricing(yacht)),
               heroImage: yacht.heroImage,
               images: yacht.images,
             }))}

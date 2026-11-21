@@ -1,11 +1,11 @@
 import { FAQItem } from "@/types/common";
-import { getFullDayCharter, standardDayIncludes } from "@/lib/day-charters";
+import { getFullDayCharter, outingTerms, standardDayIncludes } from "@/lib/day-charters";
 
 export const homeFAQ: FAQItem[] = [
   {
     question: "What is the cost of renting a yacht in Dubai?",
     answer:
-      "See the Yacht Charter page for VAT-inclusive prices by yacht and what is included in the standard eight-hour package. Weekly and monthly schedules are individually quoted.",
+      "See the Yacht Charter page for VAT-inclusive day and four-outing prices. Weekly and exclusive monthly charters are individually quoted.",
   },
   {
     question: "Where do Imperial Yachting yachts depart from?",
@@ -91,8 +91,8 @@ export function buildYachtFAQ(yacht: YachtFAQInput): FAQItem[] {
     {
       question: `How is the ${yacht.name}'s charter price calculated, and what's included?`,
       answer:
-        yacht.slug && getFullDayCharter(yacht.slug)
-          ? `The standard eight-hour private charter includes ${standardDayIncludes[0].toLowerCase() + standardDayIncludes.slice(1)} The price is per yacht and includes VAT. Ask about longer itineraries and optional extras.`
+        yacht.slug && getFullDayCharter(yacht.slug)?.hours
+          ? `The standard eight-hour private charter includes ${standardDayIncludes[0].toLowerCase() + standardDayIncludes.slice(1)} The price is per yacht and includes VAT. A four-outing package is available. Ask about longer itineraries and optional extras.`
           : `Charter pricing for the ${yacht.name} is based on an hourly (or daily, for longer bookings) rate that includes a professional captain and crew, fuel for standard cruising routes, soft drinks, bottled water, ice, and fresh towels. Catering, decoration, photography, and water sports are available as optional extras.`,
     },
     {
@@ -119,15 +119,16 @@ export const fleetFAQ: FAQItem[] = [
   {
     question: "Are the yachts available for overnight charters?",
     answer:
-      "Ask about an overnight or full 24-hour charter on Moneta. These are quoted separately, with sleeping capacity and overnight arrangements confirmed for your itinerary. Weekly and monthly charters are by individual quote.",
+      "Ask about an overnight or full 24-hour charter on Moneta. These are quoted separately, with sleeping capacity and overnight arrangements confirmed for your itinerary. Weekly and exclusive monthly charters are by individual quote.",
   },
 ];
 
 export const charterFAQ: FAQItem[] = [
+  { question: "What is the four-outing package?", answer: outingTerms },
   {
     question: "What is the difference between a day charter and a weekly charter in Dubai?",
     answer:
-      "The full-day package is eight hours aboard the yacht, with a standard Dubai Harbour route and no overnight stay. For a week or a month, we agree the dates, sailing hours, crew, route and overnight arrangements in a written quote.",
+      "Day packages are not overnight charters. For a week or an exclusive month, we agree the dates, sailing hours, crew, route and overnight arrangements in a written quote.",
   },
   {
     question: "Can I customize my yacht charter itinerary?",

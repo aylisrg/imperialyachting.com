@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { fetchAllYachts } from "@/lib/yachts-db";
+import { publicCharterPricing } from "@/lib/day-charters";
 import { getHourlyRate, getLowestPrice } from "@/lib/pricing";
 import { SITE_CONFIG } from "@/lib/constants";
 import { sanitizeText } from "../sanitize";
@@ -66,7 +67,7 @@ export const listYachtsMeta: ToolMeta = {
   title: "List Yachts",
   description:
     "List Imperial Yachting's owned fleet of motor yachts available for charter from Dubai Harbour and Marasi Bay, Dubai. " +
-    "Prices are in AED per hour and include a professional crew, fuel for standard cruising routes, and soft drinks. " +
+    "Hourly and day prices are distinguished by their units; check the vessel details for package inclusions. " +
     "Use `guests` to filter by party size and `maxHourlyRate` to filter by budget. " +
     "Weekend minimum-hours apply on Friday and Saturday in the UAE. " +
     "Call `get_yacht` with the returned slug for the full pricing table, specs, and included amenities before quoting a client.",
@@ -90,7 +91,7 @@ function mapYachtCard(yacht: Yacht): YachtCard {
     lengthM: yacht.length.meters,
     capacity: yacht.capacity,
     cabins: yacht.cabins ?? null,
-    fromPrice: getLowestPrice(yacht.pricing),
+    fromPrice: getLowestPrice(publicCharterPricing(yacht)),
     hourlyRate: getHourlyRate(yacht.pricing),
     heroImage: absoluteUrl(yacht.heroImage),
     url: `${SITE_CONFIG.url}/fleet/${yacht.slug}`,
