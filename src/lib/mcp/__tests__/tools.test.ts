@@ -40,9 +40,10 @@ const bigYacht: Yacht = {
       season: "Summer",
       period: "Weekday",
       hourly: 1200,
-      daily: null,
-      weekly: null,
-      monthly: null,
+      daily: 18000,
+      weekly: 75000,
+      monthly: 250000,
+      hourlyB2B: 3131, dailyB2B: 3132, weeklyB2B: 3133, monthlyB2B: 3134,
       validFrom: null,
       validTo: null,
       isWeekend: false,
@@ -148,7 +149,16 @@ describe("getYacht", () => {
     const { structured } = await getYacht({ slug: "monte-carlo-6" });
     expect(structured.found).toBe(true);
     expect(structured.yacht?.name).toBe("Monte Carlo 6");
-    expect(structured.yacht?.pricing).toHaveLength(1);
+    expect(structured.yacht?.pricing).toMatchObject([
+      { hourly: 1200, daily: null, weekly: null, monthly: null },
+      { hourly: null, daily: 14000, weekly: null, monthly: null },
+    ]);
+    expect(structured.yacht?.publicPackages).toMatchObject({
+      vatIncluded: true, inquiryOnly: true, hourlyPromotionsApply: false,
+      day: { amount: 14000, hours: 8, holidaysExcluded: true },
+      fourOutings: { amount: 53200, windowDays: 30, exclusive: false, holidaysExcluded: true },
+    });
+    expect(JSON.stringify(structured)).not.toMatch(/B2B|313[1-4]|18000|75000|250000/);
     expect(structured.yacht?.images.length).toBeLessThanOrEqual(8);
   });
 

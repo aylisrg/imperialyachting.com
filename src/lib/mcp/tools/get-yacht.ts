@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { fetchAllYachts, fetchYachtBySlug } from "@/lib/yachts-db";
+import { getFullDayCharter, publicCharterPricing } from "@/lib/day-charters";
 import { SITE_CONFIG } from "@/lib/constants";
 import { sanitizeText, sanitizeStringArray } from "../sanitize";
 import type { Yacht } from "@/types/yacht";
@@ -44,6 +45,12 @@ const yachtDetailSchema = z.object({
   amenities: z.array(z.object({ icon: z.string(), label: z.string() })),
   included: z.array(z.string()),
   pricing: z.array(pricingRowSchema),
+  publicPackages: z.object({
+    currency: z.literal("AED"), vatIncluded: z.literal(true), inquiryOnly: z.literal(true),
+    day: z.object({ amount: z.number(), hours: z.number().nullable(), holidaysExcluded: z.literal(true) }),
+    fourOutings: z.object({ amount: z.number(), windowDays: z.literal(30), exclusive: z.literal(false), holidaysExcluded: z.literal(true) }),
+    hourlyPromotionsApply: z.literal(false),
+  }).optional(),
   rules: z.object({ daily: z.string(), weekly: z.string() }),
   images: z.array(z.string()),
   youtubeVideo: z.string().nullable(),
@@ -73,7 +80,7 @@ export const getYachtMeta: ToolMeta = {
   title: "Get Yacht Details",
   description:
     "Get the full detail card for a single Imperial Yachting vessel: description, specs, amenities, what's included, " +
-    "the complete seasonal pricing table (hourly/daily/weekly/monthly, weekday vs. weekend), rules, and up to 8 images. " +
+    "public seasonal pricing, any fixed enquiry-only packages, rules, and up to 8 images. " +
     "Use this before quoting a client — `list_yachts` only returns a summary. " +
     "If the slug is not found, the result lists valid slugs to retry with.",
   annotations: getYachtAnnotations,
@@ -86,6 +93,7 @@ function absoluteUrl(path: string): string {
 }
 
 function mapYachtDetail(yacht: Yacht): YachtDetail {
+  const charter = getFullDayCharter(yacht.slug);
   return {
     slug: yacht.slug,
     name: sanitizeText(yacht.name, 200),
@@ -108,7 +116,7 @@ function mapYachtDetail(yacht: Yacht): YachtDetail {
       label: sanitizeText(a.label, 150),
     })),
     included: sanitizeStringArray(yacht.included, 200, 50),
-    pricing: yacht.pricing.map((p) => ({
+    pricing: publicCharterPricing(yacht).map((p) => ({
       season: sanitizeText(p.season, 100),
       period: sanitizeText(p.period, 100),
       validFrom: p.validFrom ?? null,
@@ -120,9 +128,15 @@ function mapYachtDetail(yacht: Yacht): YachtDetail {
       monthly: p.monthly,
     })),
     rules: {
-      daily: sanitizeText(yacht.dailyRules, 1000),
-      weekly: sanitizeText(yacht.weeklyRules, 1000),
+      daily: charter ? "Regular non-holiday dates. Inquiry only. Hourly promotions do not apply." : sanitizeText(yacht.dailyRules, 1000),
+      weekly: charter ? "Weekly, exclusive 30-day, overnight and 24-hour charters are quoted separately on request." : sanitizeText(yacht.weeklyRules, 1000),
     },
+    ...(charter ? { publicPackages: {
+      currency: "AED", vatIncluded: true, inquiryOnly: true,
+      day: { amount: charter.price, hours: charter.hours, holidaysExcluded: true },
+      fourOutings: { amount: charter.fourOutings, windowDays: 30, exclusive: false, holidaysExcluded: true },
+      hourlyPromotionsApply: false,
+    } } : {}),
     images: yacht.images.filter(Boolean).slice(0, MAX_IMAGES).map(absoluteUrl),
     youtubeVideo: yacht.youtubeVideo ? yacht.youtubeVideo : null,
     minHoursWeekday: yacht.minHoursWeekday ?? 2,

@@ -25,7 +25,7 @@ const processSteps = [
   { title: "Experience", description: "Board at Dubai Harbour or Marasi Bay and enjoy your cruise." },
 ];
 
-export function CharterPageContent({ hourlyRates }: { hourlyRates: Record<string, number | null> }) {
+export function CharterPageContent({ fleetSlugs }: { fleetSlugs: Record<string, string> }) {
   return (
     <WakePage>
       <WakeHero
@@ -33,7 +33,7 @@ export function CharterPageContent({ hourlyRates }: { hourlyRates: Record<string
         alt="Moneta, Monte Carlo 6, at golden hour"
         crumb="Home / Services / Yacht Charter"
         title={<>Unforgettable yacht<br /><i>experiences in Dubai</i></>}
-        lead="All-inclusive, crewed luxury yacht charters on our privately owned fleet. Sunset cruises, celebrations, and corporate events departing from Dubai Harbour and Marasi Bay."
+        lead="Crewed private yacht charters on our privately owned fleet. Sunset cruises, celebrations, and corporate events departing from Dubai Harbour and Marasi Bay."
       >
         <div className="acts">
           <a className="btn" href={SITE_CONFIG.whatsapp} target="_blank" rel="noopener noreferrer">Book via WhatsApp</a>
@@ -42,15 +42,15 @@ export function CharterPageContent({ hourlyRates }: { hourlyRates: Record<string
       </WakeHero>
 
       <WakeSection>
-        <WakeHead title={<>A full day<br />on the water.</>}>Eight hours aboard your own crewed yacht. Choose the boat and we’ll plan the day with you.</WakeHead>
-        <DayCharterCards hourlyRates={hourlyRates} />
+        <WakeHead title={<>A full day<br />on the water.</>}>Choose a fixed-price day or four agreed outings within 30 days. Exclusive charters are quoted separately.</WakeHead>
+        <DayCharterCards fleetSlugs={fleetSlugs} />
         <ExtendedCharters />
       </WakeSection>
 
       <WakeSection tone="light">
         <div className="w-split">
           <WakeSplitTitle ix="01" title={<>What&apos;s<br />included.</>}>
-            <p>Your standard eight-hour charter starts and ends at Dubai Harbour.</p>
+            <p>The standard eight-hour package starts and ends at Dubai Harbour. Confirm the duration and berth for EVO 43.</p>
             <p>We confirm the route, timing and available extras before you book.</p>
           </WakeSplitTitle>
           <WakeList items={inclusions} />

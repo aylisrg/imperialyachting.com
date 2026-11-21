@@ -17,8 +17,7 @@ import { buildYachtFAQ } from "@/data/faq";
 import { SITE_CONFIG } from "@/lib/constants";
 import { PriceConstructor } from "@/components/pricing/PriceConstructor";
 import { FullDayRate } from "@/components/wake/DayCharters";
-import { getFullDayCharter } from "@/lib/day-charters";
-import type { Yacht } from "@/types/yacht";
+import { getFullDayCharter, publicCharterPricing, structuredCharterPricing } from "@/lib/day-charters";
 
 export const dynamicParams = true;
 
@@ -93,18 +92,6 @@ function formatPrice(value: number | null): string {
   return `AED ${value.toLocaleString("en-US")}`;
 }
 
-function hasAnyB2B(yacht: Yacht): boolean {
-  return yacht.pricing.some(
-    (s) => s.hourlyB2B != null || s.dailyB2B != null || s.weeklyB2B != null || s.monthlyB2B != null
-  );
-}
-
-function hasAnyHourly(yacht: Yacht): boolean {
-  return yacht.pricing.some(
-    (s) => s.hourly != null || s.hourlyB2B != null
-  );
-}
-
 export default async function YachtDetailPage({
   params,
 }: {
@@ -117,22 +104,18 @@ export default async function YachtDetailPage({
     notFound();
   }
 
-  const lowestPrice = getLowestPrice(yacht.pricing);
+  const pricing = publicCharterPricing(yacht);
+  const lowestPrice = getLowestPrice(pricing);
   const hourlyRate = getHourlyRate(yacht.pricing);
   const fullDay = getFullDayCharter(yacht.slug);
-  const showB2B = hasAnyB2B(yacht);
-  const showHourly = hasAnyHourly(yacht);
+  const showHourly = hourlyRate !== null;
   const clips = fleetClips(yacht.slug);
   const heroImage = yacht.heroImage || yacht.images[0];
   const crumb = `Home / Fleet / ${yacht.name}`;
-  // The older database rows do not describe the new eight-hour package.
-  const structuredYacht = fullDay
-    ? { ...yacht, pricing: yacht.pricing.map((season) => ({ ...season, daily: null, weekly: null, monthly: null })) }
-    : yacht;
 
   return (
     <>
-      <JsonLd data={yachtProductSchema(structuredYacht)} />
+      <JsonLd data={yachtProductSchema({ ...yacht, pricing: structuredCharterPricing(yacht) })} />
       <JsonLd data={faqSchema(buildYachtFAQ(yacht))} />
       <JsonLd
         data={breadcrumbSchema([
@@ -240,13 +223,13 @@ export default async function YachtDetailPage({
 
         {fullDay && (
           <WakeSection>
-            <WakeHead title={<>Your full day<br />on the water.</>}>A private charter from Dubai Harbour.</WakeHead>
-            <FullDayRate charter={fullDay} hourlyRate={hourlyRate} />
-            <Link href="/services/charter" className="btn o">View extended charter options</Link>
+            <WakeHead title={<>Your full day<br />on the water.</>}>A private charter on regular, non-holiday dates.</WakeHead>
+            <FullDayRate charter={fullDay} />
+            <Link href="/services/charter" className="btn o">View all charter options</Link>
           </WakeSection>
         )}
 
-        {yacht.pricing.length > 0 && (!fullDay || showHourly || showB2B) && (
+        {yacht.pricing.length > 0 && (!fullDay || showHourly) && (
           <WakeSection>
             <WakeHead title={<>Charter<br />rates.</>}>All prices in AED. Rates include crew, fuel, and standard amenities.</WakeHead>
             <div className="w-table-wrap">
@@ -257,31 +240,17 @@ export default async function YachtDetailPage({
                     <th>Period</th>
                     {showHourly && <th>Hourly</th>}
                     {!fullDay && <><th>Daily</th><th>Weekly</th><th>Monthly</th></>}
-                    {showB2B && (
-                      <>
-                        {showHourly && <th className="b2b">Hourly B2B</th>}
-                        <th className="b2b">Daily B2B</th>
-                        <th className="b2b">Weekly B2B</th>
-                        <th className="b2b">Monthly B2B</th>
-                      </>
-                    )}
+
                   </tr>
                 </thead>
                 <tbody>
-                  {yacht.pricing.map((season) => (
+                  {yacht.pricing.filter((season) => !fullDay || season.hourly != null).map((season) => (
                     <tr key={season.season}>
                       <td>{season.season}</td>
                       <td className="w-mute">{season.period}</td>
                       {showHourly && <td>{formatPrice(season.hourly)}</td>}
                       {!fullDay && <><td>{formatPrice(season.daily)}</td><td>{formatPrice(season.weekly)}</td><td>{formatPrice(season.monthly)}</td></>}
-                      {showB2B && (
-                        <>
-                          {showHourly && <td className="b2b">{formatPrice(season.hourlyB2B ?? null)}</td>}
-                          <td className="b2b">{formatPrice(season.dailyB2B ?? null)}</td>
-                          <td className="b2b">{formatPrice(season.weeklyB2B ?? null)}</td>
-                          <td className="b2b">{formatPrice(season.monthlyB2B ?? null)}</td>
-                        </>
-                      )}
+
                     </tr>
                   ))}
                 </tbody>
