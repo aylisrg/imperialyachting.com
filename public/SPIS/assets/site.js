@@ -94,7 +94,9 @@ if (enquiry) {
       help,
       `[${campaign} · Imperial Yachting]`,
     ];
-    window.location.assign(whatsappUrl(lines.filter(Boolean).join("\n")));
+    const adres = whatsappUrl(lines.filter(Boolean).join("\n"));
+    if (typeof window.spisCel === "function") window.spisCel("spis_whatsapp", () => window.location.assign(adres));
+    else window.location.assign(adres);
   });
 }
 
