@@ -23,7 +23,7 @@
   const stories = {
     charter: {
       label: "WhatsApp → booking",
-      question: "“Is VanDutch available tomorrow evening?”",
+      question: "“Is Van Dutch 40 available tomorrow evening?”",
       steps: [
         { role: "office", title: "An enquiry arrives.", description: "The office picks up the WhatsApp message and passes the request to Sales.", result: "An enquiry with a yacht and a requested time.", short: "Receive enquiry" },
         { role: "sales", title: "Sales checks the details.", description: "Sales checks the yacht calendar and replies in WhatsApp. Guest wishes stay with the enquiry.", result: "A reply based on the shared calendar.", short: "Reply in WhatsApp" },
