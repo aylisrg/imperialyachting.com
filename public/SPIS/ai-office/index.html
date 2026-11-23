@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fafbf9">
+  <meta name="description" content="Step inside the SPIS AI office. Watch a yacht enquiry, a maintenance request and a document renewal move between a coordinated team of AI agents.">
+  <title>Inside the AI office — SPIS</title>
+  <link rel="stylesheet" href="/SPIS/ai-office/office.css">
+  <script src="/SPIS/ai-office/office.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to office</a>
+  <header class="site-header">
+    <a class="brand" href="/SPIS" aria-label="SPIS home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>SPIS <span class="brand-context">/ AI office</span></a>
+    <nav aria-label="Main navigation"><a href="/SPIS">The technology <span aria-hidden="true">↗</span></a><a href="/SPIS/imperial">Imperial Yachting <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main id="main">
+    <div class="introduction">
+      <div><p class="eyebrow">Inside SPIS</p><h1>A whole AI office.<br><span>Working on your yacht.</span></h1></div>
+      <p class="intro-copy">An enquiry becomes a booking. A request becomes a checked result. Follow the people, the work and the handoffs.</p>
+    </div>
+    <section class="office-experience" aria-label="Explore the SPIS AI office">
+      <div class="scenario-bar">
+        <div class="scenario-tabs" role="tablist" aria-label="Office stories">
+          <button type="button" role="tab" id="story-charter" aria-controls="story-panel" aria-selected="true" data-story="charter"><span aria-hidden="true">↗</span> A charter enquiry</button>
+          <button type="button" role="tab" id="story-maintenance" aria-controls="story-panel" aria-selected="false" tabindex="-1" data-story="maintenance"><span aria-hidden="true">⌁</span> A maintenance request</button>
+          <button type="button" role="tab" id="story-renewal" aria-controls="story-panel" aria-selected="false" tabindex="-1" data-story="renewal"><span aria-hidden="true">▤</span> A document renewal</button>
+        </div>
+        <p class="demo-note"><span class="demo-dot" aria-hidden="true"></span>Illustrated workflow demo</p>
+      </div>
+      <div class="office-sheet" id="story-panel" role="tabpanel" aria-labelledby="story-charter" tabindex="0">
+        <div class="drawing-column">
+          <div class="drawing-header"><span>SPIS / OPERATIONS FLOOR</span><span>AI AGENTS AT WORK</span></div>
+          <div class="office-viewport" id="office-viewport" tabindex="0" aria-label="Office drawing. Use the role buttons below to explore employees. In close-up view, scroll to explore the whole floor.">
+            <div class="office-world" id="office-world">
+              <img class="office-background" id="office-background" src="/SPIS/ai-office/assets/office-pencil.webp" width="1536" height="1024" fetchpriority="high" alt="Architectural pencil drawing of an open office with messaging, design, calendar, crew, finance, legal, project and quality-review workstations.">
+              <canvas id="office-canvas" width="1536" height="1024" aria-label="Animated employees work at their desks and carry tasks between departments. Select a role or a story step below for a text explanation."></canvas>
+            </div>
+            <div class="view-caption" aria-hidden="true"><span class="pencil-swatch"></span>Graphite / SPIS blue</div>
+          </div>
+          <div class="drawing-controls">
+            <div class="play-controls">
+              <button class="control-button primary-control" type="button" id="play-toggle" aria-label="Pause office animation"><span id="play-icon" aria-hidden="true">Ⅱ</span><span id="play-label">Pause</span></button>
+              <button class="control-button" type="button" id="restart" aria-label="Restart this story"><span aria-hidden="true">↺</span><span>Restart</span></button>
+            </div>
+            <button class="control-button zoom-control" type="button" id="zoom-toggle" aria-pressed="false"><span aria-hidden="true">⊕</span><span id="zoom-label">Close-up</span></button>
+          </div>
+        </div>
+        <aside class="story-inspector" aria-label="Current story">
+          <div class="story-context"><span class="eyebrow" id="story-category">WhatsApp → booking</span><span class="step-counter" id="step-counter">1 / 7</span></div>
+          <blockquote id="story-question">“Is VanDutch available tomorrow evening?”</blockquote>
+          <div class="current-work">
+            <p class="active-role-label"><span class="role-portrait active-role-portrait" id="active-role-portrait" aria-hidden="true"></span><span id="active-role-dot"></span><span id="active-role">Office</span><span class="work-state" id="work-state">Working</span></p>
+            <h2 id="step-heading">An enquiry arrives.</h2>
+            <p id="step-description">The office picks up the WhatsApp message and passes the request to Sales.</p>
+            <div class="result-paper"><span class="result-caption" id="result-caption">Handoff</span><p id="step-result">An enquiry with a yacht and a requested time.</p></div>
+          </div>
+          <div class="approval-box" id="approval-box" hidden>
+            <p>This example is waiting for a person.</p>
+            <button type="button" id="approve-example">Approve example <span aria-hidden="true">✓</span></button>
+            <small>Illustration only · No payment or submission</small>
+          </div>
+          <div class="story-progress" aria-hidden="true"><span id="story-progress"></span></div>
+          <p class="scene-status" id="scene-status">Follow the blue task from desk to desk.</p>
+        </aside>
+      </div>
+      <div class="story-timeline" aria-label="Story steps">
+        <div class="timeline-top"><p class="eyebrow">Follow the work</p><div class="step-arrows"><button type="button" id="previous-step" aria-label="Previous step">←</button><button type="button" id="next-step" aria-label="Next step">→</button></div></div>
+        <ol id="step-list" class="step-list"></ol>
+      </div>
+      <section class="team-section" aria-labelledby="office-team-title">
+        <div class="team-intro"><h3 id="office-team-title">Meet the AI team.</h3><p>Select a portrait to see what each role handles.</p></div>
+        <div id="role-list" class="role-list" role="group" aria-label="Office roles"></div>
+        <article class="role-detail" id="role-detail" aria-labelledby="role-name">
+          <span class="role-portrait role-avatar" id="role-avatar" aria-hidden="true"></span>
+          <div class="role-description">
+            <h4 id="role-name">Office</h4>
+            <p class="role-purpose" id="role-purpose">Picks up incoming requests and gets the right specialist involved.</p>
+            <dl><div><dt>Works with</dt><dd id="role-input">WhatsApp, Telegram, email and connected channels</dd></div><div><dt>Hands over</dt><dd id="role-output">A request with context and a responsible role</dd></div></dl>
+          </div>
+        </article>
+        <div class="team-facts">
+          <p>People approve spending, access changes and actions that can’t be undone.</p>
+          <p><strong>≈25</strong> AI staff <span aria-hidden="true">·</span> <strong>≈500</strong> automated checks</p>
+        </div>
+      </section>
+    </section>
+    <footer class="page-footer"><p>Built around a yacht. Connected through SPIS.</p><a href="/SPIS">Explore the technology <span aria-hidden="true">↗</span></a></footer>
+    <noscript><p class="noscript-note">Enable JavaScript to watch the illustrated office. Office receives a request, specialists coordinate the work, a person approves sensitive steps, and a separate checker verifies the result.</p></noscript>
+  </main>
+  <a class="assistant-link" href="https://wa.me/971528355939?text=Hello%20Elliott%27s%20assistant.%20I%27d%20like%20to%20learn%20about%20the%20SPIS%20AI%20office.%20%5BDubai%20Yacht%20Show%20%C2%B7%20SPIS%20AI%20office%5D" rel="noopener">Talk to Elliott's assistant <span aria-hidden="true">↗</span></a>
+  <div class="sr-only" role="status" id="interaction-status"></div>
+</body>
+</html>

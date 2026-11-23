@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en" class="spis">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SPIS lets yacht brokers hold charter slots and gives owners one place to see yacht operations, documents and expenses.">
+  <meta name="theme-color" content="#ffffff">
+  <title>SPIS — Yacht Management</title>
+  <link rel="stylesheet" href="/SPIS/assets/site.css">
+  <link rel="stylesheet" href="/SPIS/assets/yacht-calendar.css">
+  <link rel="stylesheet" href="/SPIS/assets/ai-inbox.css">
+  <script src="/SPIS/assets/site.js" defer></script>
+  <script src="/SPIS/assets/yacht-calendar.js" defer></script>
+  <script src="/SPIS/ai-office/office.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="masthead">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/SPIS" aria-label="SPIS home"><span class="brand-wave" aria-hidden="true"><i></i><i></i><i></i></span>SPIS</a>
+      <nav class="main-nav" aria-label="Main navigation"><a href="/SPIS/booking">Book a yacht</a><a href="#booking">Broker portal</a><a href="#preview">Owner portal</a><a href="#ai-office">AI office</a><a href="#fleet">Fleet</a></nav>
+      <details class="mobile-nav" data-mobile-nav>
+        <summary aria-label="Menu"><span aria-hidden="true"></span><span aria-hidden="true"></span></summary>
+        <nav aria-label="Page navigation"><a href="/SPIS/booking">Book a yacht</a><a href="#booking">Broker portal</a><a href="#preview">Owner portal</a><a href="#ai-office">AI office</a><a href="#fleet">Fleet</a></nav>
+      </details>
+      <a class="sister" href="/SPIS/imperial">Imperial Yachting <span class="arrow" aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero blueprint-hero" aria-labelledby="hero-title">
+  <div class="wrap blueprint-layout">
+    <div class="hero-copy">
+      <p class="drawing-stamp"><b>SPIS</b><span>Dubai Yacht Show</span></p>
+      <h1 id="hero-title">AI ERA <br>YACHTING <br>MANAGEMENT <br><span>MAGIC</span></h1>
+      <p class="lede">Yacht management technology that connects brokers, owners, crew and AI. One system for bookings, maintenance, money and documents.</p>
+      <div class="hero-actions">
+        <a class="button" href="#ai-office">Step inside the AI office <span class="arrow" aria-hidden="true">↓</span></a>
+        <a class="inline-link" href="/SPIS/imperial">See Imperial Yachting <span class="arrow" aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <figure class="hero-art blueprint-plate">
+      <div class="plate-label"><span>VANDUTCH 40</span><span>SECTION A–A</span></div>
+      <div class="blueprint-image">
+        <img src="/SPIS/assets/vandutch.webp" width="1640" height="820" fetchpriority="high" alt="Graphite cutaway of a VanDutch 40 showing its bow lounge, galley and helm">
+        <span class="drawing-leader leader-helm" aria-hidden="true">Helm</span>
+        <span class="drawing-leader leader-lounge" aria-hidden="true">Bow lounge</span>
+      </div>
+      <div class="drawing-dimension" aria-hidden="true"><span>Bow</span><i></i><span>Stern</span></div>
+      <figcaption><span>SPIS / FLEET DRAWING</span><span>Illustrative cutaway · Not to scale</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+
+  <section class="integrated-office" id="ai-office" aria-label="SPIS AI office">
+    <spis-ai-office id="ai-team">
+      <template shadowrootmode="open">
+        <link rel="stylesheet" href="/SPIS/ai-office/office.css">
+        <div class="embedded-office">
+    <div class="introduction">
+      <div><p class="eyebrow">Inside SPIS</p><h2>A whole AI office.<br><span>Working on your yacht.</span></h2></div>
+      <p class="intro-copy">An enquiry becomes a booking. A request becomes a checked result. Follow the people, the work and the handoffs.</p>
+    </div>
+    <section class="office-experience" aria-label="Explore the SPIS AI office">
+      <div class="scenario-bar">
+        <div class="scenario-tabs" role="tablist" aria-label="Office stories">
+          <button type="button" role="tab" id="story-charter" aria-controls="story-panel" aria-selected="true" data-story="charter"><span aria-hidden="true">↗</span> A charter enquiry</button>
+          <button type="button" role="tab" id="story-maintenance" aria-controls="story-panel" aria-selected="false" tabindex="-1" data-story="maintenance"><span aria-hidden="true">⌁</span> A maintenance request</button>
+          <button type="button" role="tab" id="story-renewal" aria-controls="story-panel" aria-selected="false" tabindex="-1" data-story="renewal"><span aria-hidden="true">▤</span> A document renewal</button>
+        </div>
+        <p class="demo-note"><span class="demo-dot" aria-hidden="true"></span>Illustrated workflow demo</p>
+      </div>
+      <div class="office-sheet" id="story-panel" role="tabpanel" aria-labelledby="story-charter" tabindex="0">
+        <div class="drawing-column">
+          <div class="drawing-header"><span>SPIS / OPERATIONS FLOOR</span><span>AI AGENTS AT WORK</span></div>
+          <div class="office-viewport" id="office-viewport" tabindex="0" aria-label="Office drawing. Use the role buttons below to explore employees. In close-up view, scroll to explore the whole floor.">
+            <div class="office-world" id="office-world">
+              <img class="office-background" id="office-background" src="/SPIS/ai-office/assets/office-pencil.webp" width="1536" height="1024" loading="lazy" fetchpriority="low" alt="Architectural pencil drawing of an open office with messaging, design, calendar, crew, finance, legal, project and quality-review workstations.">
+              <canvas id="office-canvas" width="1536" height="1024" aria-label="Animated employees work at their desks and carry tasks between departments. Select a role or a story step below for a text explanation."></canvas>
+            </div>
+            <div class="view-caption" aria-hidden="true"><span class="pencil-swatch"></span>Graphite / SPIS blue</div>
+          </div>
+          <div class="drawing-controls">
+            <div class="play-controls">
+              <button class="control-button primary-control" type="button" id="play-toggle" aria-label="Pause office animation"><span id="play-icon" aria-hidden="true">Ⅱ</span><span id="play-label">Pause</span></button>
+              <button class="control-button" type="button" id="restart" aria-label="Restart this story"><span aria-hidden="true">↺</span><span>Restart</span></button>
+            </div>
+            <button class="control-button zoom-control" type="button" id="zoom-toggle" aria-pressed="false"><span aria-hidden="true">⊕</span><span id="zoom-label">Close-up</span></button>
+          </div>
+        </div>
+        <aside class="story-inspector" aria-label="Current story">
+          <div class="story-context"><span class="eyebrow" id="story-category">WhatsApp → booking</span><span class="step-counter" id="step-counter">1 / 7</span></div>
+          <blockquote id="story-question">“Is VanDutch available tomorrow evening?”</blockquote>
+          <div class="current-work">
+            <p class="active-role-label"><span class="role-portrait active-role-portrait" id="active-role-portrait" aria-hidden="true"></span><span id="active-role-dot"></span><span id="active-role">Office</span><span class="work-state" id="work-state">Working</span></p>
+            <h2 id="step-heading">An enquiry arrives.</h2>
+            <p id="step-description">The office picks up the WhatsApp message and passes the request to Sales.</p>
+            <div class="result-paper"><span class="result-caption" id="result-caption">Handoff</span><p id="step-result">An enquiry with a yacht and a requested time.</p></div>
+          </div>
+          <div class="approval-box" id="approval-box" hidden>
+            <p>This example is waiting for a person.</p>
+            <button type="button" id="approve-example">Approve example <span aria-hidden="true">✓</span></button>
+            <small>Illustration only · No payment or submission</small>
+          </div>
+          <div class="story-progress" aria-hidden="true"><span id="story-progress"></span></div>
+          <p class="scene-status" id="scene-status">Follow the blue task from desk to desk.</p>
+        </aside>
+      </div>
+      <div class="story-timeline" aria-label="Story steps">
+        <div class="timeline-top"><p class="eyebrow">Follow the work</p><div class="step-arrows"><button type="button" id="previous-step" aria-label="Previous step">←</button><button type="button" id="next-step" aria-label="Next step">→</button></div></div>
+        <ol id="step-list" class="step-list"></ol>
+      </div>
+      <section class="team-section" aria-labelledby="office-team-title">
+        <div class="team-intro"><h3 id="office-team-title">Meet the AI team.</h3><p>Select a portrait to see what each role handles.</p></div>
+        <div id="role-list" class="role-list" role="group" aria-label="Office roles"></div>
+        <article class="role-detail" id="role-detail" aria-labelledby="role-name">
+          <span class="role-portrait role-avatar" id="role-avatar" aria-hidden="true"></span>
+          <div class="role-description">
+            <h4 id="role-name">Office</h4>
+            <p class="role-purpose" id="role-purpose">Picks up incoming requests and gets the right specialist involved.</p>
+            <dl><div><dt>Works with</dt><dd id="role-input">WhatsApp, Telegram, email and connected channels</dd></div><div><dt>Hands over</dt><dd id="role-output">A request with context and a responsible role</dd></div></dl>
+          </div>
+        </article>
+        <div class="team-facts">
+          <p>People approve spending, access changes and actions that can’t be undone.</p>
+          <p><strong>≈25</strong> AI staff <span aria-hidden="true">·</span> <strong>≈500</strong> automated checks</p>
+        </div>
+      </section>
+    </section>
+    <noscript><p class="noscript-note">Enable JavaScript to watch the illustrated office. Office receives a request, specialists coordinate the work, a person approves sensitive steps, and a separate checker verifies the result.</p></noscript>
+
+<div class="sr-only" role="status" id="interaction-status"></div>
+</div>
+      </template>
+    </spis-ai-office>
+  </section>
+
+  <section class="section product-section broker-section" id="booking" aria-labelledby="booking-title">
+    <div class="wrap">
+      <div class="section-head product-head" data-reveal>
+        <div><p class="label">Broker portal</p><h2 id="booking-title">Every broker books live.<br>Even at 2 a.m.</h2></div>
+        <p class="section-intro">Each broker has a private link that opens on their phone without a sign-in. They can hold a slot and book it themselves.</p>
+      </div>
+      <div class="product-shell broker-shell" data-tabset data-booking-demo data-reveal>
+        <div class="product-bar broker-bar">
+          <div class="brand"><span class="signal" aria-hidden="true"></span>SPIS <span class="demo-label">Booking demo</span></div>
+          <div class="switcher" role="tablist" aria-label="Broker portal demo">
+            <button id="broker-tab-boats" type="button" role="tab" aria-controls="broker-boats" aria-selected="true">Boats</button>
+            <button id="broker-tab-balance" type="button" role="tab" aria-controls="broker-balance" aria-selected="false" tabindex="-1">Balance</button>
+            <button id="broker-tab-calendar" type="button" role="tab" aria-controls="broker-calendar" aria-selected="false" tabindex="-1">Calendar</button>
+            <button id="broker-tab-info" type="button" role="tab" aria-controls="broker-info" aria-selected="false" tabindex="-1">Info</button>
+          </div>
+        </div>
+        <div class="product-screen broker-screen" id="broker-boats" role="tabpanel" aria-labelledby="broker-tab-boats" tabindex="0">
+          <div class="broker-boat">
+            <div><p class="label">Open day cruiser · Dubai Harbour</p><h3>VanDutch 40</h3><p data-booking-availability>Try a hold on the 18:00 sample slot.</p><a class="inline-link" href="/SPIS/assets/brochures/vandutch-40.pdf">Client brochure (PDF) <span class="arrow" aria-hidden="true">↗</span></a></div>
+            <img src="/SPIS/assets/vandutch-profile.webp" width="1280" height="660" loading="lazy" alt="VanDutch 40 graphite side profile">
+          </div>
+          <div class="booking-actions">
+            <label class="guest-note" for="broker-requests">Guest requests <span>(optional)</span>
+              <input id="broker-requests" data-booking-requests maxlength="160" autocomplete="off" placeholder="E.g. a child life jacket">
+            </label>
+            <button class="button" type="button" data-hold-hours="2">Pay within 2 hours <span class="arrow" aria-hidden="true">↗</span></button>
+            <button class="quiet-button" type="button" data-hold-hours="12">Hold for 12 hours</button>
+          </div>
+        </div>
+        <div class="product-screen broker-screen" id="broker-balance" role="tabpanel" aria-labelledby="broker-tab-balance" tabindex="0" hidden>
+          <div class="screen-head"><div><p class="label">Broker balance</p><h3>Your sample hold</h3></div><span class="pill" data-booking-chip>No hold</span></div>
+          <div class="booking-record"><span>VanDutch 40 · 18:00</span><strong data-booking-timer aria-label="Hold time remaining">—</strong></div>
+          <p class="captain-note" data-captain-note hidden><strong>Captain’s trip note</strong><span data-captain-text></span></p>
+          <div class="balance-actions">
+            <details><summary>Pay online</summary><p>In the broker portal, pay by card or USDT. A broker can take over an unpaid hold by paying for the slot. This demo uses sample data.</p></details>
+            <details><summary>PDF invoice</summary><p>The broker portal prepares a PDF invoice for the booking.</p></details>
+            <button class="quiet-button" type="button" data-hold-release disabled>Cancel hold</button>
+          </div>
+        </div>
+        <div class="product-screen broker-screen" id="broker-calendar" role="tabpanel" aria-labelledby="broker-tab-calendar" tabindex="0" hidden>
+          <div class="screen-head"><div><p class="label">VanDutch 40 · Sample day</p><h3>Availability</h3></div><span class="pill">Dubai time</span></div>
+          <ul class="slot-list">
+            <li><time datetime="16:00">16:00</time><span class="slot-busy">Booked</span></li>
+            <li><time datetime="18:00">18:00</time><span class="slot-open" data-booking-slot>Available</span></li>
+            <li><time datetime="20:00">20:00</time><span class="slot-unknown">No response</span></li>
+          </ul>
+          <p class="booking-note">A hold blocks the slot. The public broker calendar shows reservations as Busy.</p>
+        </div>
+        <div class="product-screen broker-screen" id="broker-info" role="tabpanel" aria-labelledby="broker-tab-info" tabindex="0" hidden>
+          <div class="screen-head"><div><p class="label">Broker profile · Example</p><h3>Agent information</h3></div><span class="pill">Gold</span></div>
+          <dl class="broker-summary"><div><dt>Booked hours</dt><dd>12 h</dd></div><div><dt>Payment history</dt><dd>2 paid trips</dd></div><div><dt>Portal language</dt><dd>EN / RU</dd></div></dl>
+          <p class="booking-note">Example agent record. Each broker’s private link opens their own view.</p>
+        </div>
+        <p class="demo-disclaimer" data-booking-status aria-live="polite">Sample data. Try a hold to see the calendar and balance change.</p>
+      </div>
+      <a class="inline-link public-calendar" href="https://iy.je/nVT">Open the public calendar <span class="arrow" aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="section lifecycle-section yc-section" id="system" aria-labelledby="system-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div><p class="label">Shared availability</p><h2 id="system-title">One yacht.<br>One calendar.</h2></div>
+        <p class="section-intro">Your brokers, AI agents and booking platforms, working from the same yacht schedule.</p>
+      </div>
+      <div class="yc-workspace" data-yacht-calendar>
+        <div class="yc-calendar">
+          <div class="yc-toolbar">
+            <div class="yc-vessel"><span class="yc-calendar-mark" aria-hidden="true">23</span><div><strong>VanDutch 40</strong><span>November 2026</span></div></div>
+            <div class="yc-view"><span>23–29 Nov</span><b>Week</b></div>
+          </div>
+          <div class="yc-scroll-guide"><span>Swipe through the week</span><span>Dubai · UTC+4</span></div>
+          <div class="yc-scroll" tabindex="0" role="region" aria-label="Sample weekly calendar for VanDutch 40, 23 to 29 November 2026. Scroll horizontally to see all seven days.">
+            <div class="yc-week">
+              <div class="yc-hours" aria-hidden="true">
+                <div class="yc-day-heading yc-zone">GST</div>
+                <div class="yc-time-grid"><span style="--hour:0">09:00</span><span style="--hour:1">10:00</span><span style="--hour:2">11:00</span><span style="--hour:3">12:00</span><span style="--hour:4">13:00</span><span style="--hour:5">14:00</span><span style="--hour:6">15:00</span><span style="--hour:7">16:00</span><span style="--hour:8">17:00</span><span style="--hour:9">18:00</span></div>
+              </div>
+              <div class="yc-day" role="group" aria-label="Monday 23 November">
+                <div class="yc-day-heading"><span>MON</span><strong>23</strong></div>
+                <div class="yc-day-grid">
+                  <button class="yc-event yc-crew" type="button" data-yc-event="crew" aria-pressed="false" style="--start:1;--duration:2" data-yc-when="Mon 23 Nov · 10:00–12:00" data-yc-origin="Crew · Maintenance" aria-label="Engine service, Monday 23 November, 10:00 to 12:00, Crew"><strong>Engine service</strong><span>Crew</span><time>10:00–12:00</time></button>
+                </div>
+              </div>
+              <div class="yc-day" role="group" aria-label="Tuesday 24 November">
+                <div class="yc-day-heading"><span>TUE</span><strong>24</strong></div>
+                <div class="yc-day-grid">
+                  <button class="yc-event yc-platforms" type="button" data-yc-event="platforms" aria-pressed="false" style="--start:5;--duration:3" data-yc-when="Tue 24 Nov · 14:00–17:00" data-yc-origin="GetMyBoat · Booking platform" aria-label="Charter, Tuesday 24 November, 14:00 to 17:00, GetMyBoat"><strong>Charter</strong><span>GetMyBoat</span><time>14:00–17:00</time></button>
+                </div>
+              </div>
+              <div class="yc-day" role="group" aria-label="Wednesday 25 November">
+                <div class="yc-day-heading"><span>WED</span><strong>25</strong></div>
+                <div class="yc-day-grid">
+                  <button class="yc-event yc-brokers" type="button" data-yc-event="brokers" aria-pressed="false" style="--start:2;--duration:2" data-yc-when="Wed 25 Nov · 11:00–13:00" data-yc-origin="Broker portal · Agency" aria-label="Broker hold, Wednesday 25 November, 11:00 to 13:00, Broker portal"><strong>Broker hold</strong><span>Agency</span><time>11:00–13:00</time></button>
+                </div>
+              </div>
+              <div class="yc-day" role="group" aria-label="Thursday 26 November">
+                <div class="yc-day-heading"><span>THU</span><strong>26</strong></div>
+                <div class="yc-day-grid">
+                  <button class="yc-event yc-crew yc-owner" type="button" data-yc-event="crew" aria-pressed="false" style="--start:7;--duration:2" data-yc-when="Thu 26 Nov · 16:00–18:00" data-yc-origin="Owner · Private use" aria-label="Owner trip, Thursday 26 November, 16:00 to 18:00, Owner"><strong>Owner trip</strong><span>Owner</span><time>16:00–18:00</time></button>
+                </div>
+              </div>
+              <div class="yc-day" role="group" aria-label="Friday 27 November">
+                <div class="yc-day-heading"><span>FRI</span><strong>27</strong></div>
+                <div class="yc-day-grid">
+                  <button class="yc-event yc-ai" type="button" data-yc-event="ai" aria-pressed="false" style="--start:1;--duration:2" data-yc-when="Fri 27 Nov · 10:00–12:00" data-yc-origin="AI assistant · Sample hold" aria-label="AI hold, Friday 27 November, 10:00 to 12:00, AI assistant"><strong>AI hold</strong><span>AI assistant</span><time>10:00–12:00</time></button>
+                </div>
+              </div>
+              <div class="yc-day yc-weekend" role="group" aria-label="Saturday 28 November">
+                <div class="yc-day-heading"><span>SAT</span><strong>28</strong></div>
+                <div class="yc-day-grid">
+                  <button class="yc-event yc-brokers" type="button" data-yc-event="brokers" aria-pressed="false" style="--start:5;--duration:3" data-yc-when="Sat 28 Nov · 14:00–17:00" data-yc-origin="Agency booking tool · Charter" aria-label="Charter, Saturday 28 November, 14:00 to 17:00, Agency booking tool"><strong>Charter</strong><span>Agency tool</span><time>14:00–17:00</time></button>
+                </div>
+              </div>
+              <div class="yc-day yc-weekend" role="group" aria-label="Sunday 29 November">
+                <div class="yc-day-heading"><span>SUN</span><strong>29</strong></div>
+                <div class="yc-day-grid"><p class="yc-open-slot">Available</p></div>
+              </div>
+            </div>
+          </div>
+          <div class="yc-event-detail" aria-live="polite" aria-atomic="true" data-yc-detail>
+            <span class="yc-detail-marker" aria-hidden="true"></span>
+            <div><strong data-yc-detail-title>Select an event</strong><span data-yc-detail-meta>See its time and where it came from.</span></div>
+          </div>
+        </div>
+        <fieldset class="yc-sources">
+          <legend>Bring your booking tools.</legend>
+          <p class="yc-source-help" id="yc-source-help">Choose whose events to show.</p>
+          <div class="yc-source-list">
+            <label class="yc-source yc-brokers">
+              <input type="checkbox" value="brokers" data-yc-source checked aria-describedby="yc-source-help">
+              <span><strong>Brokers &amp; agencies</strong><small>Portals · WhatsApp · booking tools</small></span>
+            </label>
+            <label class="yc-source yc-ai">
+              <input type="checkbox" value="ai" data-yc-source checked aria-describedby="yc-source-help">
+              <span><strong>AI agents</strong><small>Your assistant · custom agents</small></span>
+            </label>
+            <label class="yc-source yc-platforms">
+              <input type="checkbox" value="platforms" data-yc-source checked aria-describedby="yc-source-help">
+              <span><strong>Booking platforms</strong><small>GetMyBoat · other marketplaces</small></span>
+            </label>
+            <label class="yc-source yc-crew">
+              <input type="checkbox" value="crew" data-yc-source checked aria-describedby="yc-source-help">
+              <span><strong>Owner &amp; crew</strong><small>Google Calendar · calendar feeds</small></span>
+            </label>
+          </div>
+          <div class="yc-open-connections">
+            <span>Other tools &amp; custom systems</span>
+            <ul aria-label="Connection options"><li>API</li><li>MCP</li><li>iCal</li></ul>
+          </div>
+        </fieldset>
+      </div>
+      <p class="yc-caption">Illustrative connections &amp; sample events. Each service needs its own API or calendar-feed setup.</p>
+    </div>
+  </section>
+
+  <section class="section inbox-section" id="ai-inbox" aria-labelledby="ai-office-title">
+    <div class="wrap" id="workflows">
+      <div class="section-head" data-reveal>
+        <div><p class="label">AI office</p><h2 id="ai-office-title">One inbox.<br>Every channel.</h2></div>
+        <p class="section-intro">Messages and calls come into one inbox. The SPIS assistant uses the conversation and yacht records to answer in the original channel.</p>
+      </div>
+      <figure class="inbox-plate" aria-label="How SPIS receives messages, reads the context and replies">
+        <div class="inbox-channels">
+          <h3 class="inbox-annotation">Incoming channels</h3>
+          <ul class="inbox-channel-list">
+            <li><span class="inbox-icon inbox-icon-whatsapp" aria-hidden="true"></span>WhatsApp</li>
+            <li><span class="inbox-icon inbox-icon-telegram" aria-hidden="true"></span>Telegram</li>
+            <li><span class="inbox-icon inbox-icon-instagram" aria-hidden="true"></span>Instagram</li>
+            <li><span class="inbox-icon inbox-icon-email" aria-hidden="true"></span>Email</li>
+            <li><span class="inbox-icon inbox-icon-calls" aria-hidden="true"></span>Calls</li>
+          </ul>
+        </div>
+        <span class="inbox-flow-line inbox-flow-in" aria-hidden="true"></span>
+        <div class="inbox-core">
+          <h3>SPIS inbox <span>+ AI</span></h3>
+          <img class="inbox-illustration" src="/SPIS/assets/inbox-workstation.webp" width="1536" height="1024" loading="lazy" alt="">
+          <h4 class="inbox-annotation">Context the AI checks</h4>
+          <ul class="inbox-context">
+            <li>Chat history</li><li>Contact profile</li><li>Yacht calendar</li>
+          </ul>
+        </div>
+        <span class="inbox-flow-line inbox-flow-out" aria-hidden="true"></span>
+        <div class="inbox-reply">
+          <h3 class="inbox-annotation">Example <span aria-hidden="true">·</span> WhatsApp</h3>
+          <div class="inbox-dialogue">
+            <div class="inbox-message"><p class="inbox-speaker">Broker</p><p>Can my client see the VanDutch this Friday?</p></div>
+            <div class="inbox-message inbox-message-answer"><p class="inbox-speaker">SPIS assistant</p><p>Friday at 11:00 or 14:00 works at Dubai Harbour. Which time suits your client?</p></div>
+          </div>
+        </div>
+      </figure>
+      <a class="inline-link inbox-office-link" href="#ai-office">Step inside the AI office</a>
+    </div>
+  </section>
+
+  <section class="section product-section" id="preview" aria-labelledby="preview-title">
+    <div class="wrap">
+      <div class="section-head product-head" data-reveal><div><p class="label">Interactive demo</p><h2 id="preview-title">The owner’s view.</h2></div><p class="section-intro">Owners see their own yacht’s readiness, calendar, approvals, work and monthly finances. Sign in by email or Telegram. The portal refreshes every 15 minutes.</p></div>
+      <div class="product-shell" data-tabset data-reveal>
+        <div class="product-bar"><div class="brand"><span class="brand-wave" aria-hidden="true"><i></i><i></i><i></i></span>SPIS</div><div class="switcher" role="tablist" aria-label="Product screens">
+          <button id="tab-owner" type="button" role="tab" aria-controls="screen-owner" aria-selected="true">Owner portal</button>
+          <button id="tab-catalogue" type="button" role="tab" aria-controls="screen-catalogue" aria-selected="false" tabindex="-1">Catalogue</button>
+          <button id="tab-logbook" type="button" role="tab" aria-controls="screen-logbook" aria-selected="false" tabindex="-1">Logbook</button>
+        </div></div>
+        <div class="product-screen" id="screen-owner" role="tabpanel" aria-labelledby="tab-owner" tabindex="0">
+          <div class="screen-head"><div><p class="label">Owner view</p><h3>Maybach</h3></div><span class="pill"><i></i> Illustrative owner view</span></div>
+          <div class="dashboard">
+            <div class="dashboard-main">
+              <h4>On the schedule</h4>
+              <div class="schedule-row"><time>Tue</time><div><strong>Engine service</strong><p>Scheduled maintenance</p></div></div>
+              <div class="schedule-row"><time>Fri</time><div><strong>Crew check</strong><p>Onboard operations</p></div></div>
+            </div>
+            <div class="dashboard-side">
+              <h4>Next renewal</h4><p class="renewal-value">21 <small>days</small></p><p>Insurance policy</p>
+              <div class="progress-line" aria-hidden="true"><i></i></div>
+            </div>
+          </div>
+          <div class="privacy-row"><span>Balance <b aria-label="Hidden">••••</b></span><span>Invoices <b aria-label="Hidden">••••</b></span></div>
+          <details class="owner-assistant"><summary>Ask the assistant</summary><p>It answers from this yacht’s portal and passes questions outside the available records to a manager.</p></details>
+        </div>
+        <div class="product-screen" id="screen-catalogue" role="tabpanel" aria-labelledby="tab-catalogue" tabindex="0" hidden>
+          <div class="screen-head"><div><p class="label">Fleet library</p><h3>Yacht catalogue</h3></div><span class="pill">4 vessels</span></div>
+          <ul class="screen-catalogue"><li><img src="/SPIS/assets/vandutch-profile.webp" width="1280" height="660" alt="" loading="lazy"><strong>VanDutch 40</strong><span>Open day cruiser</span></li><li><img src="/SPIS/assets/moneta-profile.webp" width="1280" height="660" alt="" loading="lazy"><strong>Moneta</strong><span>Monte Carlo 6</span></li><li><img src="/SPIS/assets/evo-profile.webp" width="1280" height="660" alt="" loading="lazy"><strong>Evo 43</strong><span>Open day yacht</span></li><li><img src="/SPIS/assets/maybach-profile.webp" width="1280" height="660" alt="" loading="lazy"><strong>Maybach</strong><span>Silver Arrows Marine SAM 46</span></li></ul>
+        </div>
+        <div class="product-screen" id="screen-logbook" role="tabpanel" aria-labelledby="tab-logbook" tabindex="0" hidden>
+          <div class="screen-head"><div><p class="label">VanDutch 40</p><h3>Logbook</h3></div><span class="pill">Illustrative entries</span></div>
+          <div class="dashboard-main logbook">
+            <div class="schedule-row"><time>08:10</time><div><strong>Pre-departure check</strong><p>Completed</p></div></div>
+            <div class="schedule-row"><time>10:00</time><div><strong>Charter departure</strong><p>Dubai Harbour</p></div></div>
+            <div class="schedule-row"><time>14:20</time><div><strong>Post-charter inspection</strong><p>Completed</p></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="section records-section" id="vessel-records" aria-labelledby="records-title">
+  <div class="wrap">
+    <div class="section-head" data-reveal>
+      <div><p class="label">Logbook, documents and finance</p><h2 id="records-title">Every trip.<br>Every approval.</h2></div>
+      <p class="section-intro">The logbook turns crew conversations into a yacht record spanning trips, equipment, stock, maintenance and expenses.</p>
+    </div>
+    <div class="records-sheet" data-reveal>
+      <h3>Captain’s expense</h3>
+      <ol class="approval-flow">
+        <li>Request in chat</li><li>Human approval</li><li>Payment</li><li>Paid receipt in chat</li>
+      </ol>
+    </div>
+    <div class="record-grid" data-reveal>
+      <article>
+        <p class="label">Documents</p><h3>Renew before the next trip.</h3>
+        <p>SPIS opens renewal tasks ahead of expiry and checks the next trip against licence and insurance dates.</p>
+        <ul class="document-states" aria-label="Renewal statuses">
+          <li>Upcoming</li><li>In progress</li><li>Done</li><li>Overdue</li>
+        </ul>
+      </article>
+      <article>
+        <p class="label">Accounting</p><h3>Every invoice checked.</h3>
+        <p>Review incoming invoices, approve payment, match bank entries and report expenses by yacht and trip.</p>
+      </article>
+      <article>
+        <p class="label">Catalogues</p><h3>Find a yacht or a part.</h3>
+        <p>Browse yacht photos or search over a million parts from 100+ brands by part number, with diagrams and manuals.</p>
+        <a class="inline-link" href="https://boats.sazanoff.ru/index.html">Open the yacht catalogue <span class="arrow" aria-hidden="true">↗</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+  <section class="guest-booking-callout" id="online-booking" aria-labelledby="online-booking-title">
+    <div class="wrap guest-booking-callout-inner">
+      <div>
+        <h2 id="online-booking-title">Book a yacht online.</h2>
+        <p>See how guests choose a yacht, find a time and complete the booking.</p>
+      </div>
+      <a class="button" href="/SPIS/booking">Open booking page</a>
+    </div>
+  </section>
+
+  <section class="section roadmap-section" id="coming-next" aria-labelledby="roadmap-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal><div><p class="label">Roadmap</p><h2 id="roadmap-title">Coming next.</h2></div></div>
+      <div class="roadmap-grid" data-reveal>
+        <article><h3>Ask your yacht.</h3><p>Connect your own AI with a personal key. Read access covers the yacht’s location, finances and work records.</p></article>
+        <article><h3>Purchase and sale.</h3><p>Keep surveys, service history and handover documents together.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section fleet-section" id="fleet" aria-labelledby="fleet-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="fleet-title">Meet the fleet.</h2>
+      </div>
+      <div class="fleet-explorer" data-tabset>
+        <div class="fleet-controls">
+          <div class="switcher" role="tablist" aria-label="Select yacht"><button id="fleet-tab-vandutch" type="button" role="tab" aria-selected="true" aria-controls="vessel-vandutch">VanDutch 40</button><button id="fleet-tab-moneta" type="button" role="tab" aria-selected="false" aria-controls="vessel-moneta" tabindex="-1">Moneta</button><button id="fleet-tab-evo" type="button" role="tab" aria-selected="false" aria-controls="vessel-evo" tabindex="-1">Evo 43</button><button id="fleet-tab-maybach" type="button" role="tab" aria-selected="false" aria-controls="vessel-maybach" tabindex="-1">Maybach</button></div>
+          <div class="step-controls">
+            <button class="round-button" type="button" data-tab-step="-1" aria-label="Previous yacht">‹</button>
+            <button class="round-button" type="button" data-tab-step="1" aria-label="Next yacht">›</button>
+          </div>
+        </div>
+        <article id="vessel-vandutch" class="fleet-panel" role="tabpanel" aria-labelledby="fleet-tab-vandutch" tabindex="0">
+        <div class="fleet-image"><div class="yacht-art">
+      <img src="/SPIS/assets/vandutch-profile.webp" width="1280" height="660" loading="lazy" decoding="async" alt="Graphite side profile of VanDutch 40">
+    </div></div>
+        <div class="vessel-caption">
+          <div><p class="label">Open day cruiser</p><h3>VanDutch 40</h3></div>
+          <p>A flush foredeck and an open cockpit.</p>
+          <a class="inline-link" href="https://imperialyachting.com/fleet/vd-40">View yacht <span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </article><article id="vessel-moneta" class="fleet-panel" role="tabpanel" aria-labelledby="fleet-tab-moneta" tabindex="0" hidden>
+        <div class="fleet-image"><div class="yacht-art">
+      <img src="/SPIS/assets/moneta-profile.webp" width="1280" height="660" loading="lazy" decoding="async" alt="Graphite side profile of Moneta">
+    </div></div>
+        <div class="vessel-caption">
+          <div><p class="label">Monte Carlo 6</p><h3>Moneta</h3></div>
+          <p>A flybridge, a broad salon and an aft deck.</p>
+          <a class="inline-link" href="https://imperialyachting.com/fleet/monte-carlo-6">View yacht <span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </article><article id="vessel-evo" class="fleet-panel" role="tabpanel" aria-labelledby="fleet-tab-evo" tabindex="0" hidden>
+        <div class="fleet-image"><div class="yacht-art">
+      <img src="/SPIS/assets/evo-profile.webp" width="1280" height="660" loading="lazy" decoding="async" alt="Graphite side profile of Evo 43">
+    </div></div>
+        <div class="vessel-caption">
+          <div><p class="label">Open day yacht</p><h3>Evo 43</h3></div>
+          <p>An aft terrace that opens out over the water.</p>
+          <a class="inline-link" href="https://imperialyachting.com/fleet/evo4">View yacht <span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </article><article id="vessel-maybach" class="fleet-panel" role="tabpanel" aria-labelledby="fleet-tab-maybach" tabindex="0" hidden>
+        <div class="fleet-image"><div class="yacht-art">
+      <img src="/SPIS/assets/maybach-profile.webp" width="1280" height="660" loading="lazy" decoding="async" alt="Graphite side profile of Maybach">
+    </div></div>
+        <div class="vessel-caption">
+          <div><p class="label">Silver Arrows Marine SAM 46</p><h3>Maybach</h3></div>
+          <p>A low-profile hull and panoramic glazing.</p>
+          <a class="inline-link" href="https://imperialyachting.com/fleet/maybach">View yacht <span class="arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing section" aria-labelledby="closing-title">
+    <div class="wrap closing-inner" data-reveal>
+      <p class="label">For owners and future owners</p>
+      <h2 id="closing-title">Talk about your yacht.</h2>
+      <p>Start with a yacht you already own or get organised before delivery.</p>
+      <div class="hero-actions"><a class="button" data-wa data-source="SPIS" href="https://wa.me/971528355939">Talk to Elliott’s assistant<span class="arrow" aria-hidden="true">↗</span></a><a class="inline-link" href="/SPIS/imperial">Imperial Yachting <span class="arrow" aria-hidden="true">↗</span></a></div>
+    </div>
+  </section>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a class="brand" href="/SPIS">SPIS</a>
+      <span>Dubai Harbour, UAE</span>
+      <a class="inline-link" href="/SPIS/imperial">Imperial Yachting <span class="arrow" aria-hidden="true">↗</span></a>
+    </div>
+  </footer>
+  <div class="dock"><a class="button dock-button" data-wa data-source="SPIS" href="https://wa.me/971528355939">Talk to Elliott’s assistant<span class="arrow" aria-hidden="true">↗</span></a></div>
+</body>
+</html>
