@@ -1,6 +1,6 @@
 "use strict";
 
-const whatsapp = "https://wa.me/971528355939";
+const whatsapp = "https://wa.me/971585272280"; // IY-2251: номер выставки, слово Ильи 23.11
 const campaign = "Dubai Yacht Show";
 
 function whatsappUrl(message) {
@@ -9,11 +9,6 @@ function whatsappUrl(message) {
   return url.href;
 }
 
-for (const link of document.querySelectorAll("[data-wa]")) {
-  link.href = whatsappUrl(
-    `Hello Elliott's assistant. I’m interested in yacht management. [${campaign} · ${link.dataset.source}]`,
-  );
-}
 
 for (const menu of document.querySelectorAll("[data-mobile-nav]")) {
   for (const link of menu.querySelectorAll("a")) {
