@@ -77,6 +77,10 @@ const nextConfig: NextConfig = {
     { source: "/docs", destination: "/documents", permanent: true },
   ],
   rewrites: async () => [
+    // SPIS (IY-2251): pages are served without the trailing slash (the site strips it),
+    // all paths inside the pages are absolute /SPIS/… Route matching is case-insensitive, so /spis works too.
+    { source: "/SPIS", destination: "/SPIS/index.html" },
+    { source: "/SPIS/:page(ai-office|booking|imperial)", destination: "/SPIS/:page/index.html" },
     // IndexNow key verification file, expected at https://<host>/<key>.txt.
     // The key itself is at least 8 hex chars, so this never matches short
     // static files like /robots.txt or /llms.txt.

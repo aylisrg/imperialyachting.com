@@ -1,0 +1,222 @@
+.inbox-section {
+  background: linear-gradient(#f8fafc, #fff 38%);
+}
+.inbox-section .section-intro { max-width: 27rem; }
+.inbox-plate {
+  --inbox-pencil: #6c8297;
+  --inbox-rule: #bfccd8;
+  --inbox-accent: #264f77;
+  position: relative;
+  display: grid;
+  padding: clamp(.85rem, 3vw, 2rem);
+  border: 1px solid var(--inbox-rule);
+  background-color: white;
+  background-image:
+    linear-gradient(#294f7110 1px, transparent 1px),
+    linear-gradient(90deg, #294f7110 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: center;
+}
+.inbox-plate::before, .inbox-plate::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: .75rem;
+  height: .75rem;
+  border: solid var(--inbox-accent);
+  pointer-events: none;
+}
+.inbox-plate::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.inbox-plate::after { right: -1px; bottom: -1px; border-width: 0 2px 2px 0; }
+.inbox-annotation {
+  color: var(--inbox-accent);
+  font: 650 .875rem/1.35 var(--font);
+  letter-spacing: .012em;
+  text-wrap: pretty;
+}
+.inbox-channels, .inbox-core, .inbox-reply { min-width: 0; }
+.inbox-channel-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .4rem;
+  margin-top: .65rem;
+  padding: 0;
+  list-style: none;
+}
+.inbox-channel-list li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: 2.7rem;
+  padding: .48rem .64rem;
+  border: 1px solid var(--inbox-rule);
+  background: #fff;
+  color: #253a4d;
+  font-size: .875rem;
+  font-weight: 620;
+  white-space: nowrap;
+}
+.inbox-icon {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 1.12rem;
+  height: 1.12rem;
+  color: var(--inbox-accent);
+}
+.inbox-icon-whatsapp, .inbox-icon-telegram { border: 1px solid currentColor; border-radius: 50%; }
+.inbox-icon-whatsapp::before, .inbox-icon-calls::before {
+  content: "☎";
+  font: .75rem/1 system-ui, sans-serif;
+}
+.inbox-icon-whatsapp::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: .28rem;
+  height: .28rem;
+  border: solid currentColor;
+  border-width: 0 0 1px 1px;
+  background: white;
+  transform: skew(-14deg, -10deg);
+}
+.inbox-icon-telegram::before {
+  content: "";
+  width: .7rem;
+  height: .63rem;
+  background: currentColor;
+  clip-path: polygon(0 38%, 100% 0, 78% 100%, 50% 72%, 35% 86%, 39% 57%, 78% 22%, 28% 51%);
+}
+.inbox-icon-instagram { border: 1px solid currentColor; border-radius: .28rem; }
+.inbox-icon-instagram::before { content: ""; width: .47rem; height: .47rem; border: 1px solid currentColor; border-radius: 50%; }
+.inbox-icon-instagram::after { content: ""; position: absolute; top: .13rem; right: .13rem; width: .12rem; height: .12rem; border-radius: 50%; background: currentColor; }
+.inbox-icon-email { height: .8rem; border: 1px solid currentColor; border-radius: .1rem; overflow: hidden; }
+.inbox-icon-email::before {
+  content: "";
+  position: absolute;
+  top: -.36rem;
+  width: .75rem;
+  height: .75rem;
+  border: solid currentColor;
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+}
+.inbox-icon-calls::before { font-size: 1rem; }
+.inbox-flow-line {
+  position: relative;
+  justify-self: center;
+  width: 1px;
+  height: 2.15rem;
+  background: var(--inbox-pencil);
+}
+.inbox-flow-line::after {
+  content: "";
+  position: absolute;
+  inset: auto auto 1px -3px;
+  width: 7px;
+  height: 7px;
+  border: solid var(--inbox-pencil);
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+}
+.inbox-core {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: .9rem .5rem 1rem;
+  border: 1px solid var(--inbox-rule);
+  background: #fff;
+  text-align: center;
+}
+.inbox-core h3 { font-size: clamp(1.42rem, 2.6vw, 2.08rem); }
+.inbox-core h3 span { color: var(--inbox-accent); font-weight: 550; }
+.inbox-illustration {
+  width: min(100%, 29rem);
+  margin-block: .12rem .2rem;
+  object-fit: contain;
+}
+.inbox-context {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .3rem .75rem;
+  margin-top: .4rem;
+  padding: 0;
+  list-style: none;
+  font-size: .875rem;
+  color: #425a71;
+}
+.inbox-context li { padding-top: .17rem; border-top: 1px solid var(--inbox-rule); }
+.inbox-reply {
+  align-self: center;
+  padding: .85rem;
+  border: 1px solid var(--inbox-rule);
+  background: #fff;
+}
+.inbox-dialogue { display: grid; gap: .55rem; margin-top: .75rem; }
+.inbox-message {
+  padding: .55rem .65rem;
+  border: 1px solid #d1dbe3;
+  border-radius: 0 .5rem .5rem .5rem;
+  background: #f5f7f9;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.inbox-message-answer {
+  margin-inline-start: .65rem;
+  border-color: #bfd2e4;
+  border-radius: .5rem 0 .5rem .5rem;
+  background: #edf4fb;
+}
+.inbox-speaker {
+  margin-bottom: .2rem;
+  color: var(--inbox-accent);
+  font-size: .875rem;
+  font-weight: 680;
+}
+.inbox-office-link { margin-top: .65rem; }
+
+@media (max-width: 57.999rem) {
+  .inbox-channels > h3 { text-align: center; }
+}
+
+@media (min-width: 58rem) {
+  .inbox-plate {
+    grid-template-columns: minmax(0, .8fr) 2rem minmax(0, 1.95fr) 2rem minmax(0, 1.24fr);
+    align-items: center;
+  }
+  .inbox-channel-list {
+    position: relative;
+    display: grid;
+    justify-content: stretch;
+  }
+  .inbox-channel-list::after {
+    content: "";
+    position: absolute;
+    top: 1.35rem;
+    right: -1px;
+    bottom: 1.35rem;
+    width: 1px;
+    background: var(--inbox-pencil);
+  }
+  .inbox-channel-list li { margin-right: .65rem; }
+  .inbox-channel-list li::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: calc(-.65rem - 1px);
+    width: .65rem;
+    border-top: 1px solid var(--inbox-pencil);
+  }
+  .inbox-flow-line { justify-self: stretch; width: auto; height: 1px; }
+  .inbox-flow-in { margin-top: 1.85rem; }
+  .inbox-flow-line::after {
+    inset: -3px 2px auto auto;
+    transform: rotate(-45deg);
+  }
+  .inbox-reply { padding: 1rem; }
+}

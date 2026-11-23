@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" class="spis">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fafbf9">
+  <meta name="description" content="Explore how guests use SPIS to choose a yacht, check times and review an online charter booking.">
+  <title>Book a yacht online — SPIS</title>
+  <link rel="stylesheet" href="/SPIS/assets/site.css">
+  <link rel="stylesheet" href="/SPIS/booking/booking.css">
+  <script src="/SPIS/assets/site.js" defer></script>
+  <script src="/SPIS/booking/booking.js" defer></script>
+<!-- IY-2251: счётчики (Маркетолог, IY-2180) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BQPZ2WJWWL"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-BQPZ2WJWWL');</script>
+<script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(114603316,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/114603316" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+</head>
+<body class="guest-booking">
+  <a class="skip" href="#booking-engine">Skip to the booking walkthrough</a>
+  <header class="masthead">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/SPIS" aria-label="SPIS home"><span class="brand-wave" aria-hidden="true"><i></i><i></i><i></i></span>SPIS</a>
+      <a class="sister" href="/SPIS/imperial">Imperial Yachting</a>
+    </div>
+  </header>
+
+  <main class="wrap guest-main">
+    <div class="guest-intro">
+      <div>
+        <p class="label">Imperial Yachting · Dubai</p>
+        <h1>Book a yacht<br>online.</h1>
+      </div>
+      <p>Tell the booking assistant when you want to go and who’s coming. Choose a yacht and time, then review your trip before paying.</p>
+    </div>
+
+    <section id="booking-engine" class="guest-engine" aria-labelledby="guest-engine-title">
+      <div class="guest-workspace" data-tabset>
+        <div class="guest-toolbar">
+          <h2 id="guest-engine-title">Booking walkthrough</h2>
+          <p>Example trip</p>
+        </div>
+        <div class="guest-flow" role="tablist" aria-label="Booking steps">
+          <button id="guest-step-trip" type="button" role="tab" aria-controls="guest-panel-trip" aria-selected="true"><span aria-hidden="true">1</span>Your trip</button>
+          <button id="guest-step-yacht" type="button" role="tab" aria-controls="guest-panel-yacht" aria-selected="false" tabindex="-1"><span aria-hidden="true">2</span>Yacht &amp; time</button>
+          <button id="guest-step-review" type="button" role="tab" aria-controls="guest-panel-review" aria-selected="false" tabindex="-1"><span aria-hidden="true">3</span>Review &amp; pay</button>
+        </div>
+
+        <div class="guest-board">
+          <figure class="guest-yacht">
+            <img src="/SPIS/assets/vandutch-profile.webp" width="1280" height="660" fetchpriority="high" alt="Pencil drawing of the VanDutch 40">
+            <figcaption><strong>VanDutch 40</strong><span>Dubai Harbour</span></figcaption>
+          </figure>
+
+          <div class="guest-panel" id="guest-panel-trip" role="tabpanel" aria-labelledby="guest-step-trip" tabindex="0">
+            <h3>Describe your trip.</h3>
+            <p class="guest-prompt">“A sunset charter for six on Friday. We’d like three hours.”</p>
+            <dl class="guest-trip">
+              <div><dt>Day</dt><dd>Friday</dd></div>
+              <div><dt>Guests</dt><dd>6</dd></div>
+              <div><dt>Duration</dt><dd>3 hours</dd></div>
+            </dl>
+            <button class="button" type="button" data-tab-step="1">See example times</button>
+          </div>
+
+          <div class="guest-panel" id="guest-panel-yacht" role="tabpanel" aria-labelledby="guest-step-yacht" tabindex="0" hidden>
+            <h3>Choose a time.</h3>
+            <p class="guest-panel-copy">The assistant matches your trip to the VanDutch 40 for this example.</p>
+            <fieldset class="guest-times">
+              <legend>Friday · Dubai time</legend>
+              <label><input type="radio" name="example-time" value="17:00–20:00" checked> <span>17:00–20:00</span></label>
+              <label><input type="radio" name="example-time" value="18:00–21:00"> <span>18:00–21:00</span></label>
+            </fieldset>
+            <button class="button" type="button" data-tab-step="1">Review this trip</button>
+          </div>
+
+          <div class="guest-panel" id="guest-panel-review" role="tabpanel" aria-labelledby="guest-step-review" tabindex="0" hidden>
+            <h3>Review your booking.</h3>
+            <dl class="guest-trip guest-review">
+              <div><dt>Yacht</dt><dd>VanDutch 40</dd></div>
+              <div><dt>Departure</dt><dd>Dubai Harbour</dd></div>
+              <div><dt>Time</dt><dd>Friday, <span data-example-time>17:00–20:00</span></dd></div>
+              <div><dt>Guests</dt><dd>6</dd></div>
+            </dl>
+            <p class="guest-panel-copy">In a live booking, review the quote and pay the deposit through Stripe Checkout. The booking is confirmed after the payment is verified.</p>
+            <button class="guest-replay" type="button" data-tab-step="1">Back to the start</button>
+          </div>
+        </div>
+        <p class="guest-demo-note">Sample times. This walkthrough creates no booking and takes no payment.</p>
+      </div>
+      <noscript><p class="guest-demo-note">The booking steps are trip details, available yachts and times, quote review and secure checkout.</p></noscript>
+    </section>
+
+    <p class="guest-guide">Already using your own AI assistant? <a class="inline-link" href="https://iy.je/Xni">Open the Imperial AI booking guide</a></p>
+  </main>
+</body>
+</html>
