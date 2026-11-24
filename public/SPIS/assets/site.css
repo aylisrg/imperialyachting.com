@@ -338,6 +338,7 @@ button:disabled:hover { text-decoration: none; }
 .agent-legend .is-held { background: #f1ebff; color: #4d3296; }
 .agent-legend .is-booked { background: #e9eef4; color: #66727f; }
 .agent-prebook { margin-top: .8rem; padding: .75rem; border: 1px solid #cbdbe8; border-radius: 14px; background: #fff; }
+.agent-prebook-head small { color: var(--muted); font-size: .7rem; }
 .agent-prebook-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .4rem .8rem; margin-bottom: .6rem; font-size: .88rem; }
 .agent-options { display: grid; gap: .45rem; margin-bottom: .5rem; }
 .agent-option { display: flex; gap: .55rem; align-items: start; padding: .6rem .65rem; border: 1px solid #dce4ef; border-radius: 12px; cursor: pointer; }
@@ -363,7 +364,7 @@ button:disabled:hover { text-decoration: none; }
 .agent-row-actions .button { min-height: 40px; padding-block: .45rem; font-size: .8rem; }
 .agent-empty { margin-top: 0; }
 @media (min-width: 42rem) {
-  .agent-boats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .agent-boats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .agent-pickers { grid-template-columns: auto auto; justify-content: space-between; }
   .agent-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .agent-row { grid-template-columns: minmax(0, 1fr) auto auto; }

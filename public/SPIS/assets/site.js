@@ -105,20 +105,19 @@ const bookingDemo = document.querySelector("[data-booking-demo]");
 if (bookingDemo) {
   const q = (selector) => bookingDemo.querySelector(selector);
   const BOATS = {
-    vandutch: { name: "Van Dutch 40", rate: 1200 },
-    montecarlo: { name: "Monte Carlo 60", rate: 2600 },
-    evo: { name: "Evo 43", rate: 1400 },
-    maybach: { name: "Maybach", rate: 1800 },
+    // Per hour, AED, excl. 5% VAT: hold = standard B2B (hold for 12 hours), fast = pay within 2 hours.
+    montecarlo: { name: "Monte Carlo 60", hold: 1600, fast: 1500 },
+    vandutch: { name: "Van Dutch 40", hold: 800, fast: 750 },
+    maybach: { name: "Maybach", hold: 1200, fast: 1125 },
   };
   const DAYS = ["Thu 26 Nov", "Fri 27 Nov", "Sat 28 Nov"];
   const HOURS = Array.from({ length: 13 }, (_, i) => 9 + i); // 09:00–22:00, hourly start slots
-  const PROMO = 0.9;
   const status = q("[data-booking-status]");
   const hoursBox = q("[data-agent-hours]");
   const prebook = q("[data-agent-prebook]");
   const rowsBox = q("[data-agent-rows]");
   const tab = (id) => document.getElementById(id);
-  const state = { boat: "vandutch", day: 0, start: null, duration: 2, holds: [] };
+  const state = { boat: "montecarlo", day: 0, start: null, duration: 2, holds: [] };
   const busy = {};
   let nextId = 1;
   let ticker;
@@ -205,9 +204,8 @@ if (bookingDemo) {
     q("[data-agent-pick]").textContent = boat.name + " · " + DAYS[state.day] + " · " + hh(state.start) + "–" + hh(state.start + state.duration);
     const durations = q("[data-agent-durations]"); durations.replaceChildren();
     for (const d of [1, 2, 3, 4]) durations.append(chip(d + " h", d === state.duration, () => { state.duration = d; renderCalendar(); }, !fits(state.start, d)));
-    const standard = boat.rate * state.duration;
-    q('[data-agent-price="2"]').textContent = aed(Math.round(standard * PROMO));
-    q('[data-agent-price="12"]').textContent = aed(standard);
+    q('[data-agent-price="2"]').textContent = aed(boat.fast * state.duration) + " · " + aed(boat.fast) + "/h";
+    q('[data-agent-price="12"]').textContent = aed(boat.hold * state.duration) + " · " + aed(boat.hold) + "/h";
   }
 
   function renderBalance() {
@@ -221,7 +219,7 @@ if (bookingDemo) {
       li.className = "agent-row is-" + hold.status.toLowerCase().replace(/\W+/g, "-");
       li.innerHTML = '<div><strong></strong><span></span></div><div class="agent-row-state"><em></em><b></b></div><div class="agent-row-actions"></div>';
       li.querySelector("strong").textContent = hold.boat_name + " · " + DAYS[hold.day] + " · " + hh(hold.start) + "–" + hh(hold.start + hold.duration);
-      li.querySelector("span").textContent = (hold.hours === 2 ? "Pay within 2 hours · promo" : "Hold for 12 hours · standard") + " · " + aed(hold.price);
+      li.querySelector("span").textContent = (hold.hours === 2 ? "Pay within 2 hours" : "Hold for 12 hours") + " · " + aed(hold.price);
       li.querySelector("em").textContent = hold.status;
       const timer = li.querySelector("b");
       if (hold.status === "Pre-booked") { timer.dataset.agentTimer = hold.id; timer.textContent = left(hold); }
@@ -258,13 +256,13 @@ if (bookingDemo) {
   q("[data-agent-confirm]").addEventListener("click", () => {
     if (state.start === null || !fits(state.start, state.duration)) return;
     const hours = Number(q('input[name="agent-option"]:checked').value);
-    const standard = BOATS[state.boat].rate * state.duration;
-    const hold = { id: nextId++, boat: state.boat, boat_name: BOATS[state.boat].name, day: state.day, start: state.start, duration: state.duration, hours, price: hours === 2 ? Math.round(standard * PROMO) : standard, status: "Pre-booked", expires: Date.now() + hours * 3600000 };
+    const boat = BOATS[state.boat];
+    const hold = { id: nextId++, boat: state.boat, boat_name: BOATS[state.boat].name, day: state.day, start: state.start, duration: state.duration, hours, price: (hours === 2 ? boat.fast : boat.hold) * state.duration, status: "Pre-booked", expires: Date.now() + hours * 3600000 };
     state.holds.push(hold);
     state.start = null;
     status.textContent = hours === 2
-      ? "Sample pre-booking: promo price, pay within 2 hours. In the real cabinet the invoice and card link arrive at once."
-      : "Sample pre-booking: the hours are held for 12 hours at the standard B2B price.";
+      ? "Sample pre-booking: pay within 2 hours."
+      : "Sample pre-booking: held for 12 hours.";
     renderBalance(); renderCalendar();
     if (!ticker) ticker = setInterval(tick, 1000);
   });
