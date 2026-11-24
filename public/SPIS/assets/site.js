@@ -278,4 +278,12 @@ if (bookingDemo) {
   }
 
   renderCalendar(); renderBalance();
+
+  // On phones the floating "Talk to Elliott's assistant" button would cover the demo: hide it while the demo is on screen.
+  const dock = document.querySelector(".dock");
+  if (dock && "IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => {
+      for (const entry of entries) dock.classList.toggle("is-over-demo", entry.isIntersecting);
+    }).observe(bookingDemo);
+  }
 }

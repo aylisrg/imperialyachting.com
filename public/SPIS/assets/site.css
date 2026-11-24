@@ -370,6 +370,7 @@ button:disabled:hover { text-decoration: none; }
   .agent-row { grid-template-columns: minmax(0, 1fr) auto auto; }
 }
 @media (min-width: 64rem) { .agent-hours { overflow-x: visible; } }
+@media (max-width: 37.5rem) { .dock.is-over-demo { visibility: hidden; } }
 
 .roadmap-section { background: #f7f8fb; }
 .roadmap-grid article { background: #fff; border-color: #e0e5f0; }
