@@ -127,7 +127,6 @@ h3 { font-size: clamp(1.21rem, 2.4vw, 1.63rem); line-height: 1.11; letter-spacin
 .screen-head { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: .3rem .6rem; margin-bottom: .9rem; }
 .screen-head h3 { font-size: clamp(1.8rem, 4vw, 3.05rem); letter-spacing: -.06em; margin-top: .15rem; }
 .pill { display: inline-flex; align-items: center; gap: .38rem; padding: .3rem .58rem; color: #265e68; background: #e8f3f1; border-radius: 999px; font-size: .67rem; font-weight: 650; }
-.pill i { width: 6px; height: 6px; border-radius: 50%; background: #2f8a79; }
 .dashboard { display: grid; gap: .6rem; }
 .dashboard-main, .dashboard-side { background: white; border: 1px solid #e6edf2; border-radius: 16px; padding: .8rem .9rem; }
 .dashboard h4 { font-size: .82rem; color: #3a4a56; }
@@ -275,10 +274,6 @@ h3 { font-size: clamp(1.21rem, 2.4vw, 1.63rem); line-height: 1.11; letter-spacin
   background: linear-gradient(#39a8db75,#39a8db75) center/1px 100% no-repeat,
               linear-gradient(#597fd789,#597fd789) center/100% 1px no-repeat;
 }
-.signal {
-  display: inline-block; flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%;
-  background: #7efbe2; box-shadow: 0 0 12px #67f7dc99, 0 0 0 4px #5ff8d721;
-}
 .broker-section {
   background: radial-gradient(ellipse at 82% 4%, #3e326c94, transparent 55%),
               radial-gradient(ellipse at 4% 70%, #00738743, transparent 58%), #0b1524;
@@ -295,31 +290,85 @@ h3 { font-size: clamp(1.21rem, 2.4vw, 1.63rem); line-height: 1.11; letter-spacin
 .broker-bar .switcher button[aria-selected="true"] { background-color: #d1f9ff; }
 .broker-screen { background: #f6f9fd; min-height: clamp(19rem, 31vw, 23rem); }
 .broker-screen .label { color: #005596; }
-.broker-boat { display: grid; align-items: center; }
-.broker-boat h3 { margin-top: .15rem; font-size: clamp(2rem, 5.4vw, 3.55rem); }
-.broker-boat p:not(.label) { margin-top: .32rem; color: var(--muted); font-size: .9rem; }
-.broker-boat img { mix-blend-mode: multiply; }
 .booking-actions { display: flex; flex-wrap: wrap; gap: .42rem .72rem; align-items: center; }
 .booking-actions .quiet-button { padding-inline: .35rem; }
-.booking-record, .slot-list li {
-  display: flex; justify-content: space-between; align-items: center;
-  gap: .45rem; border-bottom: 1px solid #dce4ef; padding: .66rem .05rem;
-}
-.booking-record strong { color: #473894; font-variant-numeric: tabular-nums; font-size: 1.48rem; }
 .booking-note { margin-top: .85rem; max-width: 37rem; color: var(--muted); font-size: .84rem; }
 button:disabled { cursor: default; color: #5b6775; opacity: .64; }
 button:disabled:hover { text-decoration: none; }
-.slot-list { padding: 0; list-style: none; }
-.slot-list time { font-weight: 660; font-variant-numeric: tabular-nums; }
-.slot-list span { font-size: .79rem; font-weight: 660; border-radius: 999px; padding: .25rem .55rem; }
-.slot-busy { color: #435164; background: #e5ecf4; }
-.slot-open { color: #12604d; background: #dff6e9; }
-.slot-open.is-held { color: #4d3296; background: #eee6ff; }
-.slot-unknown { color: #674316; background: #f9ecd5; }
 
 
 .demo-disclaimer { min-height: 2.95rem; color: #c5d5eb; padding: .72rem .95rem; font-size: .78rem; }
 .public-calendar { color: #9be9f8; margin-top: .45rem; }
+
+/* IY-2280: agent booking cabinet demo (sample data, client-side only). */
+.agent-boats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; padding: 0; list-style: none; }
+.agent-boats li { display: flex; flex-direction: column; min-width: 0; border-top: 1px solid var(--line); padding-top: .1rem; }
+.agent-boats img { mix-blend-mode: multiply; }
+.agent-boats strong { font-size: .95rem; letter-spacing: -.02em; }
+.agent-boats span { color: var(--muted); font-size: .72rem; }
+.agent-boats b { margin-top: .2rem; color: #17486e; font-size: .84rem; font-weight: 720; }
+.agent-boats .inline-link { min-height: 32px; font-size: .74rem; }
+.agent-boats .quiet-button { align-self: start; margin-top: auto; padding-inline: 0; }
+.agent-pickers { display: grid; gap: .45rem; margin-bottom: .7rem; }
+.agent-chips { display: flex; flex-wrap: wrap; gap: .3rem; }
+.agent-chips button {
+  min-height: 36px; padding: .3rem .65rem; border: 1px solid #cbdbe8; border-radius: 999px;
+  background: #fff; color: #24465e; font-size: .74rem; font-weight: 620; white-space: nowrap;
+}
+.agent-chips button[aria-pressed="true"] { border-color: #17486e; background: #17486e; color: #fff; }
+.agent-chips button:disabled { opacity: .4; }
+.agent-hours {
+  display: grid; grid-template-columns: repeat(13, minmax(3.6rem, 1fr)); gap: .25rem;
+  overflow-x: auto; padding-bottom: .3rem; overscroll-behavior-x: contain; scrollbar-width: thin;
+}
+.agent-hour {
+  display: flex; flex-direction: column; justify-content: flex-start; gap: .1rem; min-height: 3.6rem; padding: .35rem .3rem;
+  border: 1px solid #dce4ef; border-radius: 10px; background: #fff; color: #435164; text-align: left; font-size: .7rem;
+}
+.agent-hour time { color: var(--ink); font-weight: 690; font-variant-numeric: tabular-nums; font-size: .76rem; }
+.agent-hour small { color: #4d3296; font-weight: 700; font-variant-numeric: tabular-nums; font-size: .66rem; }
+.agent-hour.is-free { border-color: #a9dcc3; background: #f1fbf6; color: #12604d; }
+.agent-hour.is-free:hover { border-color: #12604d; }
+.agent-hour.is-picked { border-color: #0065c4; background: #e8f3ff; color: #004f9f; box-shadow: inset 0 0 0 1px #0065c4; }
+.agent-hour.is-held { border-color: #cdbdf6; background: #f1ebff; color: #4d3296; }
+.agent-hour.is-booked { background: #e9eef4; color: #66727f; }
+.agent-legend { display: flex; flex-wrap: wrap; gap: .3rem .8rem; margin-top: .35rem; font-size: .7rem; color: var(--muted); }
+.agent-legend span { padding: .1rem .5rem; border-radius: 6px; }
+.agent-legend .is-free { background: #f1fbf6; color: #12604d; }
+.agent-legend .is-held { background: #f1ebff; color: #4d3296; }
+.agent-legend .is-booked { background: #e9eef4; color: #66727f; }
+.agent-prebook { margin-top: .8rem; padding: .75rem; border: 1px solid #cbdbe8; border-radius: 14px; background: #fff; }
+.agent-prebook-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .4rem .8rem; margin-bottom: .6rem; font-size: .88rem; }
+.agent-options { display: grid; gap: .45rem; margin-bottom: .5rem; }
+.agent-option { display: flex; gap: .55rem; align-items: start; padding: .6rem .65rem; border: 1px solid #dce4ef; border-radius: 12px; cursor: pointer; }
+.agent-option:has(input:checked) { border-color: #0065c4; background: #f2f8ff; }
+.agent-option input { margin-top: .2rem; accent-color: var(--blue); }
+.agent-option span { display: grid; gap: .1rem; }
+.agent-option strong { font-size: .86rem; }
+.agent-option b { color: #17486e; font-size: .95rem; font-variant-numeric: tabular-nums; }
+.agent-option small { color: var(--muted); font-size: .72rem; line-height: 1.4; }
+.agent-rows { display: grid; gap: .5rem; padding: 0; list-style: none; }
+.agent-row {
+  display: grid; gap: .4rem .8rem; align-items: center; padding: .65rem .7rem;
+  border: 1px solid #dce4ef; border-radius: 12px; background: #fff;
+}
+.agent-row strong { display: block; font-size: .86rem; }
+.agent-row span { color: var(--muted); font-size: .74rem; }
+.agent-row-state { display: flex; align-items: baseline; gap: .5rem; }
+.agent-row-state em { font-style: normal; font-size: .72rem; font-weight: 700; padding: .15rem .5rem; border-radius: 999px; background: #e9eef4; color: #435164; }
+.agent-row.is-pre-booked em { background: #f1ebff; color: #4d3296; }
+.agent-row.is-paid em { background: #dff6e9; color: #12604d; }
+.agent-row-state b { color: #4d3296; font-variant-numeric: tabular-nums; font-size: 1.15rem; }
+.agent-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .6rem; }
+.agent-row-actions .button { min-height: 40px; padding-block: .45rem; font-size: .8rem; }
+.agent-empty { margin-top: 0; }
+@media (min-width: 42rem) {
+  .agent-boats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .agent-pickers { grid-template-columns: auto auto; justify-content: space-between; }
+  .agent-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .agent-row { grid-template-columns: minmax(0, 1fr) auto auto; }
+}
+@media (min-width: 64rem) { .agent-hours { overflow-x: visible; } }
 
 .roadmap-section { background: #f7f8fb; }
 .roadmap-grid article { background: #fff; border-color: #e0e5f0; }
@@ -332,13 +381,11 @@ button:disabled:hover { text-decoration: none; }
 .guest-booking-callout p { margin-top: .55rem; color: var(--muted); }
 
 @media (min-width: 42rem) {
-  .broker-boat { grid-template-columns: minmax(0, .88fr) minmax(0, 1.28fr); gap: 1rem; }
   .broker-screen { padding-top: 1.45rem; }
   .roadmap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 .vessel-links { display: flex; flex-wrap: wrap; gap: 0 .85rem; }
-.broker-boat .inline-link { font-size: .81rem; }
 .button:disabled { color: #fff; opacity: .56; }
 
 /* Transparent navigation over the opening sheet. */
@@ -418,15 +465,6 @@ button:disabled:hover { text-decoration: none; }
 .vessel-caption { margin-top: .85rem; }
 
 /* Brokerage, system flows and the AI team. */
-.guest-note { flex-basis: 100%; max-width: 28rem; margin: .35rem 0 .22rem; color: #313e50; font-size: .8rem; font-weight: 650; }
-.guest-note span { color: var(--muted); font-weight: 500; }
-.guest-note input {
-  display: block; width: 100%; min-height: 44px; margin-top: .24rem;
-  border: 1px solid #cbdbe8; border-radius: 10px; background: #fff; padding: .45rem .55rem;
-  color: var(--ink);
-}
-.captain-note { display: grid; gap: .26rem; padding: .55rem .65rem; margin-top: .8rem; border-left: 2px solid #5084b3; background: #e9f1fa; font-size: .8rem; }
-.captain-note span { overflow-wrap: anywhere; }
 .balance-actions { margin-top: .6rem; }
 .balance-actions details, .owner-assistant {
   padding: .5rem .15rem; border-bottom: 1px solid #dce4ef; color: var(--blue-deep); font-size: .83rem;
@@ -473,7 +511,7 @@ button:disabled:hover { text-decoration: none; }
   .approval-flow li:not(:last-child) { position: relative; }
   .approval-flow li:not(:last-child)::after { content: "›"; position: absolute; inset: 50% -.42rem auto auto; transform: translateY(-50%); color: #416e92; }
   .record-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .broker-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .broker-summary { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 @media (min-width: 53rem) {
   .blueprint-layout { grid-template-columns: minmax(0, .85fr) minmax(0, 1.2fr); gap: clamp(1.25rem, 3.5vw, 3rem); }

@@ -47,7 +47,6 @@ h1 span, .introduction h2 span { color: var(--blue); }
 .scenario-tabs button[aria-selected="true"] { background: var(--blue); color: white; box-shadow: 0 2px 5px #243d4d16; }
 .scenario-tabs button:hover:not([aria-selected="true"]) { background: #e4ebef; }
 .demo-note { display: flex; gap: .45rem; align-items: center; color: var(--muted); font-size: .67rem; white-space: nowrap; }
-.demo-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #789282; }
 .office-sheet { display: grid; grid-template-columns: minmax(0, 1fr) 290px; border: 1px solid #afbeca; background: #fff; }
 .drawing-column { min-width: 0; display: flex; flex-direction: column; }
 .drawing-header { min-height: 36px; padding: .6rem 1rem; display: flex; justify-content: space-between; gap: .6rem; border-bottom: 1px solid #e0e6e8; font: 550 .56rem/1.5 "SFMono-Regular", Consolas, monospace; letter-spacing: .09em; color: #718695; }
@@ -72,7 +71,6 @@ h1 span, .introduction h2 span { color: var(--blue); }
 blockquote { font-size: 1rem; font-weight: 520; letter-spacing: -.025em; line-height: 1.4; padding: 1rem 0 1.4rem; border-bottom: 1px solid var(--rule); }
 .current-work { margin-top: 1.4rem; }
 .active-role-label { display: flex; align-items: center; gap: .4rem; min-height: 2.4rem; color: var(--blue); font-size: .875rem; font-weight: 650; }
-#active-role-dot { display: none; height: 6px; width: 6px; flex: 0 0 6px; border-radius: 50%; background: var(--amber); }
 .active-role-portrait { width: 2.4rem; flex: 0 0 2.4rem; }
 .work-state { margin-left: auto; font-size: .6rem; font-weight: 450; color: #748595; }
 #step-heading { font-size: 1.6rem; line-height: 1.12; letter-spacing: -.04em; margin-top: .7rem; font-weight: 650; text-wrap: balance; }
@@ -89,7 +87,6 @@ blockquote { font-size: 1rem; font-weight: 520; letter-spacing: -.025em; line-he
 .approval-box button span { margin-left: .4rem; }
 .approval-box small { display: block; color: #826c52; margin-top: .4rem; font-size: .57rem; }
 .story-inspector.is-waiting .work-state { color: var(--amber); }
-.story-inspector.is-waiting #active-role-dot { display: block; }
 .story-timeline { padding: 1.15rem 0 1.8rem; }
 .timeline-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
 .step-arrows { display: flex; gap: .3rem; }

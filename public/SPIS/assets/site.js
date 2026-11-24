@@ -100,74 +100,184 @@ if (enquiry) {
   });
 }
 
+// IY-2280: demo of the agent booking cabinet. Sample data only: no network requests, no real bookings.
 const bookingDemo = document.querySelector("[data-booking-demo]");
 if (bookingDemo) {
-  const status = bookingDemo.querySelector("[data-booking-status]");
-  const slot = bookingDemo.querySelector("[data-booking-slot]");
-  const balance = bookingDemo.querySelector("[data-booking-chip]");
-  const timer = bookingDemo.querySelector("[data-booking-timer]");
-  const release = bookingDemo.querySelector("[data-hold-release]");
-  const balanceTab = document.getElementById("broker-tab-balance");
-  const availability = bookingDemo.querySelector("[data-booking-availability]");
-  const holdButtons = [...bookingDemo.querySelectorAll("[data-hold-hours]")];
-  const requests = bookingDemo.querySelector("[data-booking-requests]");
-  const captainNote = bookingDemo.querySelector("[data-captain-note]");
-  const captainText = bookingDemo.querySelector("[data-captain-text]");
-  let expiresAt = 0;
-  let timerId;
+  const q = (selector) => bookingDemo.querySelector(selector);
+  const BOATS = {
+    vandutch: { name: "Van Dutch 40", rate: 1200 },
+    montecarlo: { name: "Monte Carlo 60", rate: 2600 },
+    evo: { name: "Evo 43", rate: 1400 },
+    maybach: { name: "Maybach", rate: 1800 },
+  };
+  const DAYS = ["Thu 26 Nov", "Fri 27 Nov", "Sat 28 Nov"];
+  const HOURS = Array.from({ length: 13 }, (_, i) => 9 + i); // 09:00–22:00, hourly start slots
+  const PROMO = 0.9;
+  const status = q("[data-booking-status]");
+  const hoursBox = q("[data-agent-hours]");
+  const prebook = q("[data-agent-prebook]");
+  const rowsBox = q("[data-agent-rows]");
+  const tab = (id) => document.getElementById(id);
+  const state = { boat: "vandutch", day: 0, start: null, duration: 2, holds: [] };
+  const busy = {};
+  let nextId = 1;
+  let ticker;
 
-  function clearHold(message) {
-    clearInterval(timerId);
-    expiresAt = 0;
-    balance.textContent = "No hold";
-    slot.textContent = "Available";
-    slot.classList.remove("is-held");
-    timer.textContent = "—";
-    release.disabled = true;
-    captainNote.hidden = true;
-    captainText.textContent = "";
-    availability.textContent = "Try a hold on the 18:00 sample slot.";
-    for (const button of holdButtons) button.disabled = false;
-    status.textContent = message;
-  }
+  const hh = (h) => String(h).padStart(2, "0") + ":00";
+  const aed = (n) => n.toLocaleString("en-US") + " AED";
+  const key = (boat, day) => boat + "|" + day;
 
-  function showCountdown() {
-    const secondsLeft = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
-    if (!secondsLeft) {
-      clearHold("The sample hold expired. The 18:00 sample slot is available again.");
-      return;
-    }
-    const parts = [
-      Math.floor(secondsLeft / 3600),
-      Math.floor(secondsLeft % 3600 / 60),
-      secondsLeft % 60,
-    ];
-    timer.textContent = parts.map((part) => String(part).padStart(2, "0")).join(":");
-  }
-
-  for (const button of holdButtons) {
-    button.addEventListener("click", () => {
-      const hours = Number(button.dataset.holdHours);
-      clearInterval(timerId);
-      expiresAt = Date.now() + hours * 3600000;
-      balance.textContent = "Hold active";
-      slot.textContent = "Held";
-      slot.classList.add("is-held");
-      release.disabled = false;
-      captainText.textContent = requests.value.trim();
-      captainNote.hidden = !captainText.textContent;
-      availability.textContent = "The 18:00 sample slot is held.";
-      for (const button of holdButtons) button.disabled = true;
-      status.textContent = `Sample hold placed for ${hours} hours. The 18:00 slot now shows as held in Calendar.`;
-      showCountdown();
-      timerId = setInterval(showCountdown, 1000);
-      balanceTab.click();
-      balanceTab.focus({ preventScroll: true });
+  // Deterministic sample: a few booked blocks per boat and day.
+  for (const [boatIndex, boat] of Object.keys(BOATS).entries()) {
+    DAYS.forEach((_, day) => {
+      const taken = {};
+      let seed = boatIndex * 7 + day * 3 + 1;
+      for (let block = 0; block < 2; block += 1) {
+        seed = (seed * 9301 + 49297) % 233280;
+        const start = 9 + (seed % 12);
+        const length = 2 + (seed % 2);
+        for (let h = start; h < Math.min(start + length, 22); h += 1) taken[h] = "booked";
+      }
+      busy[key(boat, day)] = taken;
     });
   }
 
-  release.addEventListener("click", () => {
-    clearHold("Sample hold released. The 18:00 slot is available again.");
-    balanceTab.focus({ preventScroll: true });
+  function slotState(h) {
+    const hold = state.holds.find((x) => x.boat === state.boat && x.day === state.day && x.status !== "Cancelled" && h >= x.start && h < x.start + x.duration);
+    if (hold) return hold.status === "Paid" ? "booked" : "held";
+    return busy[key(state.boat, state.day)][h] || "free";
+  }
+  function fits(start, duration) {
+    if (start + duration > 22) return false;
+    for (let h = start; h < start + duration; h += 1) if (slotState(h) !== "free") return false;
+    return true;
+  }
+  function chip(label, pressed, onClick, disabled = false) {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.disabled = disabled;
+    b.setAttribute("aria-pressed", String(pressed));
+    b.addEventListener("click", onClick);
+    return b;
+  }
+  function left(hold) {
+    const s = Math.max(0, Math.ceil((hold.expires - Date.now()) / 1000));
+    return [Math.floor(s / 3600), Math.floor(s % 3600 / 60), s % 60].map((p) => String(p).padStart(2, "0")).join(":");
+  }
+
+  function renderCalendar() {
+    q("[data-agent-cal-label]").textContent = BOATS[state.boat].name + " · " + DAYS[state.day] + " · Dubai time";
+    const boats = q("[data-agent-boat-chips]"); boats.replaceChildren();
+    for (const [id, boat] of Object.entries(BOATS)) boats.append(chip(boat.name, id === state.boat, () => { state.boat = id; state.start = null; renderCalendar(); }));
+    const days = q("[data-agent-day-chips]"); days.replaceChildren();
+    DAYS.forEach((label, i) => days.append(chip(label, i === state.day, () => { state.day = i; state.start = null; renderCalendar(); })));
+    const scrolled = hoursBox.scrollLeft;
+    hoursBox.replaceChildren();
+    for (const h of HOURS) {
+      const kind = slotState(h);
+      const hold = kind === "held" && state.holds.find((x) => x.boat === state.boat && x.day === state.day && x.status === "Pre-booked" && h >= x.start && h < x.start + x.duration);
+      const picked = state.start !== null && h >= state.start && h < state.start + state.duration;
+      const cell = document.createElement(kind === "free" ? "button" : "div");
+      cell.className = "agent-hour is-" + kind + (picked ? " is-picked" : "");
+      if (kind === "free") { cell.type = "button"; cell.setAttribute("aria-pressed", String(picked)); cell.addEventListener("click", () => pick(h)); }
+      const label = kind === "free" ? "Free" : kind === "held" ? "Held" : "Booked";
+      cell.innerHTML = "<time></time><span></span>";
+      cell.querySelector("time").textContent = hh(h);
+      cell.querySelector("span").textContent = picked ? "Selected" : label;
+      if (hold && h === hold.start) { const t = document.createElement("small"); t.dataset.agentTimer = hold.id; t.textContent = left(hold); cell.append(t); }
+      cell.setAttribute("aria-label", hh(h) + " " + (picked ? "selected" : label.toLowerCase()));
+      hoursBox.append(cell);
+    }
+    hoursBox.scrollLeft = scrolled;
+    renderPrebook();
+  }
+
+  function pick(h) {
+    state.start = h;
+    if (!fits(h, state.duration)) state.duration = [2, 3, 4, 1].find((d) => fits(h, d)) || 1;
+    renderCalendar();
+    prebook.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
+
+  function renderPrebook() {
+    prebook.hidden = state.start === null;
+    if (state.start === null) return;
+    const boat = BOATS[state.boat];
+    q("[data-agent-pick]").textContent = boat.name + " · " + DAYS[state.day] + " · " + hh(state.start) + "–" + hh(state.start + state.duration);
+    const durations = q("[data-agent-durations]"); durations.replaceChildren();
+    for (const d of [1, 2, 3, 4]) durations.append(chip(d + " h", d === state.duration, () => { state.duration = d; renderCalendar(); }, !fits(state.start, d)));
+    const standard = boat.rate * state.duration;
+    q('[data-agent-price="2"]').textContent = aed(Math.round(standard * PROMO));
+    q('[data-agent-price="12"]').textContent = aed(standard);
+  }
+
+  function renderBalance() {
+    const active = state.holds.filter((x) => x.status === "Pre-booked");
+    q("[data-agent-count]").textContent = active.length ? active.length + " pre-booked" : "No pre-bookings";
+    q("[data-agent-empty]").hidden = state.holds.length > 0;
+    q("[data-agent-info-held]").textContent = active.reduce((n, x) => n + x.duration, 0) + " h";
+    rowsBox.replaceChildren();
+    for (const hold of [...state.holds].reverse()) {
+      const li = document.createElement("li");
+      li.className = "agent-row is-" + hold.status.toLowerCase().replace(/\W+/g, "-");
+      li.innerHTML = '<div><strong></strong><span></span></div><div class="agent-row-state"><em></em><b></b></div><div class="agent-row-actions"></div>';
+      li.querySelector("strong").textContent = hold.boat_name + " · " + DAYS[hold.day] + " · " + hh(hold.start) + "–" + hh(hold.start + hold.duration);
+      li.querySelector("span").textContent = (hold.hours === 2 ? "Pay within 2 hours · promo" : "Hold for 12 hours · standard") + " · " + aed(hold.price);
+      li.querySelector("em").textContent = hold.status;
+      const timer = li.querySelector("b");
+      if (hold.status === "Pre-booked") { timer.dataset.agentTimer = hold.id; timer.textContent = left(hold); }
+      if (hold.status === "Pre-booked") {
+        const actions = li.querySelector(".agent-row-actions");
+        const pay = document.createElement("button"); pay.type = "button"; pay.className = "button"; pay.textContent = "Pay online";
+        pay.addEventListener("click", () => settle(hold, "Paid", "Sample payment marked as paid. The hours now show as booked. No card was charged."));
+        const cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "quiet-button"; cancel.textContent = "Cancel hold";
+        cancel.addEventListener("click", () => settle(hold, "Cancelled", "Sample hold cancelled. The hours are free again."));
+        actions.append(pay, cancel);
+      }
+      rowsBox.append(li);
+    }
+  }
+
+  function settle(hold, next, message) {
+    hold.status = next;
+    status.textContent = message;
+    renderBalance(); renderCalendar();
+    tab("broker-tab-balance").focus({ preventScroll: true });
+  }
+
+  function tick() {
+    for (const hold of state.holds) {
+      if (hold.status === "Pre-booked" && hold.expires <= Date.now()) { hold.status = "Expired"; renderBalance(); renderCalendar(); }
+    }
+    for (const el of bookingDemo.querySelectorAll("[data-agent-timer]")) {
+      const hold = state.holds.find((x) => String(x.id) === el.dataset.agentTimer);
+      if (hold) el.textContent = left(hold);
+    }
+    if (!state.holds.some((x) => x.status === "Pre-booked")) { clearInterval(ticker); ticker = null; }
+  }
+
+  q("[data-agent-confirm]").addEventListener("click", () => {
+    if (state.start === null || !fits(state.start, state.duration)) return;
+    const hours = Number(q('input[name="agent-option"]:checked').value);
+    const standard = BOATS[state.boat].rate * state.duration;
+    const hold = { id: nextId++, boat: state.boat, boat_name: BOATS[state.boat].name, day: state.day, start: state.start, duration: state.duration, hours, price: hours === 2 ? Math.round(standard * PROMO) : standard, status: "Pre-booked", expires: Date.now() + hours * 3600000 };
+    state.holds.push(hold);
+    state.start = null;
+    status.textContent = hours === 2
+      ? "Sample pre-booking: promo price, pay within 2 hours. In the real cabinet the invoice and card link arrive at once."
+      : "Sample pre-booking: the hours are held for 12 hours at the standard B2B price.";
+    renderBalance(); renderCalendar();
+    if (!ticker) ticker = setInterval(tick, 1000);
   });
+  q("[data-agent-close]").addEventListener("click", () => { state.start = null; renderCalendar(); });
+
+  for (const button of bookingDemo.querySelectorAll("[data-agent-boat]")) {
+    button.addEventListener("click", () => {
+      state.boat = button.dataset.agentBoat; state.start = null;
+      renderCalendar();
+      tab("broker-tab-calendar").click();
+      tab("broker-tab-calendar").focus({ preventScroll: true });
+    });
+  }
+
+  renderCalendar(); renderBalance();
 }

@@ -70,7 +70,7 @@
           <button type="button" role="tab" id="story-maintenance" aria-controls="story-panel" aria-selected="false" tabindex="-1" data-story="maintenance"><span aria-hidden="true">⌁</span> A maintenance request</button>
           <button type="button" role="tab" id="story-renewal" aria-controls="story-panel" aria-selected="false" tabindex="-1" data-story="renewal"><span aria-hidden="true">▤</span> A document renewal</button>
         </div>
-        <p class="demo-note"><span class="demo-dot" aria-hidden="true"></span>Illustrated workflow demo</p>
+        <p class="demo-note">Illustrated workflow demo</p>
       </div>
       <div class="office-sheet" id="story-panel" role="tabpanel" aria-labelledby="story-charter" tabindex="0">
         <div class="drawing-column">
@@ -93,7 +93,7 @@
           <div class="story-context"><span class="eyebrow" id="story-category">WhatsApp → booking</span><span class="step-counter" id="step-counter">1 / 7</span></div>
           <blockquote id="story-question">“Is Van Dutch 40 available tomorrow evening?”</blockquote>
           <div class="current-work">
-            <p class="active-role-label"><span class="role-portrait active-role-portrait" id="active-role-portrait" aria-hidden="true"></span><span id="active-role-dot"></span><span id="active-role">Office</span><span class="work-state" id="work-state">Working</span></p>
+            <p class="active-role-label"><span class="role-portrait active-role-portrait" id="active-role-portrait" aria-hidden="true"></span><span id="active-role">Office</span><span class="work-state" id="work-state">Working</span></p>
             <h2 id="step-heading">An enquiry arrives.</h2>
             <p id="step-description">The office picks up the WhatsApp message and passes the request to Sales.</p>
             <div class="result-paper"><span class="result-caption" id="result-caption">Handoff</span><p id="step-result">An enquiry with a yacht and a requested time.</p></div>
@@ -144,8 +144,8 @@
       </div>
       <div class="product-shell broker-shell" data-tabset data-booking-demo data-reveal>
         <div class="product-bar broker-bar">
-          <div class="brand"><span class="signal" aria-hidden="true"></span>SPIS <span class="demo-label">Booking demo</span></div>
-          <div class="switcher" role="tablist" aria-label="Broker portal demo">
+          <div class="brand">SPIS <span class="demo-label">Agent booking demo</span></div>
+          <div class="switcher" role="tablist" aria-label="Agent booking demo">
             <button id="broker-tab-boats" type="button" role="tab" aria-controls="broker-boats" aria-selected="true">Boats</button>
             <button id="broker-tab-balance" type="button" role="tab" aria-controls="broker-balance" aria-selected="false" tabindex="-1">Balance</button>
             <button id="broker-tab-calendar" type="button" role="tab" aria-controls="broker-calendar" aria-selected="false" tabindex="-1">Calendar</button>
@@ -153,43 +153,45 @@
           </div>
         </div>
         <div class="product-screen broker-screen" id="broker-boats" role="tabpanel" aria-labelledby="broker-tab-boats" tabindex="0">
-          <div class="broker-boat">
-            <div><p class="label">Open day cruiser · Dubai Harbour</p><h3>Van Dutch 40</h3><p data-booking-availability>Try a hold on the 18:00 sample slot.</p><a class="inline-link" href="/SPIS/assets/brochures/vandutch-40.pdf">Client brochure (PDF) <span class="arrow" aria-hidden="true">↗</span></a></div>
-            <img src="/SPIS/assets/vandutch-profile.webp" width="1280" height="660" loading="lazy" alt="Van Dutch 40 graphite side profile">
-          </div>
-          <div class="booking-actions">
-            <label class="guest-note" for="broker-requests">Guest requests <span>(optional)</span>
-              <input id="broker-requests" data-booking-requests maxlength="160" autocomplete="off" placeholder="E.g. a child life jacket">
-            </label>
-            <button class="button" type="button" data-hold-hours="2">Fastbook: pay within 2 hours <span class="arrow" aria-hidden="true">↗</span></button>
-            <button class="quiet-button" type="button" data-hold-hours="12">Standard: hold for 12 hours</button>
-          </div>
+          <div class="screen-head"><div><p class="label">Agent cabinet · Dubai Harbour</p><h3>Our boats</h3></div><span class="pill">B2B prices</span></div>
+          <ul class="agent-boats">
+            <li><img src="/SPIS/assets/vandutch-profile.webp" width="1280" height="660" loading="lazy" alt=""><strong>Van Dutch 40</strong><span>Open day cruiser · up to 10 guests</span><b>from 1,200 AED/h</b><a class="inline-link" href="/SPIS/assets/brochures/vandutch-40.pdf">Brochure (PDF) <span class="arrow" aria-hidden="true">↗</span></a><button class="quiet-button" type="button" data-agent-boat="vandutch">Check availability <span class="arrow" aria-hidden="true">→</span></button></li>
+            <li><img src="/SPIS/assets/moneta-profile.webp" width="1280" height="660" loading="lazy" alt=""><strong>Monte Carlo 60</strong><span>Flybridge yacht · up to 15 guests</span><b>from 2,600 AED/h</b><a class="inline-link" href="/SPIS/assets/brochures/moneta.pdf">Brochure (PDF) <span class="arrow" aria-hidden="true">↗</span></a><button class="quiet-button" type="button" data-agent-boat="montecarlo">Check availability <span class="arrow" aria-hidden="true">→</span></button></li>
+            <li><img src="/SPIS/assets/evo-profile.webp" width="1280" height="660" loading="lazy" alt=""><strong>Evo 43</strong><span>Open day yacht · up to 12 guests</span><b>from 1,400 AED/h</b><button class="quiet-button" type="button" data-agent-boat="evo">Check availability <span class="arrow" aria-hidden="true">→</span></button></li>
+            <li><img src="/SPIS/assets/maybach-profile.webp" width="1280" height="660" loading="lazy" alt=""><strong>Maybach</strong><span>Silver Arrows Marine SAM 46</span><b>from 1,800 AED/h</b><button class="quiet-button" type="button" data-agent-boat="maybach">Check availability <span class="arrow" aria-hidden="true">→</span></button></li>
+          </ul>
         </div>
         <div class="product-screen broker-screen" id="broker-balance" role="tabpanel" aria-labelledby="broker-tab-balance" tabindex="0" hidden>
-          <div class="screen-head"><div><p class="label">Broker balance</p><h3>Your sample hold</h3></div><span class="pill" data-booking-chip>No hold</span></div>
-          <div class="booking-record"><span>Van Dutch 40 · 18:00</span><strong data-booking-timer aria-label="Hold time remaining">—</strong></div>
-          <p class="captain-note" data-captain-note hidden><strong>Captain’s trip note</strong><span data-captain-text></span></p>
-          <div class="balance-actions">
-            <details><summary>Pay online</summary><p>In the broker portal, pay by card or USDT. A broker can take over an unpaid hold by paying for the slot. This demo uses sample data.</p></details>
-            <details><summary>PDF invoice</summary><p>The broker portal prepares a PDF invoice for the booking.</p></details>
-            <button class="quiet-button" type="button" data-hold-release disabled>Cancel hold</button>
-          </div>
+          <div class="screen-head"><div><p class="label">Agent balance</p><h3>Your bookings</h3></div><span class="pill" data-agent-count>No pre-bookings</span></div>
+          <p class="booking-note agent-empty" data-agent-empty>Nothing here yet. Pick a free hour in Calendar to pre-book a boat.</p>
+          <ul class="agent-rows" data-agent-rows></ul>
         </div>
         <div class="product-screen broker-screen" id="broker-calendar" role="tabpanel" aria-labelledby="broker-tab-calendar" tabindex="0" hidden>
-          <div class="screen-head"><div><p class="label">Van Dutch 40 · Sample day</p><h3>Availability</h3></div><span class="pill">Dubai time</span></div>
-          <ul class="slot-list">
-            <li><time datetime="16:00">16:00</time><span class="slot-busy">Booked</span></li>
-            <li><time datetime="18:00">18:00</time><span class="slot-open" data-booking-slot>Available</span></li>
-            <li><time datetime="20:00">20:00</time><span class="slot-unknown">No response</span></li>
-          </ul>
-          <p class="booking-note">A hold blocks the slot. The public broker calendar shows reservations as Busy.</p>
+          <div class="screen-head"><div><p class="label" data-agent-cal-label>Van Dutch 40 · Dubai time</p><h3>Availability</h3></div><span class="pill">Sample day</span></div>
+          <div class="agent-pickers">
+            <div class="agent-chips" role="group" aria-label="Boat" data-agent-boat-chips></div>
+            <div class="agent-chips" role="group" aria-label="Day" data-agent-day-chips></div>
+          </div>
+          <div class="agent-hours" role="group" aria-label="Hours" tabindex="0" data-agent-hours></div>
+          <p class="agent-legend"><span class="is-free">Free</span><span class="is-held">Held</span><span class="is-booked">Booked</span></p>
+          <div class="agent-prebook" data-agent-prebook hidden>
+            <div class="agent-prebook-head">
+              <p><strong data-agent-pick></strong></p>
+              <div class="agent-chips" role="group" aria-label="Duration" data-agent-durations></div>
+            </div>
+            <div class="agent-options" role="radiogroup" aria-label="Pre-booking option">
+              <label class="agent-option"><input type="radio" name="agent-option" value="2" checked><span><strong>Pay within 2 hours</strong><b data-agent-price="2"></b><small>Promo price · non-refundable. Invoice and card payment link are sent at once.</small></span></label>
+              <label class="agent-option"><input type="radio" name="agent-option" value="12"><span><strong>Hold for 12 hours</strong><b data-agent-price="12"></b><small>Standard B2B price. The slot waits 12 hours for your payment.</small></span></label>
+            </div>
+            <div class="booking-actions"><button class="button" type="button" data-agent-confirm>Pre-book <span class="arrow" aria-hidden="true">↗</span></button><button class="quiet-button" type="button" data-agent-close>Cancel</button></div>
+          </div>
         </div>
         <div class="product-screen broker-screen" id="broker-info" role="tabpanel" aria-labelledby="broker-tab-info" tabindex="0" hidden>
-          <div class="screen-head"><div><p class="label">Broker profile · Example</p><h3>Agent information</h3></div><span class="pill">Gold</span></div>
-          <dl class="broker-summary"><div><dt>Booked hours</dt><dd>12 h</dd></div><div><dt>Payment history</dt><dd>2 paid trips</dd></div><div><dt>Portal language</dt><dd>EN / RU</dd></div></dl>
-          <p class="booking-note">Example agent record. Each broker’s private link opens their own view.</p>
+          <div class="screen-head"><div><p class="label">Agent profile · November</p><h3>Month summary</h3></div><span class="pill">Gold agent</span></div>
+          <dl class="broker-summary"><div><dt>Hours booked</dt><dd>46 h</dd></div><div><dt>Paid</dt><dd>38 h · 52,400 AED</dd></div><div><dt>Pre-booked now</dt><dd data-agent-info-held>0 h</dd></div><div><dt>Portal language</dt><dd>EN / RU</dd></div></dl>
+          <p class="booking-note">Each agent opens the cabinet by a private link: no sign-in, live availability, card or USDT payment, PDF invoice.</p>
         </div>
-        <p class="demo-disclaimer" data-booking-status aria-live="polite">Sample data. Try a hold to see the calendar and balance change.</p>
+        <p class="demo-disclaimer" data-booking-status aria-live="polite">Sample data. Prices and hours are illustrative; nothing is booked or charged.</p>
       </div>
       <a class="inline-link public-calendar" href="https://iy.je/crm">Open the public calendar <span class="arrow" aria-hidden="true">↗</span></a>
     </div>
@@ -341,7 +343,7 @@
           <button id="tab-logbook" type="button" role="tab" aria-controls="screen-logbook" aria-selected="false" tabindex="-1">Logbook</button>
         </div></div>
         <div class="product-screen" id="screen-owner" role="tabpanel" aria-labelledby="tab-owner" tabindex="0">
-          <div class="screen-head"><div><p class="label">Owner view</p><h3>Maybach</h3></div><span class="pill"><i></i> Illustrative owner view</span></div>
+          <div class="screen-head"><div><p class="label">Owner view</p><h3>Maybach</h3></div><span class="pill">Illustrative owner view</span></div>
           <div class="dashboard">
             <div class="dashboard-main">
               <h4>On the schedule</h4>
