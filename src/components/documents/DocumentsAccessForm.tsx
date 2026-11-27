@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Loader2, Mail, MailCheck, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Eye, EyeOff, KeyRound, Loader2, Mail, MailCheck, ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 
 export const ACCESS_EMAIL_INPUT_ID = "docs-email";
@@ -24,6 +25,122 @@ function errorMessage(data: unknown): string {
  * optional) and gets a sign-in link in their inbox.
  */
 export function DocumentsAccessForm({ expired = false }: { expired?: boolean }) {
+  return (
+    <div className="space-y-4">
+      <EmailAccessForm expired={expired} />
+      <PasswordAccessForm />
+    </div>
+  );
+}
+
+/**
+ * Partners who already have the shared access password unlock the documents
+ * with it directly; the email link above stays the main way in.
+ */
+function PasswordAccessForm() {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!password || loading) return;
+
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/documents/unlock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
+        trackEvent("docs_unlocked_with_password");
+        // Re-render the page as unlocked.
+        router.refresh();
+        return;
+      }
+      setError(errorMessage(await res.json().catch(() => null)));
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-2 text-sm font-medium text-white/45 transition-colors hover:text-white/75"
+      >
+        <KeyRound className="w-4 h-4" />
+        Have an access password?
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 sm:p-8 space-y-4" noValidate>
+      <div>
+        <label htmlFor="docs-password" className="block text-sm font-medium text-white/60 mb-2">
+          Access password
+        </label>
+        <div className="relative">
+          <input
+            id="docs-password"
+            type={show ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            autoFocus
+            placeholder="Enter password"
+            className={`${inputClass} pr-11`}
+          />
+          <button
+            type="button"
+            onClick={() => setShow((s) => !s)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+            aria-label={show ? "Hide password" : "Show password"}
+            tabIndex={-1}
+          >
+            {show ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <p className="text-sm text-red-400/90 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2" role="alert">
+          {error}
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={loading || !password}
+        className="group w-full inline-flex items-center justify-center gap-2 rounded-lg border border-gold-500/40 px-6 py-3 text-sm font-semibold text-gold-400 transition-all duration-300 hover:bg-gold-500/10 disabled:opacity-50 disabled:pointer-events-none"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Unlocking…
+          </>
+        ) : (
+          <>
+            Unlock documents
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+          </>
+        )}
+      </button>
+    </form>
+  );
+}
+
+function EmailAccessForm({ expired }: { expired: boolean }) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
