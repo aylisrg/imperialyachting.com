@@ -22,6 +22,7 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { SITE_CONFIG } from "@/lib/constants";
+import { isPasswordSession } from "@/lib/documents-session";
 import {
   DOCUMENT_CATEGORIES,
   type CompanyDocument,
@@ -153,7 +154,13 @@ function AccessGrantedCard({
         </div>
       </div>
       <p className="text-sm text-white/60">
-        Signed in as <span className="text-white font-medium break-all">{email}</span>
+        {isPasswordSession(email) ? (
+          "Unlocked with the access password"
+        ) : (
+          <>
+            Signed in as <span className="text-white font-medium break-all">{email}</span>
+          </>
+        )}
       </p>
       <div className="mt-6 flex flex-wrap gap-3">
         <a
@@ -454,7 +461,7 @@ export function DocumentsPortal({
                 className="mt-2 inline-flex items-center gap-2 text-xs font-medium text-white/40 transition-colors hover:text-white/70 disabled:opacity-50"
               >
                 <LogOut className="w-3.5 h-3.5" />
-                Sign out ({viewer.email})
+                {isPasswordSession(viewer.email) ? "Sign out" : `Sign out (${viewer.email})`}
               </button>
             )}
           </div>

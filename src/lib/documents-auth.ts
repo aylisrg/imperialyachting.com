@@ -119,6 +119,29 @@ export function verifySessionToken(token: string | null | undefined, now: number
   return verifyToken("session", token, now);
 }
 
+/**
+ * Shared access password (DOCUMENTS_PASSWORD), the older way into the portal
+ * that partners already have. It works next to the email link: a correct
+ * password starts the same signed session, labelled PASSWORD_SESSION_LABEL
+ * instead of an email. Without DOCUMENTS_PASSWORD the password way is off.
+ */
+export function getDocumentsPassword(): string | null {
+  return process.env.DOCUMENTS_PASSWORD?.trim() || null;
+}
+
+export function isDocumentsPasswordConfigured(): boolean {
+  return getDocumentsPassword() !== null;
+}
+
+/** Constant-time comparison of a submitted password against DOCUMENTS_PASSWORD. */
+export function isPasswordValid(submitted: unknown): boolean {
+  const expected = getDocumentsPassword();
+  if (!expected || typeof submitted !== "string" || submitted.length === 0) return false;
+  const a = crypto.createHash("sha256").update(submitted).digest();
+  const b = crypto.createHash("sha256").update(expected).digest();
+  return crypto.timingSafeEqual(a, b);
+}
+
 export interface DocumentsViewer {
   email: string;
 }
