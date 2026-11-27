@@ -68,3 +68,20 @@ describe("buildYachtFAQ", () => {
     expect(capacityItem.answer).not.toContain("cabin");
   });
 });
+
+describe("FAQ matches the fleet and day prices on the yacht pages (IY-2074)", () => {
+  it("names every yacht and every day price from the day-charter list", async () => {
+    const { homeFAQ, fleetFAQ } = await import("../faq");
+    const { fullDayCharters } = await import("@/lib/day-charters");
+    const { companyInfo } = await import("../company");
+    const cost = homeFAQ[0].answer;
+    for (const charter of fullDayCharters) {
+      expect(cost).toContain(charter.name);
+      expect(cost).toContain(`AED ${charter.price.toLocaleString("en-US")}`);
+    }
+    expect(companyInfo.stats.fleetSize).toBe(fullDayCharters.length);
+    const all = [...homeFAQ, ...fleetFAQ].map((item) => item.answer).join(" ");
+    expect(all).not.toMatch(/three (yachts|distinct vessels)|AED 12,000|AED 52,000|AED 20,000/);
+    expect(fleetFAQ[0].answer).toContain("Maybach");
+  });
+});
