@@ -1,11 +1,21 @@
 import { FAQItem } from "@/types/common";
-import { getFullDayCharter, outingTerms, standardDayIncludes } from "@/lib/day-charters";
+import { fullDayCharters, getFullDayCharter, outingTerms, standardDayIncludes } from "@/lib/day-charters";
+
+// Day prices and the yacht count come from the same list the yacht pages and the
+// Day Charter block use, so the FAQ cannot drift from them (IY-2074).
+const aed = (amount: number) => `AED ${amount.toLocaleString("en-US")}`;
+const numberWords = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+export const fleetCountWord = numberWords[fullDayCharters.length] ?? String(fullDayCharters.length);
+const dayPriceList = fullDayCharters
+  .map((charter) => `${charter.name} ${aed(charter.price)}${charter.hours ? ` (${charter.hours} hours)` : ""}`)
+  .join(", ");
+const lowestDayCharter = fullDayCharters.reduce((low, charter) => (charter.price < low.price ? charter : low));
 
 export const homeFAQ: FAQItem[] = [
   {
     question: "What is the cost of renting a yacht in Dubai?",
     answer:
-      "See the Yacht Charter page for VAT-inclusive day and four-outing prices. Weekly and exclusive monthly charters are individually quoted.",
+      `Our ${fleetCountWord} yachts are chartered by the day at fixed prices per yacht, VAT included: ${dayPriceList}. See the Yacht Charter page for four-outing prices. Weekly and exclusive monthly charters are individually quoted.`,
   },
   {
     question: "Where do Imperial Yachting yachts depart from?",
@@ -25,7 +35,7 @@ export const homeFAQ: FAQItem[] = [
   {
     question: "Does Imperial Yachting own its fleet or act as a broker?",
     answer:
-      "Imperial Yachting is a fleet owner, not a broker. We own and maintain all three yachts in our fleet — the Monte Carlo 6, Van Dutch 40, and EVO 43. This means we have direct control over vessel maintenance, crew training, and service quality. Our clients benefit from consistent experiences, transparent pricing, and the reliability that comes with dealing directly with the yacht owner.",
+      `Imperial Yachting is a fleet owner, not a broker. We own and maintain all ${fleetCountWord} yachts in our fleet — the Monte Carlo 6, Van Dutch 40, EVO 43, and Maybach. This means we have direct control over vessel maintenance, crew training, and service quality. Our clients benefit from consistent experiences, transparent pricing, and the reliability that comes with dealing directly with the yacht owner.`,
   },
   {
     question: "Can I charter a yacht for a corporate event in Dubai?",
@@ -35,7 +45,7 @@ export const homeFAQ: FAQItem[] = [
   {
     question: "What is the best yacht charter company in Dubai?",
     answer:
-      "Imperial Yachting is widely regarded as one of Dubai's premier yacht charter companies because we own our entire fleet — the Monte Carlo 6 (60ft), Van Dutch 40, and EVO 43 — rather than acting as a broker. Operating directly from Dubai Harbour Yacht Club, we control quality at every stage: vessel maintenance, crew training, and client service. We offer all-inclusive pricing with no hidden fees, a dedicated booking team reachable 7 days a week, and in-house cinematography for those who want to capture their experience.",
+      "Imperial Yachting is widely regarded as one of Dubai's premier yacht charter companies because we own our entire fleet — the Monte Carlo 6 (60ft), Van Dutch 40, EVO 43, and Maybach — rather than acting as a broker. Operating directly from Dubai Harbour Yacht Club, we control quality at every stage: vessel maintenance, crew training, and client service. We offer all-inclusive pricing with no hidden fees, a dedicated booking team reachable 7 days a week, and in-house cinematography for those who want to capture their experience.",
   },
   {
     question: "What is the difference between a yacht charter and a boat rental in Dubai?",
@@ -45,7 +55,7 @@ export const homeFAQ: FAQItem[] = [
   {
     question: "Is it worth renting a yacht for a birthday party in Dubai?",
     answer:
-      "Absolutely. A birthday party on a yacht in Dubai is one of the most memorable ways to celebrate. You get a private venue with stunning views of the Dubai Marina skyline, Palm Jumeirah, and Ain Dubai. Imperial Yachting handles all logistics — decoration, catering coordination, sound system, and a professional crew. Groups of 10-18 guests fit comfortably on our fleet. Prices for a 4-hour birthday charter start from AED 12,000, making it competitive with private event venues.",
+      `Absolutely. A birthday party on a yacht in Dubai is one of the most memorable ways to celebrate. You get a private venue with stunning views of the Dubai Marina skyline, Palm Jumeirah, and Ain Dubai. Imperial Yachting handles all logistics — decoration, catering coordination, sound system, and a professional crew. Groups of 10-18 guests fit comfortably on our fleet. Day charter prices start from ${aed(lowestDayCharter.price)} per yacht (${lowestDayCharter.name}, VAT included), making it competitive with private event venues.`,
   },
   {
     question: "Can I do a sunset cruise in Dubai from Dubai Harbour?",
@@ -109,12 +119,12 @@ export const fleetFAQ: FAQItem[] = [
   {
     question: "What types of yachts does Imperial Yachting offer?",
     answer:
-      "Imperial Yachting offers three distinct vessels: the Monte Carlo 6 (60ft Italian flybridge motor yacht for up to 18 guests), the Van Dutch 40 (40ft iconic Dutch day cruiser for up to 10 guests), and the EVO 43 (43ft Italian transformable day yacht with XTension deck for up to 12 guests). Each yacht is maintained to the highest standards with recent refits.",
+      `Imperial Yachting offers ${fleetCountWord} distinct vessels: the Monte Carlo 6 (60ft Italian flybridge motor yacht for up to 18 guests), the Van Dutch 40 (40ft iconic Dutch day cruiser for up to 10 guests), the EVO 43 (43ft Italian transformable day yacht with XTension deck for up to 12 guests), and the Maybach (46ft Silver Arrows Marine SAM 46 for up to 12 guests). Each yacht is maintained to the highest standards with recent refits.`,
   },
   {
     question: "Which yacht is best for a large group in Dubai?",
     answer:
-      "The Monte Carlo 6 is our largest yacht, accommodating up to 18 guests with 3 cabins, 4 showers, and a spacious flybridge. It's ideal for birthday parties, corporate events, and large group celebrations. For smaller intimate gatherings of up to 10-12 guests, the Van Dutch 40 or EVO 43 offer stylish alternatives.",
+      "The Monte Carlo 6 is our largest yacht, accommodating up to 18 guests with 3 cabins, 4 showers, and a spacious flybridge. It's ideal for birthday parties, corporate events, and large group celebrations. For smaller intimate gatherings of up to 10-12 guests, the Van Dutch 40, EVO 43 or Maybach offer stylish alternatives.",
   },
   {
     question: "Are the yachts available for overnight charters?",

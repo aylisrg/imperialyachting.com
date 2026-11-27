@@ -1,4 +1,5 @@
 import { SITE_CONFIG } from "@/lib/constants";
+import { fullDayCharters } from "@/lib/day-charters";
 
 export const companyInfo = {
   ...SITE_CONFIG,
@@ -28,7 +29,7 @@ export const companyInfo = {
   ],
   stats: {
     yearsInBusiness: new Date().getFullYear() - 2023,
-    fleetSize: 3,
+    fleetSize: fullDayCharters.length,
     // Shown on the Careers page (production branch, IY-494).
     happyClients: "1,200+",
     charterHours: "5,000+",
